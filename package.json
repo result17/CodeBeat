@@ -1,5 +1,6 @@
 {
-  "name": "CodeBeat",
+  "publisher": "result17",
+  "name": "codeBeat",
   "displayName": "CodeBeat",
   "version": "0.0.0",
   "private": true,
@@ -16,11 +17,24 @@
     "vscode": "^1.97.0"
   },
   "activationEvents": [
-    "onStartupFinished"
+    "*"
   ],
   "contributes": {
-    "commands": [],
-    "configuration": {}
+    "commands": [{
+      "category": "CodeBeat",
+      "title": "Toggle",
+      "command": "codeBeat.toggle"
+    }],
+    "configuration": {
+      "type": "object",
+      "properties": {
+        "codeBeat.enable": {
+          "type": "boolean",
+          "default": true,
+          "definitions": "Enable code show"
+        }
+      }
+    }
   },
   "scripts": {
     "build": "tsup src/index.ts --external vscode",
