@@ -13,19 +13,30 @@ export const onDidChangeBreakpoints = useEvent(debug.onDidChangeBreakpoints)
 export const onDidStartDebugSession = useEvent(debug.onDidStartDebugSession)
 export const onDidTerminateDebugSession = useEvent(debug.onDidTerminateDebugSession)
 
-export function useOnEvent() {
+interface OnEventParams {
+  eventName: string
+  duringMs: number
+}
+
+export function useOnEvent(onEvent: (params: OnEventParams) => void, debounceMs: number = 100) {
   const eventName = ref('')
+  const duringMs = ref(0)
   const setTimeoutId = ref<NodeJS.Timeout>()
   onDidChangeActiveTextEditor(() => eventName.value = 'onDidChangeActiveTextEditor')
   onDidChangeTextEditorSelection(() => eventName.value = 'onDidChangeTextEditorSelection')
   onDidSaveTextDocument(() => eventName.value = 'onDidSaveTextDocument')
+
+  setInterval(() => duringMs.value += debounceMs, debounceMs)
 
   watchEffect(() => {
     if (!eventName.value)
       return
     clearTimeout(setTimeoutId.value)
     setTimeoutId.value = setTimeout(() => {
-      window.showInformationMessage(`${eventName.value} by setTimeout`)
-    }, 100)
+      onEvent({
+        eventName: eventName.value,
+        duringMs: duringMs.value,
+      })
+    }, debounceMs)
   })
 }
