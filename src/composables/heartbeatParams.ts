@@ -1,9 +1,10 @@
 import type { ComputedRef } from 'reactive-vscode'
+import type { Uri } from 'vscode'
 import { computed, useActiveTextEditor, useTextEditorSelection, useWorkspaceFolders } from 'reactive-vscode'
 import { env, version } from 'vscode'
 import { useSelf } from './self'
 
-interface EventArgRecord {
+interface EventArgs {
   '--entity': string
   '-plugin': string
   '--lineno'?: number
@@ -15,7 +16,7 @@ interface EventArgRecord {
   '--log-file'?: string
 }
 
-export function useCollectHeartbeatArgs(): ComputedRef<EventArgRecord | null> {
+export function useCollectHeartbeatArgs(): ComputedRef<EventArgs | null> {
   const editor = useActiveTextEditor()
   const ext = useSelf()
   const selection = useTextEditorSelection(editor).value
@@ -26,14 +27,36 @@ export function useCollectHeartbeatArgs(): ComputedRef<EventArgRecord | null> {
   const lineno = selection.start.line
   const cursorPos = selection.start.character
   const lines = editor.value?.document.lineCount
+  const currentWorkspace = computed(() => {
+    if (workspaces.value) {
+      const workspace = workspaces.value.find(workspace => workspace.uri === editor.value?.document.uri)
+      if (workspace)
+        return workspace
+      if (!workspace && workspaces.value.length > 0)
+        return workspaces.value[0]
+    }
+    return null
+  })
 
-  return computed(() => entity
-    ? ({
+  const alternateProjectName = currentWorkspace.value?.name
+
+  const projectFloder = currentWorkspace.value?.uri.fsPath
+
+  return computed(() => {
+    if (entity) {
+      const args: EventArgs = {
         '--entity': entity,
         '-plugin': plugin.value,
         '--lineno': lineno,
         '--cursorpos': cursorPos,
         '--lines-in-file': lines,
-      })
-    : null)
+      }
+      if (alternateProjectName)
+        args['--alternate-project'] = alternateProjectName
+      if (projectFloder)
+        args['--project-folder'] = projectFloder
+      return args
+    }
+    return null
+  })
 }

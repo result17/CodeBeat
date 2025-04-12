@@ -22,5 +22,3 @@ export function formatMilliseconds(ms: number): string {
   }
   return `${minutes} min${minutes !== 1 ? 's' : ''}`
 }
-
-type onEventTrriger = Map<any, any>
