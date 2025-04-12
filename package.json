@@ -20,11 +20,13 @@
     "*"
   ],
   "contributes": {
-    "commands": [{
-      "category": "CodeBeat",
-      "title": "Toggle",
-      "command": "codeBeat.toggle"
-    }],
+    "commands": [
+      {
+        "category": "CodeBeat",
+        "title": "Toggle",
+        "command": "codeBeat.toggle"
+      }
+    ],
     "configuration": {
       "type": "object",
       "properties": {

@@ -1,7 +1,8 @@
 import type { EventArgs } from '../heartbeatParams'
-import { computed, ref, useEvent } from 'reactive-vscode'
+import { ref, useEvent } from 'reactive-vscode'
 import { debug, tasks, window, workspace } from 'vscode'
 import { collectHeartbeatArgs } from '../heartbeatParams'
+import { logger } from '../utils'
 
 export const onDidChangeTextEditorSelection = useEvent(window.onDidChangeTextEditorSelection)
 export const onDidChangeActiveTextEditor = useEvent(window.onDidChangeActiveTextEditor)
@@ -16,27 +17,23 @@ export const onDidStartDebugSession = useEvent(debug.onDidStartDebugSession)
 export const onDidTerminateDebugSession = useEvent(debug.onDidTerminateDebugSession)
 
 export function useOnEvent() {
-  const eventName = ref('')
   const heartbeatParams = ref<EventArgs | null>(null)
-  // const setTimeoutId = ref<NodeJS.Timeout>()
 
-  onDidChangeActiveTextEditor(() => {
-    eventName.value = 'onDidChangeActiveTextEditor'
-    heartbeatParams.value = collectHeartbeatArgs()
-  })
+  const updateHeartbeatParams = () => {
+    try {
+      heartbeatParams.value = collectHeartbeatArgs()
+    }
+    catch (error) {
+      logger.warn('Failed to collect heartbeat args:', error)
+      heartbeatParams.value = null
+    }
+  }
 
-  onDidChangeTextEditorSelection(() => {
-    eventName.value = 'onDidChangeTextEditorSelection'
-    heartbeatParams.value = collectHeartbeatArgs()
-  })
+  onDidChangeActiveTextEditor(updateHeartbeatParams)
 
-  onDidSaveTextDocument(() => {
-    eventName.value = 'onDidSaveTextDocument'
-    heartbeatParams.value = collectHeartbeatArgs()
-  })
+  onDidChangeTextEditorSelection(updateHeartbeatParams)
 
-  return computed(() => ({
-    eventName,
-    params: heartbeatParams,
-  }))
+  onDidSaveTextDocument(updateHeartbeatParams)
+
+  return heartbeatParams
 }

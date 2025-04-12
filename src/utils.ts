@@ -1,7 +1,10 @@
+import { join } from 'node:path'
+import * as process from 'node:process'
 import { useLogger } from 'reactive-vscode'
 
 export const logger = useLogger('CodeBeat')
-
+export const resourceDir = '.codebeat'
+export const binaryFileName = 'codebeatcli-windows-amd64.exe'
 /**
  * Format milliseconds to time string
  * @param ms - milliseconds
@@ -21,4 +24,10 @@ export function formatMilliseconds(ms: number): string {
     return `${hours} hr${hours > 1 ? 's' : ''} ${minutes} min${minutes !== 1 ? 's' : ''}`
   }
   return `${minutes} min${minutes !== 1 ? 's' : ''}`
+}
+
+// TODO check if not exists
+export function getCliLocation() {
+  const homeDir = process.env.Home ?? process.cwd()
+  return join(homeDir, resourceDir, binaryFileName)
 }

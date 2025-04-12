@@ -18,22 +18,21 @@ const editor = useActiveTextEditor()
 const ext = useSelf()
 const selection = useTextEditorSelection(editor)
 const workspaces = useWorkspaceFolders()
-
 const plugin = computed(() => `${env.appName}_${version}/codebeat_${ext.value?.packageJSON.version ?? '0.0.0'}`)
 
 export function collectHeartbeatArgs(): EventArgs | null {
-  if (!editor.value?.document || !selection.value) {
+  if (!editor.value?.document) {
     return null
   }
-
   const { document } = editor.value
   const entity = document.fileName
   const lines = document.lineCount
-  const { line: lineno, character: cursorPos } = selection.value.start
 
   const currentWorkspace = workspaces.value?.find(
     workspace => workspace.uri === document.uri,
   ) ?? workspaces.value?.[0] ?? null
+
+  const { line: lineno, character: cursorPos } = selection.value.start
 
   const alternateProjectName = currentWorkspace?.name
   const projectFolder = currentWorkspace?.uri.fsPath
