@@ -1,10 +1,8 @@
-import type { ComputedRef } from 'reactive-vscode'
-import type { Uri } from 'vscode'
 import { computed, useActiveTextEditor, useTextEditorSelection, useWorkspaceFolders } from 'reactive-vscode'
 import { env, version } from 'vscode'
-import { useSelf } from './self'
+import { useSelf } from './composables/self'
 
-interface EventArgs {
+export interface EventArgs {
   '--entity': string
   '-plugin': string
   '--lineno'?: number
@@ -16,16 +14,14 @@ interface EventArgs {
   '--log-file'?: string
 }
 
-export function useCollectHeartbeatArgs(): ComputedRef<EventArgs | null> {
-  const editor = useActiveTextEditor()
-  const ext = useSelf()
-  const selection = useTextEditorSelection(editor).value
-  const workspaces = useWorkspaceFolders()
+const editor = useActiveTextEditor()
+const ext = useSelf()
+const selection = useTextEditorSelection(editor)
+const workspaces = useWorkspaceFolders()
 
+export function collectHeartbeatArgs(): EventArgs | null {
   const entity = editor.value?.document.fileName
   const plugin = computed(() => `${env.appName}_${version}/codebeat_${ext.value?.packageJSON.version ?? '0.0.0'}`)
-  const lineno = selection.start.line
-  const cursorPos = selection.start.character
   const lines = editor.value?.document.lineCount
   const currentWorkspace = computed(() => {
     if (workspaces.value) {
@@ -42,21 +38,20 @@ export function useCollectHeartbeatArgs(): ComputedRef<EventArgs | null> {
 
   const projectFloder = currentWorkspace.value?.uri.fsPath
 
-  return computed(() => {
-    if (entity) {
-      const args: EventArgs = {
-        '--entity': entity,
-        '-plugin': plugin.value,
-        '--lineno': lineno,
-        '--cursorpos': cursorPos,
-        '--lines-in-file': lines,
-      }
-      if (alternateProjectName)
-        args['--alternate-project'] = alternateProjectName
-      if (projectFloder)
-        args['--project-folder'] = projectFloder
-      return args
+  if (entity) {
+    const { line: lineno, character: cursorPos } = selection.value.start
+    const args: EventArgs = {
+      '--entity': entity,
+      '-plugin': plugin.value,
+      '--lineno': lineno,
+      '--cursorpos': cursorPos,
+      '--lines-in-file': lines,
     }
-    return null
-  })
+    if (alternateProjectName)
+      args['--alternate-project'] = alternateProjectName
+    if (projectFloder)
+      args['--project-folder'] = projectFloder
+    return args
+  }
+  return null
 }

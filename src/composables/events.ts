@@ -1,6 +1,7 @@
-import { ref, useEvent, watchEffect } from 'reactive-vscode'
+import type { EventArgs } from '../heartbeatParams'
+import { computed, ref, useEvent } from 'reactive-vscode'
 import { debug, tasks, window, workspace } from 'vscode'
-import { logger } from '../utils'
+import { collectHeartbeatArgs } from '../heartbeatParams'
 
 export const onDidChangeTextEditorSelection = useEvent(window.onDidChangeTextEditorSelection)
 export const onDidChangeActiveTextEditor = useEvent(window.onDidChangeActiveTextEditor)
@@ -14,38 +15,28 @@ export const onDidChangeBreakpoints = useEvent(debug.onDidChangeBreakpoints)
 export const onDidStartDebugSession = useEvent(debug.onDidStartDebugSession)
 export const onDidTerminateDebugSession = useEvent(debug.onDidTerminateDebugSession)
 
-interface OnEventParams {
-  eventName: string
-  duringMs: number
-}
-
-export function useOnEvent(onEvent: (params: OnEventParams) => void, debounceMs: number = 100) {
+export function useOnEvent() {
   const eventName = ref('')
-  const duringMs = ref(0)
-  const setTimeoutId = ref<NodeJS.Timeout>()
+  const heartbeatParams = ref<EventArgs | null>(null)
+  // const setTimeoutId = ref<NodeJS.Timeout>()
 
-  onDidChangeActiveTextEditor((e) => {
-    logger.error(`The file name of active text is ${e?.document.fileName}`)
+  onDidChangeActiveTextEditor(() => {
     eventName.value = 'onDidChangeActiveTextEditor'
-  })
-  onDidChangeTextEditorSelection(() => eventName.value = 'onDidChangeTextEditorSelection')
-  onDidSaveTextDocument(() => eventName.value = 'onDidSaveTextDocument')
-
-  setInterval(() => duringMs.value += debounceMs, debounceMs)
-
-  watchEffect(() => {
-    logger.info(`The event name is ${eventName.value}`)
+    heartbeatParams.value = collectHeartbeatArgs()
   })
 
-  watchEffect(() => {
-    if (!eventName.value)
-      return
-    clearTimeout(setTimeoutId.value)
-    setTimeoutId.value = setTimeout(() => {
-      onEvent({
-        eventName: eventName.value,
-        duringMs: duringMs.value,
-      })
-    }, debounceMs)
+  onDidChangeTextEditorSelection(() => {
+    eventName.value = 'onDidChangeTextEditorSelection'
+    heartbeatParams.value = collectHeartbeatArgs()
   })
+
+  onDidSaveTextDocument(() => {
+    eventName.value = 'onDidSaveTextDocument'
+    heartbeatParams.value = collectHeartbeatArgs()
+  })
+
+  return computed(() => ({
+    eventName,
+    params: heartbeatParams,
+  }))
 }
