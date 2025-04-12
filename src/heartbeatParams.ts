@@ -5,9 +5,9 @@ import { useSelf } from './composables/self'
 export interface EventArgs {
   '--entity': string
   '-plugin': string
-  '--lineno'?: number
-  '--cursorpos'?: number
-  '--lines-in-file'?: number
+  '--lineno'?: string
+  '--cursorpos'?: string
+  '--lines-in-file'?: string
   '--alternate-project'?: string
   '--project-folder'?: string
   '--config'?: string
@@ -19,39 +19,43 @@ const ext = useSelf()
 const selection = useTextEditorSelection(editor)
 const workspaces = useWorkspaceFolders()
 
+const plugin = computed(() => `${env.appName}_${version}/codebeat_${ext.value?.packageJSON.version ?? '0.0.0'}`)
+
 export function collectHeartbeatArgs(): EventArgs | null {
-  const entity = editor.value?.document.fileName
-  const plugin = computed(() => `${env.appName}_${version}/codebeat_${ext.value?.packageJSON.version ?? '0.0.0'}`)
-  const lines = editor.value?.document.lineCount
-  const currentWorkspace = computed(() => {
-    if (workspaces.value) {
-      const workspace = workspaces.value.find(workspace => workspace.uri === editor.value?.document.uri)
-      if (workspace)
-        return workspace
-      if (!workspace && workspaces.value.length > 0)
-        return workspaces.value[0]
-    }
+  if (!editor.value?.document || !selection.value) {
     return null
-  })
-
-  const alternateProjectName = currentWorkspace.value?.name
-
-  const projectFloder = currentWorkspace.value?.uri.fsPath
-
-  if (entity) {
-    const { line: lineno, character: cursorPos } = selection.value.start
-    const args: EventArgs = {
-      '--entity': entity,
-      '-plugin': plugin.value,
-      '--lineno': lineno,
-      '--cursorpos': cursorPos,
-      '--lines-in-file': lines,
-    }
-    if (alternateProjectName)
-      args['--alternate-project'] = alternateProjectName
-    if (projectFloder)
-      args['--project-folder'] = projectFloder
-    return args
   }
-  return null
+
+  const { document } = editor.value
+  const entity = document.fileName
+  const lines = document.lineCount
+  const { line: lineno, character: cursorPos } = selection.value.start
+
+  const currentWorkspace = workspaces.value?.find(
+    workspace => workspace.uri === document.uri,
+  ) ?? workspaces.value?.[0] ?? null
+
+  const alternateProjectName = currentWorkspace?.name
+  const projectFolder = currentWorkspace?.uri.fsPath
+
+  if (!entity) {
+    return null
+  }
+
+  const args: EventArgs = {
+    '--entity': entity,
+    '-plugin': plugin.value,
+    '--lineno': String(lineno),
+    '--cursorpos': String(cursorPos),
+    '--lines-in-file': String(lines),
+  }
+
+  if (alternateProjectName) {
+    args['--alternate-project'] = alternateProjectName
+  }
+  if (projectFolder) {
+    args['--project-folder'] = projectFolder
+  }
+
+  return args
 }
