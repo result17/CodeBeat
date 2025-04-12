@@ -1,5 +1,6 @@
 import { ref, useEvent, watchEffect } from 'reactive-vscode'
 import { debug, tasks, window, workspace } from 'vscode'
+import { logger } from '../utils'
 
 export const onDidChangeTextEditorSelection = useEvent(window.onDidChangeTextEditorSelection)
 export const onDidChangeActiveTextEditor = useEvent(window.onDidChangeActiveTextEditor)
@@ -22,11 +23,19 @@ export function useOnEvent(onEvent: (params: OnEventParams) => void, debounceMs:
   const eventName = ref('')
   const duringMs = ref(0)
   const setTimeoutId = ref<NodeJS.Timeout>()
-  onDidChangeActiveTextEditor(() => eventName.value = 'onDidChangeActiveTextEditor')
+
+  onDidChangeActiveTextEditor((e) => {
+    logger.error(`The file name of active text is ${e?.document.fileName}`)
+    eventName.value = 'onDidChangeActiveTextEditor'
+  })
   onDidChangeTextEditorSelection(() => eventName.value = 'onDidChangeTextEditorSelection')
   onDidSaveTextDocument(() => eventName.value = 'onDidSaveTextDocument')
 
   setInterval(() => duringMs.value += debounceMs, debounceMs)
+
+  watchEffect(() => {
+    logger.info(`The event name is ${eventName.value}`)
+  })
 
   watchEffect(() => {
     if (!eventName.value)

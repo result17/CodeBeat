@@ -1,7 +1,7 @@
 import { defineExtension, useStatusBarItem } from 'reactive-vscode'
 import { StatusBarAlignment } from 'vscode'
+import { useOnEvent } from './composables'
 import { clockIconName } from './constants'
-import { useOnEvent } from './events'
 import { formatMilliseconds } from './utils'
 
 const { activate, deactivate } = defineExtension(() => {
