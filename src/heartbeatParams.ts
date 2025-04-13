@@ -4,7 +4,7 @@ import { useSelf } from './composables/self'
 
 export interface EventArgs {
   '--entity': string
-  '-plugin': string
+  '--plugin': string
   '--lineno'?: string
   '--cursorpos'?: string
   '--lines-in-file'?: string
@@ -43,7 +43,7 @@ export function collectHeartbeatArgs(): EventArgs | null {
 
   const args: EventArgs = {
     '--entity': entity,
-    '-plugin': plugin.value,
+    '--plugin': plugin.value,
     '--lineno': String(lineno),
     '--cursorpos': String(cursorPos),
     '--lines-in-file': String(lines),

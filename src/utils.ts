@@ -1,3 +1,4 @@
+import { homedir } from 'node:os'
 import { join } from 'node:path'
 import * as process from 'node:process'
 import { useLogger } from 'reactive-vscode'
@@ -28,6 +29,6 @@ export function formatMilliseconds(ms: number): string {
 
 // TODO check if not exists
 export function getCliLocation() {
-  const homeDir = process.env.Home ?? process.cwd()
+  const homeDir = homedir() ?? process.cwd()
   return join(homeDir, resourceDir, binaryFileName)
 }

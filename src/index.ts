@@ -1,7 +1,7 @@
 import { execFile } from 'node:child_process'
 import { computed, defineExtension, useStatusBarItem, watchEffect } from 'reactive-vscode'
 import { StatusBarAlignment } from 'vscode'
-import { onDidChangeTextEditorSelection, useOnEvent } from './composables'
+import { useOnEvent } from './composables'
 import { clockIconName, debounceMs } from './constants'
 import { getCliLocation, logger } from './utils'
 
@@ -17,14 +17,10 @@ const { activate, deactivate } = defineExtension(() => {
   })
 
   statusBar.show()
-  onDidChangeTextEditorSelection(() => {
-    logger.info('selected')
-  })
 
   const params = useOnEvent()
 
   const args = computed(() => {
-    debugger
     if (!params || !params.value)
       return []
     const list = []
@@ -35,23 +31,29 @@ const { activate, deactivate } = defineExtension(() => {
   })
 
   watchEffect(() => {
-    console.debug(`The args is ${args.value}`)
+    if (!args.value.includes('--entity'))
+      return
+    if (timeout) {
+      clearTimeout(timeout)
+    }
+    timeout = setTimeout(() => {
+      console.info(`To send heartbeat params is ${args.value} and the cli location is ${cli}`)
+      const proc = execFile(cli, args.value, (error, stdout, stderr) => {
+        if (error) {
+          console.error('Fail:', error.message)
+          return
+        }
+        if (stderr) {
+          console.error('STDERR:', stderr)
+          return
+        }
+        console.log('STDOUT:', stdout)
+      })
+      proc.on('close', (code, signal) => {
+        console.info(`Cli file closed. Exit code is ${code} and sinagl is ${signal}.`)
+      })
+    }, debounceMs)
   })
-
-  // watchEffect(() => {
-  //   if (!args.value.includes('entity'))
-  //     return
-  //   if (timeout) {
-  //     clearTimeout(timeout)
-  //   }
-  //   timeout = setTimeout(() => {
-  //     logger.info(`To send heartbeat params is ${args.value}`)
-  //     const proc = execFile(cli, args.value)
-  //     proc.on('close', (code, signal) => {
-  //       logger.info(`Cli file closed. Exit code is ${code} and sinagl is ${signal}.`)
-  //     })
-  //   }, debounceMs)
-  // })
 })
 
 export { activate, deactivate }
