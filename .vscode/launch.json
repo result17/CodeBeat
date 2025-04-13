@@ -12,7 +12,12 @@
       "outFiles": [
         "${workspaceFolder}/dist/**/*.js"
       ],
-      "preLaunchTask": "npm: dev"
+      "cwd": "${workspaceFolder}",
+      "preLaunchTask": "npm: dev",
+      "envFile": "${workspaceFolder}/.env",
+      "env": {
+        "NODE_ENV": "development"
+      }
     }
   ]
 }

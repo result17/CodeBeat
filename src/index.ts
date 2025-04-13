@@ -1,9 +1,13 @@
 import { execFile } from 'node:child_process'
+import process from 'node:process'
+import * as dotenv from 'dotenv'
 import { computed, defineExtension, useStatusBarItem, watchEffect } from 'reactive-vscode'
 import { StatusBarAlignment } from 'vscode'
 import { useOnEvent } from './composables'
 import { clockIconName, debounceMs } from './constants'
-import { getCliLocation, logger } from './utils'
+import { getCliLocation } from './utils'
+
+dotenv.config()
 
 const { activate, deactivate } = defineExtension(() => {
   let timeout: NodeJS.Timeout | null = null
@@ -26,6 +30,9 @@ const { activate, deactivate } = defineExtension(() => {
     const list = []
     for (const entire of Object.entries(params.value)) {
       list.push(...entire)
+    }
+    if (process.env.IS_LOCAL === 'true') {
+      list.unshift('--local-save', '--dlog')
     }
     return list
   })

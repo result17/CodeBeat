@@ -12,3 +12,5 @@ node_modules
 temp
 src/generated
 out
+.env
+codebeat.log
