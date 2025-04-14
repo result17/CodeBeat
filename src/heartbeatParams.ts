@@ -5,6 +5,7 @@ import { useSelf } from './composables/self'
 export interface EventArgs {
   '--entity': string
   '--plugin': string
+  '--language': string
   '--lineno'?: string
   '--cursorpos'?: string
   '--lines-in-file'?: string
@@ -27,6 +28,7 @@ export function collectHeartbeatArgs(): EventArgs | null {
   const { document } = editor.value
   const entity = document.fileName
   const lines = document.lineCount
+  const language = document.languageId
 
   const currentWorkspace = workspaces.value?.find(
     workspace => workspace.uri === document.uri,
@@ -44,6 +46,7 @@ export function collectHeartbeatArgs(): EventArgs | null {
   const args: EventArgs = {
     '--entity': entity,
     '--plugin': plugin.value,
+    '--language': language,
     '--lineno': String(lineno),
     '--cursorpos': String(cursorPos),
     '--lines-in-file': String(lines),
