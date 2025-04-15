@@ -7,17 +7,17 @@
     "dist"
   ],
   "scripts": {
-    "p:build": "pnpm -C packages/codebeat-plugin run build",
-    "p:dev": "pnpm -C packages/codebeat-plugin run dev",
-    "p:prepare": "pnpm -C packages/codebeat-plugin run prepare",
-    "p:update": "pnpm -C packages/codebeat-plugin run update",
-    "p:lint": "pnpm -C packages/codebeat-plugin run lint",
-    "p:vscode:prepublish": "pnpm -C packages/codebeat-plugin run vscode:prepublish",
-    "p:publish": "pnpm -C packages/codebeat-plugin run publish",
-    "p:pack": "pnpm -C packages/codebeat-plugin run pack",
-    "p:test": "pnpm -C packages/codebeat-plugin run test",
-    "p:typecheck": "pnpm -C packages/codebeat-plugin run typecheck",
-    "p:release": "pnpm -C packages/codebeat-plugin run release"
+    "p:build": "pnpm -C packages/codebeat-ext run build",
+    "p:dev": "pnpm -C packages/codebeat-ext run dev",
+    "p:prepare": "pnpm -C packages/codebeat-ext run prepare",
+    "p:update": "pnpm -C packages/codebeat-ext run update",
+    "p:lint": "pnpm -C packages/codebeat-ext run lint",
+    "p:vscode:prepublish": "pnpm -C packages/codebeat-ext run vscode:prepublish",
+    "p:publish": "pnpm -C packages/codebeat-ext run publish",
+    "p:pack": "pnpm -C packages/codebeat-ext run pack",
+    "p:test": "pnpm -C packages/codebeat-ext run test",
+    "p:typecheck": "pnpm -C packages/codebeat-ext run typecheck",
+    "p:release": "pnpm -C packages/codebeat-ext run release"
   },
   "lint-staged": {
     "*": "eslint --fix"

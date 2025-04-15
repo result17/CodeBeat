@@ -7,14 +7,14 @@
       "request": "launch",
       "runtimeExecutable": "${execPath}",
       "args": [
-        "--extensionDevelopmentPath=${workspaceFolder}/packages/codebeat-plugin"
+        "--extensionDevelopmentPath=${workspaceFolder}/packages/codebeat-ext"
       ],
       "outFiles": [
-        "${workspaceFolder}/packages/codebeat-plugin/dist/**/*.js"
+        "${workspaceFolder}/packages/codebeat-ext/dist/**/*.js"
       ],
-      "cwd": "${workspaceFolder}/packages/codebeat-plugin",
+      "cwd": "${workspaceFolder}/packages/codebeat-ext",
       "preLaunchTask": "npm: p:dev",
-      "envFile": "${workspaceFolder}/packages/codebeat-plugin/.env",
+      "envFile": "${workspaceFolder}/packages/codebeat-ext/.env",
       "env": {
         "NODE_ENV": "development"
       }

@@ -12,8 +12,6 @@ dotenv.config()
 const { activate, deactivate } = defineExtension(() => {
   let timeout: NodeJS.Timeout | null = null
 
-  window.showInformationMessage('EXT')
-
   const cli = getCliLocation()
 
   const statusBar = useStatusBarItem({
