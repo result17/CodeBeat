@@ -1,0 +1,74 @@
+{
+  "publisher": "result17",
+  "name": "codbeat-plugin",
+  "displayName": "CodeBeat-plugin",
+  "version": "0.0.0",
+  "private": true,
+  "packageManager": "pnpm@10.8.1",
+  "description": "",
+  "author": "result17 <rescp17@gmail.com>",
+  "main": "./dist/index.js",
+  "files": [
+    "LICENSE.md",
+    "dist/*",
+    "res/*"
+  ],
+  "engines": {
+    "vscode": "^1.97.0"
+  },
+  "activationEvents": [
+    "*"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "category": "CodeBeat",
+        "title": "Toggle",
+        "command": "codeBeat.toggle"
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "properties": {
+        "codeBeat.enable": {
+          "type": "boolean",
+          "default": true,
+          "definitions": "Enable code show"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --external vscode",
+    "dev": "nr build --watch --sourcemap",
+    "prepare": "nr update",
+    "update": "vscode-ext-gen --output src/generated/meta.ts --readme ../../README.md",
+    "lint": "eslint .",
+    "vscode:prepublish": "nr build",
+    "publish": "vsce publish --no-dependencies",
+    "pack": "vsce package --no-dependencies",
+    "test": "vitest",
+    "typecheck": "tsc --noEmit",
+    "release": "bumpp && nr publish"
+  },
+  "dependencies": {
+    "dotenv": "^16.5.0"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "catalog:devtool",
+    "@antfu/ni": "catalog:devtool",
+    "@types/node": "catalog:devtool",
+    "@types/vscode": "catalog:devtool",
+    "@vscode/vsce": "catalog:devtool",
+    "bumpp": "catalog:devtool",
+    "eslint": "catalog:devtool",
+    "esno": "catalog:build",
+    "pnpm": "catalog:devtool",
+    "reactive-vscode": "catalog:plugin",
+    "tsup": "catalog:build",
+    "typescript": "catalog:devtool",
+    "vite": "catalog:build",
+    "vitest": "catalog:test",
+    "vscode-ext-gen": "catalog:devtool"
+  }
+}

@@ -1,79 +1,30 @@
 {
-  "publisher": "result17",
-  "name": "codeBeat",
-  "displayName": "CodeBeat",
+  "type": "module",
   "version": "0.0.0",
   "private": true,
-  "packageManager": "pnpm@10.6.5",
-  "description": "",
-  "author": "result17 <rescp17@gmail.com>",
-  "main": "./dist/index.js",
+  "packageManager": "pnpm@10.8.1",
   "files": [
-    "LICENSE.md",
-    "dist/*",
-    "res/*"
+    "dist"
   ],
-  "engines": {
-    "vscode": "^1.97.0"
-  },
-  "activationEvents": [
-    "*"
-  ],
-  "contributes": {
-    "commands": [
-      {
-        "category": "CodeBeat",
-        "title": "Toggle",
-        "command": "codeBeat.toggle"
-      }
-    ],
-    "configuration": {
-      "type": "object",
-      "properties": {
-        "codeBeat.enable": {
-          "type": "boolean",
-          "default": true,
-          "definitions": "Enable code show"
-        }
-      }
-    }
-  },
   "scripts": {
-    "build": "tsup src/index.ts --external vscode",
-    "dev": "nr build --watch --sourcemap",
-    "prepare": "nr update",
-    "update": "vscode-ext-gen --output src/generated/meta.ts",
-    "lint": "eslint .",
-    "vscode:prepublish": "nr build",
-    "publish": "vsce publish --no-dependencies",
-    "pack": "vsce package --no-dependencies",
-    "test": "vitest",
-    "typecheck": "tsc --noEmit",
-    "release": "bumpp && nr publish"
+    "p:build": "pnpm -C packages/codebeat-plugin run build",
+    "p:dev": "pnpm -C packages/codebeat-plugin run dev",
+    "p:prepare": "pnpm -C packages/codebeat-plugin run prepare",
+    "p:update": "pnpm -C packages/codebeat-plugin run update",
+    "p:lint": "pnpm -C packages/codebeat-plugin run lint",
+    "p:vscode:prepublish": "pnpm -C packages/codebeat-plugin run vscode:prepublish",
+    "p:publish": "pnpm -C packages/codebeat-plugin run publish",
+    "p:pack": "pnpm -C packages/codebeat-plugin run pack",
+    "p:test": "pnpm -C packages/codebeat-plugin run test",
+    "p:typecheck": "pnpm -C packages/codebeat-plugin run typecheck",
+    "p:release": "pnpm -C packages/codebeat-plugin run release"
   },
-  "devDependencies": {
-    "@antfu/eslint-config": "^4.2.1",
-    "@antfu/ni": "^23.3.1",
-    "@types/node": "^22.13.4",
-    "@types/vscode": "^1.97.0",
-    "@vscode/vsce": "^3.2.2",
-    "bumpp": "^10.0.3",
-    "eslint": "^9.20.1",
-    "esno": "^4.8.0",
-    "pnpm": "^10.4.1",
-    "reactive-vscode": "^0.2.10",
-    "tsup": "^8.3.6",
-    "typescript": "^5.7.3",
-    "vite": "^6.1.0",
-    "vitest": "^3.0.5",
-    "vscode-ext-gen": "^1.0.0"
+  "lint-staged": {
+    "*": "eslint --fix"
   },
-  "pnpm": {
+	"pnpm": {
     "onlyBuiltDependencies": [
       "esbuild"
     ]
-  },
-  "dependencies": {
-    "dotenv": "^16.5.0"
   }
 }

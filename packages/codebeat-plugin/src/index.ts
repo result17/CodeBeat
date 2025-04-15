@@ -2,7 +2,7 @@ import { execFile } from 'node:child_process'
 import process from 'node:process'
 import * as dotenv from 'dotenv'
 import { computed, defineExtension, useStatusBarItem, watchEffect } from 'reactive-vscode'
-import { StatusBarAlignment } from 'vscode'
+import { StatusBarAlignment, window } from 'vscode'
 import { useOnEvent } from './composables'
 import { clockIconName, debounceMs } from './constants'
 import { getCliLocation } from './utils'
@@ -11,6 +11,9 @@ dotenv.config()
 
 const { activate, deactivate } = defineExtension(() => {
   let timeout: NodeJS.Timeout | null = null
+
+  window.showInformationMessage('EXT')
+
   const cli = getCliLocation()
 
   const statusBar = useStatusBarItem({

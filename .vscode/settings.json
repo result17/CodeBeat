@@ -5,7 +5,7 @@
       {
         "match": "package.json",
         "isAsync": true,
-        "cmd": "npm run update"
+        "cmd": "npm run p:update"
       }
     ]
   },

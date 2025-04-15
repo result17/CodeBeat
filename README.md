@@ -7,5 +7,22 @@
 - onDidDeleteFiles (TODO)
 - onDidRenameFiles (TODO)
 - onDidSaveTextDocument (TODO)
-# Commands
-# Configurations
+## Commands
+
+<!-- commands -->
+
+| Command           | Title            |
+| ----------------- | ---------------- |
+| `codeBeat.toggle` | CodeBeat: Toggle |
+
+<!-- commands -->
+
+## Configurations
+
+<!-- configs -->
+
+| Key               | Description | Type      | Default |
+| ----------------- | ----------- | --------- | ------- |
+| `codeBeat.enable` |             | `boolean` | `true`  |
+
+<!-- configs -->
