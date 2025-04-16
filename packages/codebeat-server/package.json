@@ -10,11 +10,11 @@
     "migrate:reset": "prisma migrate reset"
   },
   "dependencies": {
-    "hono": "catalog:server",
     "@prisma/client": "catalog:server",
     "@prisma/extension-accelerate": "catalog:server",
     "@types/node": "catalog:devtool",
-    "dotenv": "catalog:build"
+    "dotenv": "catalog:build",
+    "hono": "catalog:server"
   },
   "devDependencies": {
     "prisma": "catalog:server",

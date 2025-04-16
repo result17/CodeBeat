@@ -21,24 +21,13 @@
     "s:queries": "pnpm -C packages/codebeat-server run queries"
   },
   "dependencies": {
-    "@antfu/nip": "^0.0.0"
+    "@antfu/nip": "catalog:"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:devtool",
     "@prisma/client": "catalog:server",
+    "@typescript-eslint/utils": "catalog:devtool",
     "eslint": "catalog:devtool"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild"
-    ],
-    "ignoredBuiltDependencies": [
-      "@prisma/client",
-      "@prisma/engines",
-      "@vscode/vsce-sign",
-      "keytar",
-      "prisma"
-    ]
   },
   "lint-staged": {
     "*": "eslint --fix"

@@ -18,6 +18,10 @@ catalogs:
     vite:
       specifier: ^6.1.0
       version: 6.2.6
+  default:
+    '@antfu/nip':
+      specifier: ^0.0.0
+      version: 0.0.0
   devtool:
     '@antfu/eslint-config':
       specifier: ^4.2.1
@@ -31,6 +35,9 @@ catalogs:
     '@types/vscode':
       specifier: ^1.97.0
       version: 1.99.1
+    '@typescript-eslint/utils':
+      specifier: ^8.29.1
+      version: 8.30.1
     '@vscode/vsce':
       specifier: ^3.2.2
       version: 3.3.2
@@ -79,7 +86,7 @@ importers:
   .:
     dependencies:
       '@antfu/nip':
-        specifier: ^0.0.0
+        specifier: 'catalog:'
         version: 0.0.0
     devDependencies:
       '@antfu/eslint-config':
@@ -88,6 +95,9 @@ importers:
       '@prisma/client':
         specifier: catalog:server
         version: 6.6.0(prisma@6.5.0(typescript@5.8.2))(typescript@5.8.2)
+      '@typescript-eslint/utils':
+        specifier: catalog:devtool
+        version: 8.30.1(eslint@9.24.0(jiti@2.4.2))(typescript@5.8.2)
       eslint:
         specifier: catalog:devtool
         version: 9.24.0(jiti@2.4.2)
@@ -98,9 +108,6 @@ importers:
         specifier: catalog:build
         version: 16.5.0
     devDependencies:
-      '@antfu/eslint-config':
-        specifier: catalog:devtool
-        version: 4.12.0(@typescript-eslint/utils@8.30.1(eslint@9.24.0(jiti@2.4.2))(typescript@5.8.2))(@vue/compiler-sfc@3.5.13)(eslint@9.24.0(jiti@2.4.2))(typescript@5.8.2)(vitest@3.1.1(@types/debug@4.1.12)(@types/node@22.13.10)(jiti@2.4.2)(tsx@4.19.3)(yaml@2.7.1))
       '@antfu/ni':
         specifier: catalog:devtool
         version: 23.3.1
@@ -116,9 +123,6 @@ importers:
       bumpp:
         specifier: catalog:devtool
         version: 10.1.0
-      eslint:
-        specifier: catalog:devtool
-        version: 9.24.0(jiti@2.4.2)
       esno:
         specifier: catalog:build
         version: 4.8.0
