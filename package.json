@@ -20,8 +20,13 @@
     "p:release": "pnpm -C packages/codebeat-ext run release",
     "s:queries": "pnpm -C packages/codebeat-server run queries"
   },
-  "lint-staged": {
-    "*": "eslint --fix"
+  "dependencies": {
+    "@antfu/nip": "^0.0.0"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "catalog:devtool",
+    "@prisma/client": "catalog:server",
+    "eslint": "catalog:devtool"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
@@ -35,10 +40,7 @@
       "prisma"
     ]
   },
-  "dependencies": {
-    "@antfu/nip": "^0.0.0"
-  },
-  "devDependencies": {
-    "@prisma/client": "catalog:server"
+  "lint-staged": {
+    "*": "eslint --fix"
   }
 }
