@@ -5,7 +5,9 @@
   "license": "MIT",
   "scripts": {
     "queries": "ts-node ./src/queries.ts",
-    "prepare": "prisma generate"
+    "prepare": "prisma generate",
+    "migrate:dev": "prisma migrate dev",
+    "migrate:reset": "prisma migrate reset"
   },
   "dependencies": {
     "hono": "catalog:server",

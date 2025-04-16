@@ -4,4 +4,4 @@ ADD CONSTRAINT "Lineno_valid_range" CHECK (
     "lineno" IS NULL OR 
     ("lineno" >= 0 AND ("lines" IS NULL OR "lineno" <= "lines"))
 ),
-ADD CONSTRAINT "Time_order" CHECK ("recvAt" >= "sendAt" AND "createdAt" >= "recvAt")
+ADD CONSTRAINT "Time_order" CHECK ("recvAt" >= "sendAt" AND "createdAt" >= "recvAt");

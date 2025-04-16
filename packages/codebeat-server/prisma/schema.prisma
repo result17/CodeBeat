@@ -7,7 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Heartbeats {
+model Heartbeat {
   /// Table primary_key
   id          BigInt   @id @default(autoincrement())
   /// Absolute path to file for the heartbeat
