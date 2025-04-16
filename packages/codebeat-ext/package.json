@@ -9,9 +9,7 @@
   "author": "result17 <rescp17@gmail.com>",
   "main": "./dist/index.js",
   "files": [
-    "LICENSE.md",
-    "dist/*",
-    "res/*"
+    "dist/*"
   ],
   "engines": {
     "vscode": "^1.97.0"

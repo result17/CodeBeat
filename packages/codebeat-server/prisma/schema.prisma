@@ -1,0 +1,22 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Heartbeats {
+  id          BigInt   @id @default(autoincrement())
+  entity      String   @db.VarChar(255)
+  language    String?  @db.VarChar(63)
+  lineno      Int?
+  lines       Int?
+  project     String?  @db.VarChar(255)
+  projectPath String?  @db.VarChar(255)
+  userAgent   String?  @db.VarChar(255)
+  sendAt      DateTime @default(now()) @db.Timestamp(6)
+  recvAt      DateTime @default(now()) @db.Timestamp(6)
+  createdAt   DateTime @default(now()) @db.Timestamp(6)
+}

@@ -3,9 +3,9 @@
 
 // Meta info
 export const publisher = "result17"
-export const name = "codbeat-plugin"
+export const name = "codbeat-ext"
 export const version = "0.0.0"
-export const displayName = "CodeBeat-plugin"
+export const displayName = "CodeBeat-ext"
 export const description = undefined
 export const extensionId = `${publisher}.${name}`
 
@@ -16,7 +16,7 @@ export type CommandKey =
   | "codeBeat.toggle"
 
 /**
- * Commands map registed by `result17.codbeat-plugin`
+ * Commands map registed by `result17.codbeat-ext`
  */
 export const commands = {
   /**
@@ -51,7 +51,7 @@ export interface ConfigItem<T extends keyof ConfigKeyTypeMap> {
 
 
 /**
- * Configs map registered by `result17.codbeat-plugin`
+ * Configs map registered by `result17.codbeat-ext`
  */
 export const configs = {
   /**
@@ -70,7 +70,7 @@ export interface ScopedConfigKeyTypeMap {
 }
 
 export const scopedConfigs = {
-  scope: "codbeat-plugin",
+  scope: "codbeat-ext",
   defaults: {
   } satisfies ScopedConfigKeyTypeMap,
 }

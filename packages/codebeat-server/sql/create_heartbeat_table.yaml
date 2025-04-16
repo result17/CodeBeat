@@ -1,0 +1,67 @@
+name: "creat_heartbeat_table"
+oprations:
+  - create_table:
+    name: heatbeat_table
+    columns:
+      - name: id
+        type: bigserial
+        comment: table primary_key
+      - name: entity
+        type: varchar(255)
+        comment: Absolute path to file for the heartbeat
+        nullable: false
+      - name: language
+        type: varchar(63)
+        nullable: true
+        comment: Optional language name
+      - name: lineno
+        type: int
+        nullable: true
+        comment: Optional line number
+      - name: lines
+        type: int
+        nullable: true
+        comment: Optional line in the file
+      - name: project
+        type: varchar(255)
+        nullable: true
+        comment: Optional project name
+      - name: project_path
+        type: varchar(255)
+        nullable: true
+        comment: Optional absolute path to project
+      - name: user_agent
+        type: varchar(255)
+        nullable: false
+        comment: User agent to send heartbeat
+      - name: send_at
+        type: timestamptz(6)
+        default: now()
+        nullable: false
+        comment: When cli send heartbeat
+      - name: recv_at
+        type: timestamptz(6)
+        default: now()
+        nullable: false
+        comment: when server receive heartbeat
+      - name: create_at
+        type: timestamptz(6)
+        default: now()
+        nullable: false
+        comment: when db insert heartbeat record
+    constraints:
+      - name: heartbeat_pk
+        type: primary_key
+        columns:
+          - id
+      - name: lineno_must_be_greater_than_or_equal_to_zero
+        type: check
+        check: lineno IS NULL OR lineno >= 0
+      - name: lines_must_be_greater_than_or_equal_to_zero
+        type: check
+        check: lines IS NULL OR lines >= 0
+      - name: time_order
+        type: check
+        check: recv_at >= send_at AND create_at >= recv_at
+
+      
