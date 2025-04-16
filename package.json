@@ -17,14 +17,28 @@
     "p:pack": "pnpm -C packages/codebeat-ext run pack",
     "p:test": "pnpm -C packages/codebeat-ext run test",
     "p:typecheck": "pnpm -C packages/codebeat-ext run typecheck",
-    "p:release": "pnpm -C packages/codebeat-ext run release"
+    "p:release": "pnpm -C packages/codebeat-ext run release",
+    "s:queries": "pnpm -C packages/codebeat-server run queries"
   },
   "lint-staged": {
     "*": "eslint --fix"
   },
-	"pnpm": {
+  "pnpm": {
     "onlyBuiltDependencies": [
       "esbuild"
+    ],
+    "ignoredBuiltDependencies": [
+      "@prisma/client",
+      "@prisma/engines",
+      "@vscode/vsce-sign",
+      "keytar",
+      "prisma"
     ]
+  },
+  "dependencies": {
+    "@antfu/nip": "^0.0.0"
+  },
+  "devDependencies": {
+    "@prisma/client": "catalog:server"
   }
 }
