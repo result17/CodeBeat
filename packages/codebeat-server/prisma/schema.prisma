@@ -8,15 +8,26 @@ datasource db {
 }
 
 model Heartbeats {
+  /// Table primary_key
   id          BigInt   @id @default(autoincrement())
+  /// Absolute path to file for the heartbeat
   entity      String   @db.VarChar(255)
+  /// Optional language name
   language    String?  @db.VarChar(63)
+  /// Optional line number
   lineno      Int?
+  /// Optional line in the file
   lines       Int?
+  /// Optional project name
   project     String?  @db.VarChar(255)
+  /// Optional absolute path to project
   projectPath String?  @db.VarChar(255)
+  /// User agent to send heartbeat
   userAgent   String?  @db.VarChar(255)
+  /// When cli send heartbeat
   sendAt      DateTime @default(now()) @db.Timestamp(6)
+  /// When server receive heartbeat
   recvAt      DateTime @default(now()) @db.Timestamp(6)
+  /// When db insert heartbeat record
   createdAt   DateTime @default(now()) @db.Timestamp(6)
 }
