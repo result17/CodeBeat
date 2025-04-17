@@ -22,6 +22,10 @@ catalogs:
     '@antfu/nip':
       specifier: ^0.0.0
       version: 0.0.0
+  deps:
+    zod:
+      specifier: ^3.24.2
+      version: 3.24.2
   devtool:
     '@antfu/eslint-config':
       specifier: ^4.2.1
@@ -64,6 +68,9 @@ catalogs:
       specifier: ^0.2.10
       version: 0.2.14
   server:
+    '@hono/zod-openapi':
+      specifier: ^0.19.4
+      version: 0.19.4
     '@prisma/client':
       specifier: ^6.6.0
       version: 6.6.0
@@ -88,6 +95,12 @@ importers:
       '@antfu/nip':
         specifier: 'catalog:'
         version: 0.0.0
+      vitest:
+        specifier: catalog:test
+        version: 3.1.1(@types/debug@4.1.12)(@types/node@22.13.10)(jiti@2.4.2)(tsx@4.19.3)(yaml@2.7.1)
+      zod:
+        specifier: catalog:deps
+        version: 3.24.2
     devDependencies:
       '@antfu/eslint-config':
         specifier: catalog:devtool
@@ -150,6 +163,9 @@ importers:
 
   packages/codebeat-server:
     dependencies:
+      '@hono/zod-openapi':
+        specifier: catalog:server
+        version: 0.19.4(hono@4.7.7)(zod@3.24.2)
       '@prisma/client':
         specifier: catalog:server
         version: 6.6.0(prisma@6.5.0(typescript@5.8.2))(typescript@5.8.2)
@@ -241,6 +257,11 @@ packages:
   '@antfu/nip@0.0.0':
     resolution: {integrity: sha512-DFGEDJ0oSgwOZmel7PqhHccYtSCeJt1/lnCEg9o2n1kVdGU7kFzZV6lTNXKLmER7b8gW7mamZBbtK62NaH816w==}
     hasBin: true
+
+  '@asteasolutions/zod-to-openapi@7.3.0':
+    resolution: {integrity: sha512-7tE/r1gXwMIvGnXVUdIqUhCU1RevEFC4Jk6Bussa0fk1ecbnnINkZzj1EOAJyE/M3AI25DnHT/zKQL1/FPFi8Q==}
+    peerDependencies:
+      zod: ^3.20.2
 
   '@azure/abort-controller@2.1.2':
     resolution: {integrity: sha512-nBrLsEWm4J2u5LpAPjxADTlq3trDgVZZXHNKabeXZtpq3d3AbN/KGO82R87rdDz5/lYB024rtEf10/q0urNgsA==}
@@ -548,6 +569,19 @@ packages:
   '@eslint/plugin-kit@0.2.8':
     resolution: {integrity: sha512-ZAoA40rNMPwSm+AeHpCq8STiNAwzWLJuP8Xv4CHIc9wv/PSuExjMrmjfYNj682vW0OOiZ1HKxzvjQr9XZIisQA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@hono/zod-openapi@0.19.4':
+    resolution: {integrity: sha512-wt/Hn5TudVLGQxARVBBGDN/ckDOWUQrw9gdZoDBfRb5+G8+AJ/qeRDV8iorKE3SyEeiRkJ5ErKevkjCsAgH69Q==}
+    engines: {node: '>=16.0.0'}
+    peerDependencies:
+      hono: '>=4.3.6'
+      zod: 3.*
+
+  '@hono/zod-validator@0.4.3':
+    resolution: {integrity: sha512-xIgMYXDyJ4Hj6ekm9T9Y27s080Nl9NXHcJkOvkXPhubOLj8hZkOL8pDnnXfvCf5xEE8Q4oMFenQUZZREUY2gqQ==}
+    peerDependencies:
+      hono: '>=3.9.0'
+      zod: ^3.19.1
 
   '@humanfs/core@0.19.1':
     resolution: {integrity: sha512-5DyQ4+1JEUzejeK1JGICcideyfUbGixgS9jNgex5nqkW+cY7WZhxBigmieN5Qnw9ZosSNVC9KQKyb+GUaGyKUA==}
@@ -2364,6 +2398,9 @@ packages:
     resolution: {integrity: sha512-zy1wx4+P3PfhXSEPJNtZmJXfhkkIaxU1VauWIrDZw1O7uJRDRJtKr9n3Ic4NgbA16KyOxOXO2ng9gYwCdXuSXA==}
     engines: {node: '>=18'}
 
+  openapi3-ts@4.4.0:
+    resolution: {integrity: sha512-9asTNB9IkKEzWMcHmVZE7Ts3kC9G7AFHfs8i7caD8HbI76gEjdkId4z/AkP83xdZsH7PLAnnbl47qZkXuxpArw==}
+
   optionator@0.9.4:
     resolution: {integrity: sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==}
     engines: {node: '>= 0.8.0'}
@@ -3152,6 +3189,9 @@ packages:
     resolution: {integrity: sha512-AyeEbWOu/TAXdxlV9wmGcR0+yh2j3vYPGOECcIj2S7MkrLyC7ne+oye2BKTItt0ii2PHk4cDy+95+LshzbXnGg==}
     engines: {node: '>=12.20'}
 
+  zod@3.24.2:
+    resolution: {integrity: sha512-lY7CDW43ECgW9u1TcT3IoXHflywfVqDYze4waEz812jR/bZ8FHDsl7pFQoSZTz5N+2NqRXs8GBwnAwo3ZNxqhQ==}
+
   zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
 
@@ -3228,6 +3268,11 @@ snapshots:
       find-up: 7.0.0
       package-manager-detector: 1.1.0
       pnpm-workspace-yaml: 0.3.1
+
+  '@asteasolutions/zod-to-openapi@7.3.0(zod@3.24.2)':
+    dependencies:
+      openapi3-ts: 4.4.0
+      zod: 3.24.2
 
   '@azure/abort-controller@2.1.2':
     dependencies:
@@ -3519,6 +3564,18 @@ snapshots:
     dependencies:
       '@eslint/core': 0.13.0
       levn: 0.4.1
+
+  '@hono/zod-openapi@0.19.4(hono@4.7.7)(zod@3.24.2)':
+    dependencies:
+      '@asteasolutions/zod-to-openapi': 7.3.0(zod@3.24.2)
+      '@hono/zod-validator': 0.4.3(hono@4.7.7)(zod@3.24.2)
+      hono: 4.7.7
+      zod: 3.24.2
+
+  '@hono/zod-validator@0.4.3(hono@4.7.7)(zod@3.24.2)':
+    dependencies:
+      hono: 4.7.7
+      zod: 3.24.2
 
   '@humanfs/core@0.19.1': {}
 
@@ -5603,6 +5660,10 @@ snapshots:
       is-inside-container: 1.0.0
       is-wsl: 3.1.0
 
+  openapi3-ts@4.4.0:
+    dependencies:
+      yaml: 2.7.1
+
   optionator@0.9.4:
     dependencies:
       deep-is: 0.1.4
@@ -6436,5 +6497,7 @@ snapshots:
   yocto-queue@0.1.0: {}
 
   yocto-queue@1.2.1: {}
+
+  zod@3.24.2: {}
 
   zwitch@2.0.4: {}

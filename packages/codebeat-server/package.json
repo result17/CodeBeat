@@ -5,11 +5,12 @@
   "license": "MIT",
   "scripts": {
     "queries": "ts-node ./src/queries.ts",
-    "prepare": "prisma generate",
+    "prepare": "prisma generate --no-engine",
     "migrate:dev": "prisma migrate dev",
     "migrate:reset": "prisma migrate reset"
   },
   "dependencies": {
+    "@hono/zod-openapi": "catalog:server",
     "@prisma/client": "catalog:server",
     "@prisma/extension-accelerate": "catalog:server",
     "@types/node": "catalog:devtool",
