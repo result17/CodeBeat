@@ -1,4 +1,9 @@
 # TODO
+# install
+The project installs dependencies via pnpm catalog feature. With @antfu/nip, dependency installation becomes even more effortless
+```bash
+npx nip tsx
+```
 # Events
 - onDidOpenTerminal (TODO)
 - onDidChangeTextDocument (TODO)

@@ -18,13 +18,17 @@
     "p:test": "pnpm -C packages/codebeat-ext run test",
     "p:typecheck": "pnpm -C packages/codebeat-ext run typecheck",
     "p:release": "pnpm -C packages/codebeat-ext run release",
-    "s:queries": "pnpm -C packages/codebeat-server run queries"
+    "s:queries": "pnpm -C packages/codebeat-server run queries",
+    "s:dev": "pnpm -C packages/codebeat-server run dev"
   },
   "dependencies": {
+    "tsx": "catalog:server",
+    "wrangler": "catalog:server",
     "zod": "catalog:deps"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:devtool",
+    "@antfu/nip": "catalog:devtool",
     "@prisma/client": "catalog:server",
     "@typescript-eslint/utils": "catalog:devtool",
     "eslint": "catalog:devtool",

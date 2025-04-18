@@ -4,10 +4,11 @@
   "displayName": "CodeBeat-server",
   "license": "MIT",
   "scripts": {
-    "queries": "ts-node ./src/queries.ts",
+    "queries": "tsx ./src/queries.ts",
     "prepare": "prisma generate --no-engine",
     "migrate:dev": "prisma migrate dev",
-    "migrate:reset": "prisma migrate reset"
+    "migrate:reset": "prisma migrate reset",
+    "dev": "tsx watch ./src/app.ts"
   },
   "dependencies": {
     "@hono/zod-openapi": "catalog:server",
