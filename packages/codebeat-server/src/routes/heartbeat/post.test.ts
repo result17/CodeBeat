@@ -13,18 +13,18 @@ describe('heartbeat Endpoint', () => {
     userAgent: 'vscode_codebeat_0.0.1',
   }
   it('should throw an zod error', async () => {
-    const invalid = structuredClone(heartbeatData) as unknown
-    // @ts-expect-error - create inValid data
-    invalid.entity = 1233
     const res = await app.request('/api/heartbeat', {
       method: 'POST',
       headers: {
         'content-type': 'application/json',
       },
-      body: JSON.stringify(heartbeatData),
+      body: JSON.stringify({
+        ...heartbeatData,
+        time: '2025-04-18T02:48:44.149Z',
+      }),
     })
-    expect(res.status).toBe(500)
-    expect(await res.json()).toBeNull()
+    expect(res.status).toBe(400)
+    expect(await res.json()).toHaveProperty('code')
   })
 
   it('should return heartbeat record', async () => {
