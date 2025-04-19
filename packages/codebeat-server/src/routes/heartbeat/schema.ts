@@ -49,3 +49,5 @@ export const HeartbeatSchema = z.object({
     },
   }),
 })
+
+export const HeartbeatsSchema = z.array(HeartbeatSchema)

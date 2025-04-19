@@ -1,7 +1,7 @@
 import type { Context } from 'hono'
 import type { ZodError } from 'zod'
 import { OpenAPIHono } from '@hono/zod-openapi'
-import { registerPostHeartbeat } from './post'
+import { registerPostHeartbeat, registerPostHeartbeats } from './post'
 
 export function handleZodError(
   result:
@@ -16,6 +16,7 @@ export function handleZodError(
   c: Context,
 ) {
   if (!result.success) {
+    console.error(result.error.message)
     return c.json(
       {
         code: 'BAD_REQUEST',
@@ -31,3 +32,4 @@ export const heartbeatApi = new OpenAPIHono({
 })
 
 registerPostHeartbeat(heartbeatApi)
+registerPostHeartbeats(heartbeatApi)

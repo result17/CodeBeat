@@ -4,6 +4,7 @@ packages:
 catalogs:
   build:
     dotenv: ^16.5.0
+    dotenv-cli: ^8.0.0
     esno: ^4.8.0
     tsup: ^8.3.6
     vite: ^6.1.0
@@ -13,6 +14,7 @@ catalogs:
     '@antfu/eslint-config': ^4.2.1
     '@antfu/ni': ^23.3.1
     '@antfu/nip': ^0.0.0
+    '@cloudflare/workers-types': ^4.20250418.0
     '@types/node': ^22.13.10
     '@types/vscode': ^1.97.0
     '@typescript-eslint/utils': ^8.29.1

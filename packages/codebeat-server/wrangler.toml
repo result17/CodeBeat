@@ -1,0 +1,5 @@
+name = "codebeat-sever"
+main = "src/app.ts"
+compatibility_date = "2025-04-16"
+[dev]
+port = 3000 

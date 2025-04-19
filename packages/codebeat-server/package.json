@@ -5,18 +5,24 @@
   "license": "MIT",
   "scripts": {
     "queries": "tsx ./src/queries.ts",
-    "prepare": "prisma generate --no-engine",
-    "migrate:dev": "prisma migrate dev",
-    "migrate:reset": "prisma migrate reset",
-    "dev": "tsx watch ./src/app.ts"
+    "prepare": "dotenv -e .dev.vars prisma generate --no-engine --data-proxy",
+    "migrate": "dotenv -e .dev.vars prisma migrate dev",
+    "migrate:reset": "dotenv -e .dev.vars prisma migrate reset",
+    "studio": "dotenv -e .dev.vars -- npx prisma studio",
+    "dev": "tsx watch ./src/app.ts",
+    "wdev": "dotenv -e .dev.vars wrangler dev",
+    "wdeploy": "wrangler"
   },
   "dependencies": {
+    "@cloudflare/workers-types": "catalog:devtool",
     "@hono/zod-openapi": "catalog:server",
     "@prisma/client": "catalog:server",
     "@prisma/extension-accelerate": "catalog:server",
     "@types/node": "catalog:devtool",
     "dotenv": "catalog:build",
-    "hono": "catalog:server"
+    "dotenv-cli": "catalog:build",
+    "hono": "catalog:server",
+    "wrangler": "catalog:server"
   },
   "devDependencies": {
     "prisma": "catalog:server",

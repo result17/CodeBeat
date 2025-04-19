@@ -9,6 +9,9 @@ catalogs:
     dotenv:
       specifier: ^16.5.0
       version: 16.5.0
+    dotenv-cli:
+      specifier: ^8.0.0
+      version: 8.0.0
     esno:
       specifier: ^4.8.0
       version: 4.8.0
@@ -32,6 +35,9 @@ catalogs:
     '@antfu/nip':
       specifier: ^0.0.0
       version: 0.0.0
+    '@cloudflare/workers-types':
+      specifier: ^4.20250418.0
+      version: 4.20250418.0
     '@types/node':
       specifier: ^22.13.10
       version: 22.13.10
@@ -97,12 +103,18 @@ importers:
 
   .:
     dependencies:
+      '@cloudflare/workers-types':
+        specifier: catalog:devtool
+        version: 4.20250418.0
+      dotenv-cli:
+        specifier: catalog:build
+        version: 8.0.0
       tsx:
         specifier: catalog:server
         version: 4.19.3
       wrangler:
         specifier: catalog:server
-        version: 4.12.0
+        version: 4.12.0(@cloudflare/workers-types@4.20250418.0)
       zod:
         specifier: catalog:deps
         version: 3.24.2
@@ -189,9 +201,15 @@ importers:
       dotenv:
         specifier: catalog:build
         version: 16.5.0
+      dotenv-cli:
+        specifier: catalog:build
+        version: 8.0.0
       hono:
         specifier: catalog:server
         version: 4.7.7
+      wrangler:
+        specifier: catalog:server
+        version: 4.12.0(@cloudflare/workers-types@4.20250418.0)
     devDependencies:
       prisma:
         specifier: catalog:server
@@ -387,6 +405,9 @@ packages:
     engines: {node: '>=16'}
     cpu: [x64]
     os: [win32]
+
+  '@cloudflare/workers-types@4.20250418.0':
+    resolution: {integrity: sha512-cPnHbEAryOX1FwEjjMXXCLudkxXUlfy7Hf55lqTPpYRSUA76NGLFfkhUF7+KkRrFg2u6pNpXTj24Gv5pMEHlqg==}
 
   '@cspotcode/source-map-support@0.8.1':
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
@@ -1631,6 +1652,14 @@ packages:
 
   domutils@3.2.2:
     resolution: {integrity: sha512-6kZKyUajlDuqlHKVX1w7gyslj9MPIXzIFiz/rGu35uC1wMi+kMhQwGhl4lt9unC9Vb9INnY9Z3/ZA3+FhASLaw==}
+
+  dotenv-cli@8.0.0:
+    resolution: {integrity: sha512-aLqYbK7xKOiTMIRf1lDPbI+Y+Ip/wo5k3eyp6ePysVaSqbyxjyK3dK35BTxG+rmd7djf5q2UPs4noPNH+cj0Qw==}
+    hasBin: true
+
+  dotenv-expand@10.0.0:
+    resolution: {integrity: sha512-GopVGCpVS1UKH75VKHGuQFqS1Gusej0z4FyQkPdwjil2gNIv+LNsqBlboOzpJFZKVT95GkCyWJbBSdFEFUWI2A==}
+    engines: {node: '>=12'}
 
   dotenv@16.5.0:
     resolution: {integrity: sha512-m/C+AwOAr9/W1UOIZUo232ejMNnJAJtYQjUbHoNTBNTJSvqzzDh7vnrei3o3r3m9blf6ZoDkvcw0VmozNRFJxg==}
@@ -3687,6 +3716,8 @@ snapshots:
   '@cloudflare/workerd-windows-64@1.20250416.0':
     optional: true
 
+  '@cloudflare/workers-types@4.20250418.0': {}
+
   '@cspotcode/source-map-support@0.8.1':
     dependencies:
       '@jridgewell/trace-mapping': 0.3.9
@@ -4834,6 +4865,15 @@ snapshots:
       dom-serializer: 2.0.0
       domelementtype: 2.3.0
       domhandler: 5.0.3
+
+  dotenv-cli@8.0.0:
+    dependencies:
+      cross-spawn: 7.0.6
+      dotenv: 16.5.0
+      dotenv-expand: 10.0.0
+      minimist: 1.2.8
+
+  dotenv-expand@10.0.0: {}
 
   dotenv@16.5.0: {}
 
@@ -6016,8 +6056,7 @@ snapshots:
     dependencies:
       brace-expansion: 2.0.1
 
-  minimist@1.2.8:
-    optional: true
+  minimist@1.2.8: {}
 
   minipass@7.1.2: {}
 
@@ -6953,7 +6992,7 @@ snapshots:
       '@cloudflare/workerd-linux-arm64': 1.20250416.0
       '@cloudflare/workerd-windows-64': 1.20250416.0
 
-  wrangler@4.12.0:
+  wrangler@4.12.0(@cloudflare/workers-types@4.20250418.0):
     dependencies:
       '@cloudflare/kv-asset-handler': 0.4.0
       '@cloudflare/unenv-preset': 2.3.1(unenv@2.0.0-rc.15)(workerd@1.20250416.0)
@@ -6964,6 +7003,7 @@ snapshots:
       unenv: 2.0.0-rc.15
       workerd: 1.20250416.0
     optionalDependencies:
+      '@cloudflare/workers-types': 4.20250418.0
       fsevents: 2.3.3
       sharp: 0.33.5
     transitivePeerDependencies:

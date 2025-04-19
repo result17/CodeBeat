@@ -1,4 +1,4 @@
-namespace NodeJS {
+declare namespace NodeJS {
   interface ProcessEnv {
     IS_LOCAL?: 'true' | 'false'
   }

@@ -19,9 +19,13 @@
     "p:typecheck": "pnpm -C packages/codebeat-ext run typecheck",
     "p:release": "pnpm -C packages/codebeat-ext run release",
     "s:queries": "pnpm -C packages/codebeat-server run queries",
-    "s:dev": "pnpm -C packages/codebeat-server run dev"
+    "s:dev": "pnpm -C packages/codebeat-server run dev",
+    "s:wdev": "pnpm -C packages/codebeat-server run wdev",
+    "s:migrate": "pnpm -C packages/codebeat-server run migrate"
   },
   "dependencies": {
+    "@cloudflare/workers-types": "catalog:devtool",
+    "dotenv-cli": "catalog:build",
     "tsx": "catalog:server",
     "wrangler": "catalog:server",
     "zod": "catalog:deps"
