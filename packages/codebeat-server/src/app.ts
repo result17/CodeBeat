@@ -1,8 +1,9 @@
 import type { ExecutionContext } from '@cloudflare/workers-types'
+import type { PrismaInstance } from './db'
 import { Hono } from 'hono'
 import { logger } from 'hono/logger'
 import { prettyJSON } from 'hono/pretty-json'
-import { getHeartbeatManager, getPrismaClientInstance, type PrismaInstance } from './db'
+import { getHeartbeatManager, getPrismaClientInstance } from './db'
 import { api } from './routes'
 
 const app = new Hono()
@@ -27,18 +28,19 @@ export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext) {
     try {
       const { prismaClient, heartbeatManager } = initDatabaseServices(env)
-      
+
       return app.fetch(request, env, {
         ...ctx,
         props: {
           ...ctx.props,
           prisma: prismaClient,
           db: {
-            heartbeat: heartbeatManager
-          }
+            heartbeat: heartbeatManager,
+          },
         },
       })
-    } catch (error) {
+    }
+    catch (error) {
       console.error('Database initialization failed:', error)
       return new Response('Service Unavailable', { status: 503 })
     }

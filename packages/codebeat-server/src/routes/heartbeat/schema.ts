@@ -31,6 +31,12 @@ export const HeartbeatSchema = z.object({
       example: '/user/testdata',
     },
   }),
+  projectPath: z.string().nonempty().nullable().openapi({
+    param: {
+      description: 'Optional project path',
+      example: '/user/testdata',
+    },
+  }),
   time: z.number().gt(0).refine(
     (value) => {
       return /^\d+\.\d$/.test(String(value))

@@ -1,5 +1,6 @@
 import type { heartbeatApi } from './index'
 import { createRoute } from '@hono/zod-openapi'
+import { getDBProps } from '../../shared/context'
 import { HeartbeatSchema, HeartbeatsSchema } from './schema'
 
 const heartbeatRoute = createRoute({
@@ -59,8 +60,7 @@ const heartbeatsRouter = createRoute({
 export function registerPostHeartbeat(api: typeof heartbeatApi) {
   return api.openapi(heartbeatRoute, async (c) => {
     const { time, ...rest } = c.req.valid('json')
-
-    const { sendAt, ...restRecord } = await c.executionCtx.props.db.heartbeat.create({
+    const { sendAt, ...restRecord } = await getDBProps(c).db.heartbeat.create({
       sendAt: new Date(time * 1000),
       ...rest,
     })
@@ -77,8 +77,8 @@ export function registerPostHeartbeats(api: typeof heartbeatApi) {
       sendAt: new Date(time * 1000),
       ...rest,
     }))
-    
-    const records = (await c.executionCtx.props.db.heartbeat.createMany(list)).map(({ sendAt, ...restRecord }) => ({
+
+    const records = (await getDBProps(c).db.heartbeat.createMany(list)).map(({ sendAt, ...restRecord }) => ({
       time: sendAt.getTime() / 1000,
       ...restRecord,
     }))
