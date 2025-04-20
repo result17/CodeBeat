@@ -71,7 +71,7 @@ export const HeartbeatResultSchema = z.object({
       example: "418"
     })
   }),
-  statusCode: z.number().int().min(100).max(599),
+  status: z.number().int().min(100).max(599),
 })
 
 export const HeartbeatResultsSchema = z.array(HeartbeatResultSchema)

@@ -39,7 +39,7 @@ describe('heartbeat Endpoint', () => {
     expect(res.status).toBe(200)
     const resData = await res.json()
     expect(resData).toMatchObject({
-      statusCode: 201
+      status: 201
     })
     expect(resData).toHaveProperty('data')
     delete resData.data.id

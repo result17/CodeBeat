@@ -70,7 +70,7 @@ export function registerPostHeartbeat(api: typeof heartbeatApi) {
         time: sendAt.getTime() / 1000,
         id: id.toString(),
       },
-      statusCode: 201,
+      status: 201,
     }, 200)
   })
 }
@@ -90,7 +90,7 @@ export function registerPostHeartbeats(api: typeof heartbeatApi) {
 
     return c.json(records.map((record) => ({
       data: record,
-      statusCode: 200
+      status: 200
     })), 200)
   })
 }
