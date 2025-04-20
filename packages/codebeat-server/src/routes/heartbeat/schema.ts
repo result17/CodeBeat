@@ -45,9 +45,9 @@ export const HeartbeatSchema = z.object({
   }),
   time: z.number().gt(0).refine(
     (value) => {
-      return /^\d+\.\d$/.test(String(value))
+      return /^\d+\.\d+$/.test(String(value))
     },
-    { message: 'The timestamp must be a decimal with one fractional digit.' },
+    { message: 'The timestamp must be a decimal with at least one fractional digit.' },
   ).openapi({
     param: {
       description: 'When cli send heartbeat',

@@ -10,7 +10,7 @@ export interface EventArgs {
   '--cursorpos'?: string
   '--lines-in-file'?: string
   '--alternate-project'?: string
-  '--project-folder'?: string
+  '--project-path'?: string
   '--config'?: string
   '--log-file'?: string
 }
@@ -56,8 +56,7 @@ export function collectHeartbeatArgs(): EventArgs | null {
     args['--alternate-project'] = alternateProjectName
   }
   if (projectFolder) {
-    args['--project-folder'] = projectFolder
+    args['--project-path'] = projectFolder
   }
-
   return args
 }
