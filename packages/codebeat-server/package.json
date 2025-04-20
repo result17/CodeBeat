@@ -10,6 +10,7 @@
     "prepare": "dotenv -e .dev.vars prisma generate --no-engine --data-proxy",
     "migrate": "dotenv -e .dev.vars prisma migrate dev",
     "migrate:reset": "dotenv -e .dev.vars prisma migrate reset",
+    "migrate:deploy": "dotenv -e .dev.vars prisma migrate deploy",
     "studio": "dotenv -e .dev.vars -- npx prisma studio",
     "dev": "tsx watch ./src/app.ts",
     "wdev": "dotenv -e .dev.vars wrangler dev",

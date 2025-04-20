@@ -1,7 +1,7 @@
 import type { heartbeatApi } from './index'
 import { createRoute } from '@hono/zod-openapi'
 import { getDBProps } from '../../shared/context'
-import { HeartbeatSchema, HeartbeatsSchema } from './schema'
+import { HeartbeatResultSchema, HeartbeatResultsSchema, HeartbeatSchema, HeartbeatsSchema } from './schema'
 
 const heartbeatRoute = createRoute({
   method: 'post',
@@ -22,7 +22,7 @@ const heartbeatRoute = createRoute({
     200: {
       content: {
         'application/json': {
-          schema: HeartbeatSchema,
+          schema: HeartbeatResultSchema,
         },
       },
       description: 'Get a heartbeat record',
@@ -49,7 +49,7 @@ const heartbeatsRouter = createRoute({
     200: {
       content: {
         'application/json': {
-          schema: HeartbeatsSchema,
+          schema: HeartbeatResultsSchema,
         },
       },
       description: 'Get heartbeat records',
@@ -60,13 +60,17 @@ const heartbeatsRouter = createRoute({
 export function registerPostHeartbeat(api: typeof heartbeatApi) {
   return api.openapi(heartbeatRoute, async (c) => {
     const { time, ...rest } = c.req.valid('json')
-    const { sendAt, ...restRecord } = await getDBProps(c).db.heartbeat.create({
+    const { sendAt, id, ...restRecord } = await getDBProps(c).db.heartbeat.create({
       sendAt: new Date(time * 1000),
       ...rest,
     })
     return c.json({
-      time: sendAt.getTime() / 1000,
-      ...restRecord,
+      data: {
+        ...restRecord,
+        time: sendAt.getTime() / 1000,
+        id: id.toString(),
+      },
+      statusCode: 201,
     }, 200)
   })
 }
@@ -78,11 +82,15 @@ export function registerPostHeartbeats(api: typeof heartbeatApi) {
       ...rest,
     }))
 
-    const records = (await getDBProps(c).db.heartbeat.createMany(list)).map(({ sendAt, ...restRecord }) => ({
-      time: sendAt.getTime() / 1000,
+    const records = (await getDBProps(c).db.heartbeat.createMany(list)).map(({ sendAt, id, ...restRecord }) => ({
       ...restRecord,
+      time: sendAt.getTime() / 1000,
+      id: id.toString(),
     }))
 
-    return c.json(records, 200)
+    return c.json(records.map((record) => ({
+      data: record,
+      statusCode: 200
+    })), 200)
   })
 }

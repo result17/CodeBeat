@@ -14,6 +14,8 @@ model Heartbeat {
   entity      String   @db.VarChar(255)
   /// Optional language name
   language    String?  @db.VarChar(63)
+  /// Optional cursor position
+  cursorpos   Int?
   /// Optional line number
   lineno      Int?
   /// Optional line in the file

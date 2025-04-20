@@ -13,6 +13,12 @@ export const HeartbeatSchema = z.object({
       example: 'Go',
     },
   }),
+  cursorpos: z.number().int().min(0).nullable().openapi({
+    param: {
+      description: 'Optional cursor postion',
+      example: 3,
+    },
+  }),
   lineno: z.number().int().min(0).nullable().openapi({
     param: {
       description: 'Optional line number',
@@ -57,3 +63,15 @@ export const HeartbeatSchema = z.object({
 })
 
 export const HeartbeatsSchema = z.array(HeartbeatSchema)
+
+export const HeartbeatResultSchema = z.object({
+  data: HeartbeatSchema.extend({
+    id: z.string().nonempty().openapi({
+      description: "Heartbeat record id (Using string takes place of bigInt)",
+      example: "418"
+    })
+  }),
+  statusCode: z.number().int().min(100).max(599),
+})
+
+export const HeartbeatResultsSchema = z.array(HeartbeatResultSchema)

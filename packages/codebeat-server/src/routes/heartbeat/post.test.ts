@@ -37,7 +37,13 @@ describe('heartbeat Endpoint', () => {
       body: JSON.stringify(heartbeatData),
     })
     expect(res.status).toBe(200)
-    // expect(await res.json()).toEqual(heartbeatData)
+    const resData = await res.json()
+    expect(resData).toMatchObject({
+      statusCode: 201
+    })
+    expect(resData).toHaveProperty('data')
+    delete resData.data.id
+    expect(resData.data).toEqual(heartbeatData)
   }, {
     timeout: 8000,
   })
