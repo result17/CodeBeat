@@ -6,7 +6,6 @@
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest watch",
-    "queries": "tsx ./src/queries.ts",
     "prepare": "dotenv -e .dev.vars prisma generate --no-engine --data-proxy",
     "migrate": "dotenv -e .dev.vars prisma migrate dev",
     "migrate:reset": "dotenv -e .dev.vars prisma migrate reset",
