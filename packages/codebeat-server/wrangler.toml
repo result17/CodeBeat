@@ -1,4 +1,4 @@
-name = "codebeat-sever"
+name = "codebeat-server"
 main = "src/app.ts"
 compatibility_date = "2025-04-16"
 [dev]
