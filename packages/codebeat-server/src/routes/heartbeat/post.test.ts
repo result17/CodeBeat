@@ -36,7 +36,7 @@ describe('heartbeat Endpoint', () => {
       },
       body: JSON.stringify(heartbeatData),
     })
-    expect(res.status).toBe(200)
+    expect(res.status).toBe(201)
     const resData = await res.json()
     expect(resData).toMatchObject({
       status: 201

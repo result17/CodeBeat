@@ -19,7 +19,7 @@ const heartbeatRoute = createRoute({
     },
   },
   responses: {
-    200: {
+    201: {
       content: {
         'application/json': {
           schema: HeartbeatResultSchema,
@@ -46,7 +46,7 @@ const heartbeatsRouter = createRoute({
     },
   },
   responses: {
-    200: {
+    201: {
       content: {
         'application/json': {
           schema: HeartbeatResultsSchema,
@@ -71,7 +71,7 @@ export function registerPostHeartbeat(api: typeof heartbeatApi) {
         id: id.toString(),
       },
       status: 201,
-    }, 200)
+    }, 201)
   })
 }
 
@@ -90,7 +90,7 @@ export function registerPostHeartbeats(api: typeof heartbeatApi) {
 
     return c.json(records.map((record) => ({
       data: record,
-      status: 200
-    })), 200)
+      status: 201
+    })), 201)
   })
 }

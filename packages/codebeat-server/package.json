@@ -12,7 +12,7 @@
     "migrate:reset": "dotenv -e .dev.vars prisma migrate reset",
     "migrate:deploy": "dotenv -e .dev.vars prisma migrate deploy",
     "studio": "dotenv -e .dev.vars -- npx prisma studio",
-    "dev": "tsx watch ./src/app.ts",
+    "dev": "tsx watch ./src/test/app.ts",
     "wdev": "dotenv -e .dev.vars wrangler dev",
     "wdeploy": "wrangler deploy"
   },
