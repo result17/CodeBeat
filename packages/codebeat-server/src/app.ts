@@ -11,6 +11,10 @@ app.use('*', logger())
 app.use('*', prettyJSON())
 app.route('/api', api)
 
+app.get('/hello', (c) => {
+  return c.html('<p>Hello from codebeat-server</p>')
+})
+
 let prismaClient: PrismaInstance | null = null
 let heartbeatManager: ReturnType<typeof getHeartbeatManager> | null = null
 
