@@ -1,6 +1,6 @@
 import { z } from '@hono/zod-openapi'
 
-export const HeartbeatSchema = z.object({
+const BaseHeartbeatSchema = z.object({
   entity: z.string().nonempty().openapi({
     param: {
       description: 'Absolute path to file for the heartbeat',
@@ -62,15 +62,27 @@ export const HeartbeatSchema = z.object({
   }),
 })
 
+export const HeartbeatSchema = BaseHeartbeatSchema.refine(data => {
+  if (data.lineno !== null && data.lines !== null && data.lines < data.lineno) {
+    return false
+  }
+  return true
+}, { message: 'lines must be greater than or equal to lineno', path: ['lines'] })
+
 export const HeartbeatsSchema = z.array(HeartbeatSchema)
 
 export const HeartbeatResultSchema = z.object({
-  data: HeartbeatSchema.extend({
+  data: BaseHeartbeatSchema.extend({
     id: z.string().nonempty().openapi({
       description: "Heartbeat record id (Using string takes place of bigInt)",
       example: "418"
     })
-  }),
+  }).refine(data => {
+    if (data.lineno !== null && data.lines !== null && data.lines < data.lineno) {
+      return false
+    }
+    return true
+  }, { message: 'lines must be greater than or equal to lineno', path: ['lines'] }),
   status: z.number().int().min(100).max(599),
 })
 
