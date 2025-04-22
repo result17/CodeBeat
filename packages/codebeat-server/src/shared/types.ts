@@ -12,3 +12,20 @@ declare module 'hono' {
     props: DBProps
   }
 }
+
+export interface AcceleratedFindManyArgs {
+  where?: {
+    recvAt?: {
+      gte?: Date
+      lte?: Date
+    }
+  }
+  omit?: {
+    recvAt?: boolean
+    createdAt?: boolean
+  }
+  cacheStrategy?: {
+    ttl?: number
+    swr?: number
+  }
+}

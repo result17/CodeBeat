@@ -5,21 +5,12 @@ import { logger } from 'hono/logger'
 import { prettyJSON } from 'hono/pretty-json'
 import { getHeartbeatManager, getPrismaClientInstance } from './db'
 import { api } from './routes'
+import { logReqJSONBody } from './shared'
 
 const app = new Hono()
 app.use('*', logger())
 app.use('*', prettyJSON())
-app.use('*', async (c, next) => {
-  if (c.req.header('Content-Type')?.includes('application/json')) {
-    try {
-      const body = await c.req.json(); 
-      console.log('JSON request body:', JSON.stringify(body, null, 2)); 
-    } catch (e) {
-      console.error('Fail to parse JSON:', e);
-    }
-  }
-  await next();
-});
+app.use('*', logReqJSONBody())
 app.route('/api', api)
 
 app.get('/hello', (c) => {
