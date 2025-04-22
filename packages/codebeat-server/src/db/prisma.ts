@@ -3,5 +3,10 @@ import { withAccelerate } from '@prisma/extension-accelerate'
 
 let client: PrismaClient | undefined
 
-export const getPrismaClientInstance = (datasourceUrl: string) => client ?? new PrismaClient({ datasourceUrl }).$extends(withAccelerate())
+export function getPrismaClientInstance(datasourceUrl: string, accelerated: boolean = true) {
+  if (client) {
+    return client
+  }
+  return accelerated ? new PrismaClient({ datasourceUrl }).$extends(withAccelerate()) : new PrismaClient({ datasourceUrl })
+}
 export type PrismaInstance = ReturnType<typeof getPrismaClientInstance>

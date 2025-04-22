@@ -1,7 +1,9 @@
 {
   "compilerOptions": {
     "lib": ["esnext"],
+    "allowImportingTsExtensions": true,
     "strict": true,
+    "noEmit": true,
     "outDir": "dist",
     "sourceMap": true,
     "esModuleInterop": true
