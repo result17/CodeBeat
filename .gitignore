@@ -13,4 +13,5 @@ temp
 src/generated
 out
 .env
+.dev.vars
 codebeat.log
