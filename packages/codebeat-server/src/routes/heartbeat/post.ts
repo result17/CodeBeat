@@ -1,6 +1,6 @@
 import type { heartbeatApi } from './index'
 import { createRoute } from '@hono/zod-openapi'
-import { getDBProps } from '../../shared/context'
+import { getDBProps } from '../../shared'
 import { HeartbeatResultSchema, HeartbeatResultsSchema, HeartbeatSchema, HeartbeatsSchema } from './schema'
 
 const heartbeatRoute = createRoute({
@@ -25,7 +25,7 @@ const heartbeatRoute = createRoute({
           schema: HeartbeatResultSchema,
         },
       },
-      description: 'Get a heartbeat record',
+      description: 'Created a heartbeat record',
     },
   },
 })
@@ -33,11 +33,11 @@ const heartbeatRoute = createRoute({
 const heartbeatsRouter = createRoute({
   method: 'post',
   tags: ['heartbeat'],
-  summary: 'Create some heartbeat records',
+  summary: 'Create some heartbeat record(s)',
   path: '/list',
   request: {
     body: {
-      description: 'Heartbeat records to create',
+      description: 'Heartbeat record(s) to create',
       content: {
         'application/json': {
           schema: HeartbeatsSchema,
@@ -52,7 +52,7 @@ const heartbeatsRouter = createRoute({
           schema: HeartbeatResultsSchema,
         },
       },
-      description: 'Get heartbeat records',
+      description: 'Created heartbeat record(s)',
     },
   },
 })
@@ -88,9 +88,9 @@ export function registerPostHeartbeats(api: typeof heartbeatApi) {
       id: id.toString(),
     }))
 
-    return c.json(records.map((record) => ({
+    return c.json(records.map(record => ({
       data: record,
-      status: 201
+      status: 201,
     })), 201)
   })
 }

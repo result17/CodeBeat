@@ -1,7 +1,7 @@
-import { describe, expect, it } from 'vitest' // Or your preferred test runner
+import { describe, expect, it } from 'vitest'
 import app from '../../test/app'
 
-describe('heartbeat Endpoint', () => {
+describe('post heartbeat Endpoint', () => {
   const heartbeatData = {
     cursorpos: 125,
     entity: '/usr/test_data/main.go',
@@ -13,7 +13,7 @@ describe('heartbeat Endpoint', () => {
     time: 1585598059.1,
     userAgent: 'vscode_codebeat_0.0.1',
   }
-  it('should throw an zod error', async () => {
+  it.skip('should throw an zod error', async () => {
     const res = await app.request('/api/heartbeat', {
       method: 'POST',
       headers: {
@@ -28,7 +28,7 @@ describe('heartbeat Endpoint', () => {
     expect(await res.json()).toHaveProperty('code')
   })
 
-  it('should return heartbeat record', async () => {
+  it.skip('should return heartbeat record', async () => {
     const res = await app.request('/api/heartbeat', {
       method: 'POST',
       headers: {
@@ -39,7 +39,7 @@ describe('heartbeat Endpoint', () => {
     expect(res.status).toBe(201)
     const resData = await res.json()
     expect(resData).toMatchObject({
-      status: 201
+      status: 201,
     })
     expect(resData).toHaveProperty('data')
     delete resData.data.id

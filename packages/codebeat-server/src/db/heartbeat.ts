@@ -3,7 +3,7 @@ import type { AcceleratedFindManyArgs } from '../shared/types'
 import type { PrismaInstance } from './prisma'
 import { getEndOfTodayDay, getStartOfTodayDay } from '../shared'
 
-type HeartbeatRecordResponse = Omit<Heartbeat, 'recvAt' | 'createdAt'>
+export type HeartbeatRecordResponse = Omit<Heartbeat, 'recvAt' | 'createdAt'>
 
 interface HeartbeatManager {
   create: (data: Prisma.HeartbeatCreateInput) => Promise<HeartbeatRecordResponse>

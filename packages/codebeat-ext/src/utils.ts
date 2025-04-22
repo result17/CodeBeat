@@ -6,6 +6,7 @@ import { useLogger } from 'reactive-vscode'
 export const logger = useLogger('CodeBeat')
 export const resourceDir = '.codebeat'
 export const binaryFileName = 'codebeatcli-windows-amd64.exe'
+
 /**
  * Format milliseconds to time string
  * @param ms - milliseconds
