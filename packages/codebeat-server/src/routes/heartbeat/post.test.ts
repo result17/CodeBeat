@@ -13,7 +13,7 @@ describe('post heartbeat Endpoint', () => {
     time: 1585598059.1,
     userAgent: 'vscode_codebeat_0.0.1',
   }
-  it.skip('should throw an zod error', async () => {
+  it('should throw an zod error', async () => {
     const res = await app.request('/api/heartbeat', {
       method: 'POST',
       headers: {
@@ -28,7 +28,7 @@ describe('post heartbeat Endpoint', () => {
     expect(await res.json()).toHaveProperty('code')
   })
 
-  it.skip('should return heartbeat record', async () => {
+  it('should return heartbeat record', async () => {
     const res = await app.request('/api/heartbeat', {
       method: 'POST',
       headers: {
@@ -44,7 +44,5 @@ describe('post heartbeat Endpoint', () => {
     expect(resData).toHaveProperty('data')
     delete resData.data.id
     expect(resData.data).toEqual(heartbeatData)
-  }, {
-    timeout: 8000,
-  })
+  }, 10000)
 })

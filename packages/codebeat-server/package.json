@@ -6,7 +6,7 @@
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest watch",
-    "prepare": "dotenv -e .dev.vars prisma generate --no-engine --data-proxy",
+    "prepare": "dotenv -e .dev.vars prisma generate --no-engine",
     "migrate": "dotenv -e .dev.vars prisma migrate dev",
     "migrate:reset": "dotenv -e .dev.vars prisma migrate reset",
     "migrate:deploy": "dotenv -e .dev.vars prisma migrate deploy",

@@ -19,6 +19,7 @@
     "p:typecheck": "pnpm -C packages/codebeat-ext run typecheck",
     "p:release": "pnpm -C packages/codebeat-ext run release",
     "s:queries": "pnpm -C packages/codebeat-server run queries",
+    "s:prepare": "pnpm -C packages/codebeat-server run prepare",
     "s:dev": "pnpm -C packages/codebeat-server run dev",
     "s:wdev": "pnpm -C packages/codebeat-server run wdev",
     "s:migrate": "pnpm -C packages/codebeat-server run migrate",

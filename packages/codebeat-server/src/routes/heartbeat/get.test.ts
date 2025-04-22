@@ -7,7 +7,5 @@ describe('get heartbeat Endpoint', () => {
       method: 'GET',
     })
     expect(res.status).toBe(200)
-  }, {
-    timeout: 10000,
-  })
+  }, 10000)
 })

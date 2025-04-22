@@ -31,3 +31,21 @@ npx nip tsx
 | `codeBeat.enable` |             | `boolean` | `true`  |
 
 <!-- configs -->
+
+## prsima & database
+<code>Prisma ORM</code> supports two [connection URLs](https://www.prisma.io/docs/orm/reference/connection-urls).<br/>
+With prsma postgres:
+```json
+// packages/codebeat-server/package.json
+{
+  "scripts": {
+    "prepare": "dotenv -e .dev.vars prisma generate --data-proxy"
+  }
+}
+```
+```ts
+// packages\codebeat-server\src\db\prisma.ts
+```
+
+## TODO
+- [x] database connection log

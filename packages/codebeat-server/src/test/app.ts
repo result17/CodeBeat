@@ -3,7 +3,7 @@ import { Hono } from 'hono'
 import { logger } from 'hono/logger'
 import { prettyJSON } from 'hono/pretty-json'
 import { api } from '../routes'
-import { prismaMiddleWare } from '../shared'
+import { prismaMiddleWare } from '../shared/node_middleware'
 
 const app = new Hono<{ Variables: DBProps }>()
 app.use('*', logger())
