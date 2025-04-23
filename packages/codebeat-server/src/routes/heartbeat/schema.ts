@@ -62,7 +62,7 @@ const BaseHeartbeatSchema = z.object({
   }),
 })
 
-export const HeartbeatSchema = BaseHeartbeatSchema.refine(data => {
+export const HeartbeatSchema = BaseHeartbeatSchema.refine((data) => {
   if (data.lineno !== null && data.lines !== null && data.lines < data.lineno) {
     return false
   }
@@ -74,10 +74,10 @@ export const HeartbeatsSchema = z.array(HeartbeatSchema)
 export const HeartbeatResultSchema = z.object({
   data: BaseHeartbeatSchema.extend({
     id: z.string().nonempty().openapi({
-      description: "Heartbeat record id (Using string takes place of bigInt)",
-      example: "418"
-    })
-  }).refine(data => {
+      description: 'Heartbeat record id (Using string takes place of bigInt)',
+      example: '418',
+    }),
+  }).refine((data) => {
     if (data.lineno !== null && data.lines !== null && data.lines < data.lineno) {
       return false
     }
@@ -87,3 +87,6 @@ export const HeartbeatResultSchema = z.object({
 })
 
 export const HeartbeatResultsSchema = z.array(HeartbeatResultSchema)
+
+export type HeartbeatResult = z.infer<typeof HeartbeatResultSchema>
+export type HeartbeatResults = HeartbeatResult[]

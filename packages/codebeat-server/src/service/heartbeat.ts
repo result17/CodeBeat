@@ -1,10 +1,10 @@
 import type z from 'zod'
 import type { PrismaInstance } from '../db/prisma'
-import type { HeartbeatResultsSchema } from '../routes/heartbeat/schema'
+import type { HeartbeatResults } from '../routes/heartbeat/schema'
 import { getHeartbeatManager } from '../db/heartbeat'
 
 interface HeartbeatService {
-  getHeartbeats: () => Promise<z.infer<typeof HeartbeatResultsSchema>>
+  getHeartbeats: () => Promise<HeartbeatResults>
 }
 
 export function createHeartbeatService(prisma: PrismaInstance): HeartbeatService {

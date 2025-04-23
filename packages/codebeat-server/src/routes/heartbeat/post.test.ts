@@ -1,3 +1,4 @@
+import type { HeartbeatResult } from './schema'
 import { describe, expect, it } from 'vitest'
 import app from '../../test/app'
 
@@ -37,12 +38,10 @@ describe('post heartbeat Endpoint', () => {
       body: JSON.stringify(heartbeatData),
     })
     expect(res.status).toBe(201)
-    const resData = await res.json()
+    const resData = (await res.json()) as HeartbeatResult
     expect(resData).toMatchObject({
       status: 201,
+      data: heartbeatData,
     })
-    expect(resData).toHaveProperty('data')
-    delete resData.data.id
-    expect(resData.data).toEqual(heartbeatData)
   }, 10000)
 })
