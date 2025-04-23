@@ -6,8 +6,7 @@ export function getDBProps(c: Context): DBProps {
     const ctx = c.executionCtx
     return ctx.props
   }
-  catch (error) {
-    console.error(`exec error: ${error}`)
+  catch {
     return {
       prisma: c.get('prisma'),
       db: c.get('db'),

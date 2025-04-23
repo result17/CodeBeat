@@ -9,7 +9,6 @@ export function prismaMiddleWare(): MiddlewareHandler<{ Variables: DBProps }> {
   const envPath = path.resolve('.local.vars')
   dotenv.config({ path: envPath })
   const { DIRECT_DATABASE_URL, DATABASE_URL } = process.env
-
   return async (c, next) => {
     const prismaClient = getPrismaClientInstance(DATABASE_URL || DIRECT_DATABASE_URL, false)
     const heartbeatManger = getHeartbeatManager(prismaClient)

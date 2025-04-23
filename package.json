@@ -28,11 +28,11 @@
   },
   "dependencies": {
     "@cloudflare/workers-types": "catalog:devtool",
+    "@hono/node-server": "catalog:devtool",
     "dotenv-cli": "catalog:build",
     "tsx": "catalog:server",
     "wrangler": "catalog:server",
-    "zod": "catalog:deps",
-    "@hono/node-server": "catalog:devtool"
+    "zod": "catalog:deps"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:devtool",
