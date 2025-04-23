@@ -3,6 +3,7 @@ import { env, version } from 'vscode'
 import { useSelf } from './composables/self'
 
 export interface EventArgs {
+  '--api-url'?: string
   '--entity': string
   '--plugin': string
   '--language': string
@@ -44,6 +45,7 @@ export function collectHeartbeatArgs(): EventArgs | null {
   }
 
   const args: EventArgs = {
+    '--api-url': 'http://127.0.0.1:3000',
     '--entity': entity,
     '--plugin': plugin.value,
     '--language': language,

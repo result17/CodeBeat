@@ -1,8 +1,8 @@
 import { execFile } from 'node:child_process'
 import process from 'node:process'
 import * as dotenv from 'dotenv'
-import { computed, defineExtension, useStatusBarItem, watchEffect } from 'reactive-vscode'
-import { StatusBarAlignment } from 'vscode'
+import { computed, defineExtension, extensionContext, useStatusBarItem, watchEffect } from 'reactive-vscode'
+import { ExtensionMode, StatusBarAlignment } from 'vscode'
 import { useOnEvent } from './composables'
 import { clockIconName, debounceMs } from './constants'
 import { getCliLocation } from './utils'
@@ -32,7 +32,7 @@ const { activate, deactivate } = defineExtension(() => {
     for (const entire of Object.entries(params.value)) {
       list.push(...entire)
     }
-    if (process.env.IS_LOCAL === 'true') {
+    if (process.env.IS_LOCAL === 'true' || extensionContext.value?.extensionMode === ExtensionMode.Development) {
       list.unshift('--local-save', '--dlog')
     }
     return list
@@ -46,6 +46,7 @@ const { activate, deactivate } = defineExtension(() => {
     }
     timeout = setTimeout(() => {
       console.info(`To send heartbeat params is ${args.value} and the cli location is ${cli}`)
+      // TODO file not found ENOENT
       const proc = execFile(cli, args.value, (error, stdout, stderr) => {
         if (error) {
           console.error('Fail:', error.message)

@@ -1,2 +1,2 @@
 export const clockIconName = '$(clock)'
-export const debounceMs = 50
+export const debounceMs = 200
