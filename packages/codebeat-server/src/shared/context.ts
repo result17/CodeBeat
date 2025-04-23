@@ -10,6 +10,7 @@ export function getDBProps(c: Context): DBProps {
     return {
       prisma: c.get('prisma'),
       db: c.get('db'),
+      services: c.get('services'),
     }
   }
 }

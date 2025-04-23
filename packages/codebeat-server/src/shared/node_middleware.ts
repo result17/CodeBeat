@@ -4,6 +4,7 @@ import path from 'node:path'
 import process from 'node:process'
 import * as dotenv from 'dotenv'
 import { getHeartbeatManager, getPrismaClientInstance } from '../db'
+import { createHeartbeatService } from '../service'
 
 export function prismaMiddleWare(): MiddlewareHandler<{ Variables: DBProps }> {
   const envPath = path.resolve('.local.vars')
@@ -15,6 +16,10 @@ export function prismaMiddleWare(): MiddlewareHandler<{ Variables: DBProps }> {
     c.set('prisma', prismaClient)
     c.set('db', {
       heartbeat: heartbeatManger,
+    })
+    const heartbeatService = createHeartbeatService(prismaClient)
+    c.set('services', {
+      heartbeat: heartbeatService,
     })
     return await next()
   }

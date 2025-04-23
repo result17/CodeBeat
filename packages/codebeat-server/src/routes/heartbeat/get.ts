@@ -22,14 +22,7 @@ const heartbeatsRoute = createRoute({
 
 export function registerGetHeartbeats(api: typeof heartbeatApi) {
   return api.openapi(heartbeatsRoute, async (c) => {
-    const records = (await getDBProps(c).db.heartbeat.queryRecords()).map(({ sendAt, id, ...restRecord }) => ({
-      ...restRecord,
-      time: sendAt.getTime() / 1000,
-      id: id.toString(),
-    }))
-    return c.json(records.map(record => ({
-      data: record,
-      status: 200,
-    })), 200)
+    const res = (await getDBProps(c).services.heartbeat.getHeartbeats())
+    return c.json(res, 200)
   })
 }

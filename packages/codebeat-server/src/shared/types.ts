@@ -1,10 +1,15 @@
 import type { getHeartbeatManager, getPrismaClientInstance } from '../db'
+import type { createHeartbeatService } from '../service'
 
+interface Services {
+  heartbeat: ReturnType<typeof createHeartbeatService>
+}
 export interface DBProps {
   prisma: ReturnType<typeof getPrismaClientInstance>
   db: {
     heartbeat: ReturnType<typeof getHeartbeatManager>
   }
+  services: Services
 }
 
 declare module 'hono' {
