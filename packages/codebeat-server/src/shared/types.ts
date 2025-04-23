@@ -1,20 +1,15 @@
-import type { getHeartbeatManager, getPrismaClientInstance } from '../db'
 import type { createHeartbeatService } from '../service'
 
 interface Services {
   heartbeat: ReturnType<typeof createHeartbeatService>
 }
-export interface DBProps {
-  prisma: ReturnType<typeof getPrismaClientInstance>
-  db: {
-    heartbeat: ReturnType<typeof getHeartbeatManager>
-  }
+export interface ContextProps {
   services: Services
 }
 
 declare module 'hono' {
   interface ExecutionContext {
-    props: DBProps
+    props: ContextProps
   }
 }
 

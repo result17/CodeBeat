@@ -19,6 +19,7 @@ describe('post heartbeat Endpoint', () => {
       method: 'POST',
       headers: {
         'content-type': 'application/json',
+        'accept': 'application/json',
       },
       body: JSON.stringify({
         ...heartbeatData,
@@ -34,6 +35,7 @@ describe('post heartbeat Endpoint', () => {
       method: 'POST',
       headers: {
         'content-type': 'application/json',
+        'accept': 'application/json',
       },
       body: JSON.stringify(heartbeatData),
     })

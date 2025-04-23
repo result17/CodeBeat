@@ -1,6 +1,6 @@
 import type { heartbeatApi } from './index'
 import { createRoute } from '@hono/zod-openapi'
-import { getDBProps } from '../../shared'
+import { getContextProps } from '../../shared'
 import { HeartbeatResultSchema, HeartbeatResultsSchema, HeartbeatSchema, HeartbeatsSchema } from './schema'
 
 const heartbeatRoute = createRoute({
@@ -59,17 +59,10 @@ const heartbeatsRouter = createRoute({
 
 export function registerPostHeartbeat(api: typeof heartbeatApi) {
   return api.openapi(heartbeatRoute, async (c) => {
-    const { time, ...rest } = c.req.valid('json')
-    const { sendAt, id, ...restRecord } = await getDBProps(c).db.heartbeat.create({
-      sendAt: new Date(time * 1000),
-      ...rest,
-    })
+    const origin = c.req.valid('json')
+    const data = (await getContextProps(c).services.heartbeat.createHeartbeatRecord(origin))
     return c.json({
-      data: {
-        ...restRecord,
-        time: sendAt.getTime() / 1000,
-        id: id.toString(),
-      },
+      data,
       status: 201,
     }, 201)
   })
@@ -77,17 +70,8 @@ export function registerPostHeartbeat(api: typeof heartbeatApi) {
 
 export function registerPostHeartbeats(api: typeof heartbeatApi) {
   return api.openapi(heartbeatsRouter, async (c) => {
-    const list = c.req.valid('json').map(({ time, ...rest }) => ({
-      sendAt: new Date(time * 1000),
-      ...rest,
-    }))
-
-    const records = (await getDBProps(c).db.heartbeat.createMany(list)).map(({ sendAt, id, ...restRecord }) => ({
-      ...restRecord,
-      time: sendAt.getTime() / 1000,
-      id: id.toString(),
-    }))
-
+    const origin = c.req.valid('json')
+    const records = (await getContextProps(c).services.heartbeat.createHeartbeatRecords(origin))
     return c.json(records.map(record => ({
       data: record,
       status: 201,

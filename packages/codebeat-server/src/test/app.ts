@@ -1,18 +1,18 @@
-import type { DBProps } from '../shared'
+import type { ContextProps } from '../shared'
 import { Hono } from 'hono'
 import { logger } from 'hono/logger'
 import { prettyJSON } from 'hono/pretty-json'
 import { api } from '../routes'
-import { logReqJSONBody } from '../shared'
-import { prismaMiddleWare } from '../shared/node_middleware'
+import { logReqJSONBody, logResJSONBody } from '../shared'
+import { serviceMiddleWare } from '../shared/node_middleware'
 
-const app = new Hono<{ Variables: DBProps }>()
+const app = new Hono<{ Variables: ContextProps }>()
 app.use('*', logger())
 app.use('*', prettyJSON())
 app.use('*', logReqJSONBody())
 
-app.use('*', prismaMiddleWare())
-
+app.use('*', serviceMiddleWare())
+app.use('/api/*', logResJSONBody())
 app.route('/api', api)
 
 export default app

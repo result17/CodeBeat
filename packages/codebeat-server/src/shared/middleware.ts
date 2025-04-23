@@ -14,3 +14,17 @@ export function logReqJSONBody(): MiddlewareHandler {
     await next()
   }
 }
+
+export function logResJSONBody(): MiddlewareHandler {
+  return async (c, next) => {
+    await next()
+    if (c.req.header('Accept')?.includes('application/json')) {
+      try {
+        console.log('JSON response body:', JSON.stringify(await c.res.clone().json(), null, 2))
+      }
+      catch (e) {
+        console.error('Fail to parse JSON:', e)
+      }
+    }
+  }
+}

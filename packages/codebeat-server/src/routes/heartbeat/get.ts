@@ -1,6 +1,6 @@
 import type { heartbeatApi } from './index'
 import { createRoute } from '@hono/zod-openapi'
-import { getDBProps } from '../../shared'
+import { getContextProps } from '../../shared'
 import { HeartbeatResultsSchema } from './schema'
 
 const heartbeatsRoute = createRoute({
@@ -22,7 +22,7 @@ const heartbeatsRoute = createRoute({
 
 export function registerGetHeartbeats(api: typeof heartbeatApi) {
   return api.openapi(heartbeatsRoute, async (c) => {
-    const res = (await getDBProps(c).services.heartbeat.getHeartbeats())
+    const res = (await getContextProps(c).services.heartbeat.getHeartbeats())
     return c.json(res, 200)
   })
 }

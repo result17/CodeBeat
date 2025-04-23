@@ -87,6 +87,6 @@ export const HeartbeatResultSchema = z.object({
 })
 
 export const HeartbeatResultsSchema = z.array(HeartbeatResultSchema)
-
+export type HeartbeatData = z.infer<typeof HeartbeatSchema>
 export type HeartbeatResult = z.infer<typeof HeartbeatResultSchema>
 export type HeartbeatResults = HeartbeatResult[]

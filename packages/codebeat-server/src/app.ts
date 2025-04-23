@@ -1,11 +1,9 @@
 import type { ExecutionContext } from '@cloudflare/workers-types'
-import type { PrismaInstance } from './db'
 import { Hono } from 'hono'
 import { logger } from 'hono/logger'
 import { prettyJSON } from 'hono/pretty-json'
-import { getHeartbeatManager, getPrismaClientInstance } from './db'
 import { api } from './routes'
-import { logReqJSONBody } from './shared'
+import { initServices, logReqJSONBody } from './shared'
 
 const app = new Hono()
 app.use('*', logger())
@@ -17,32 +15,15 @@ app.get('/hello', (c) => {
   return c.html('<p>Hello from codebeat-server</p>')
 })
 
-let prismaClient: PrismaInstance | null = null
-let heartbeatManager: ReturnType<typeof getHeartbeatManager> | null = null
-
-function initDatabaseServices(env: Env) {
-  if (!prismaClient) {
-    prismaClient = getPrismaClientInstance(env.DATABASE_URL || env.DIRECT_DATABASE_URL)
-  }
-  if (!heartbeatManager) {
-    heartbeatManager = getHeartbeatManager(prismaClient)
-  }
-  return { prismaClient, heartbeatManager }
-}
-
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext) {
     try {
-      const { prismaClient, heartbeatManager } = initDatabaseServices(env)
+      const services = initServices(env)
 
       return app.fetch(request, env, {
         ...ctx,
         props: {
-          ...ctx.props,
-          prisma: prismaClient,
-          db: {
-            heartbeat: heartbeatManager,
-          },
+          services,
         },
       })
     }

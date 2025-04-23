@@ -55,12 +55,12 @@ export function getHeartbeatManager(prisma: PrismaInstance): HeartbeatManager {
             recvAt: true,
             createdAt: true,
           },
+          // only works in cloudflare workers
           // cacheStrategy: {
           //   ttl: 60, // 60 seconds cache
           // },
         }
         const records = await (prisma.heartbeat.findMany as (args?: AcceleratedFindManyArgs) => Promise<HeartbeatRecordResponse[]>)(args)
-        console.log(`The length of records is ${records.length}`)
         return records
       }
       catch (error) {
