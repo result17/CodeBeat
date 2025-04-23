@@ -34,17 +34,43 @@ npx nip tsx
 
 ## prsima & database
 <code>Prisma ORM</code> supports two [connection URLs](https://www.prisma.io/docs/orm/reference/connection-urls).<br/>
-With prsma postgres:
+With prsma postgres(Connection URL starts with prisma):
+```env
+// Deprecated
+DATABASE_URL="prisma+postgres://accelerate.prisma-data.net/?api_key=..."
+```
 ```json
 // packages/codebeat-server/package.json
 {
   "scripts": {
-    "prepare": "dotenv -e .dev.vars prisma generate --data-proxy"
+    "prepare": "dotenv -e .dev.vars prisma generate --no-engine"
   }
 }
 ```
+Setting up a Cloudflare Workers project with Prisma ORM, you have to use <code>Prisma Accelerate<code>- it has 100k operations* free operations with <code> Prisma Postgres</code> or 60k operations* free operations with your own database.
 ```ts
 // packages\codebeat-server\src\db\prisma.ts
+new PrismaClient({ datasourceUrl }).$extends(withAccelerate())
+```
+with other postgres database(Connection URL starts with postgres):
+```env
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/codebeat"
+```
+
+## local database development
+```bash
+// cwd packages/codebeat-server
+docker-compose up -d
+```
+Docker will create two databases when it init.
+```bash
+// database migration
+pnpm migrate-local
+```
+Migration will creat tables this program needs.
+```bash
+// Node server
+pnpm dev
 ```
 
 ## TODO
