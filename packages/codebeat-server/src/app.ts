@@ -22,7 +22,7 @@ let heartbeatManager: ReturnType<typeof getHeartbeatManager> | null = null
 
 function initDatabaseServices(env: Env) {
   if (!prismaClient) {
-    prismaClient = getPrismaClientInstance(env.DATABASE_URL)
+    prismaClient = getPrismaClientInstance(env.DATABASE_URL || env.DIRECT_DATABASE_URL)
   }
   if (!heartbeatManager) {
     heartbeatManager = getHeartbeatManager(prismaClient)

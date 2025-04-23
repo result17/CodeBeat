@@ -6,10 +6,12 @@ import * as dotenv from 'dotenv'
 import { getHeartbeatManager, getPrismaClientInstance } from '../db'
 
 export function prismaMiddleWare(): MiddlewareHandler<{ Variables: DBProps }> {
-  const envPath = path.resolve('.dev.vars')
+  const envPath = path.resolve('.local.vars')
   dotenv.config({ path: envPath })
+  const { DIRECT_DATABASE_URL, DATABASE_URL } = process.env
+
   return async (c, next) => {
-    const prismaClient = getPrismaClientInstance(process.env.DATABASE_URL)
+    const prismaClient = getPrismaClientInstance(DATABASE_URL || DIRECT_DATABASE_URL, false)
     const heartbeatManger = getHeartbeatManager(prismaClient)
     c.set('prisma', prismaClient)
     c.set('db', {

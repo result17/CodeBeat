@@ -24,14 +24,15 @@
     "s:wdev": "pnpm -C packages/codebeat-server run wdev",
     "s:migrate": "pnpm -C packages/codebeat-server run migrate",
     "s:test": "pnpm -C packages/codebeat-server run test",
-    "s:deploy": "pnpm -C packages/codebeat-server run wdeploy"
+    "s:studio": "pnpm -C packages/codebeat-server run studio"
   },
   "dependencies": {
     "@cloudflare/workers-types": "catalog:devtool",
     "dotenv-cli": "catalog:build",
     "tsx": "catalog:server",
     "wrangler": "catalog:server",
-    "zod": "catalog:deps"
+    "zod": "catalog:deps",
+    "@hono/node-server": "catalog:devtool"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:devtool",
