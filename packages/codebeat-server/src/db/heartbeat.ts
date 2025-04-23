@@ -11,7 +11,6 @@ interface HeartbeatManager {
   queryRecords: (startDate?: Date, endDate?: Date) => Promise<HeartbeatRecordResponse[]>
 }
 
-// TODO Using Type SelectSubset to pick 'select' or 'omit'
 export function getHeartbeatManager(prisma: PrismaInstance): HeartbeatManager {
   return {
     async create(data) {
@@ -56,9 +55,9 @@ export function getHeartbeatManager(prisma: PrismaInstance): HeartbeatManager {
             recvAt: true,
             createdAt: true,
           },
-          cacheStrategy: {
-            ttl: 60, // 60 seconds cache
-          },
+          // cacheStrategy: {
+          //   ttl: 60, // 60 seconds cache
+          // },
         }
         const records = await (prisma.heartbeat.findMany as (args?: AcceleratedFindManyArgs) => Promise<HeartbeatRecordResponse[]>)(args)
         console.log(`The length of records is ${records.length}`)

@@ -9,11 +9,11 @@
     "prepare": "dotenv -e .dev.vars prisma generate --no-engine",
     "prepare_node": "prisma generate",
     "migrate": "dotenv -e .dev.vars prisma migrate dev",
-    "migrate-local": "dotenv -e .local.vars prisma migrate dev",
+    "migrate_local": "dotenv -e .local.vars prisma migrate dev",
     "migrate:reset": "dotenv -e .dev.vars prisma migrate reset",
     "migrate:deploy": "dotenv -e .dev.vars prisma migrate deploy",
     "studio": "dotenv -e .dev.vars -- npx prisma studio",
-    "dev": "pnpm prepare_node && dotenv -e .local.vars tsx watch ./src/test/app.ts",
+    "dev": "pnpm prepare_node && dotenv -e .local.vars tsx watch ./src/test/start.ts",
     "wdev": "pnpm prepare && dotenv -e .dev.vars wrangler dev",
     "wdeploy": "wrangler deploy"
   },
