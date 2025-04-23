@@ -1,11 +1,13 @@
 {
   "compilerOptions": {
     "lib": ["esnext"],
+    "types": ["node"],
     "allowImportingTsExtensions": true,
     "strict": true,
     "noEmit": true,
     "outDir": "dist",
     "sourceMap": true,
     "esModuleInterop": true
-  }
+  },
+  "includes": ["env.d.ts", "vite-env.d.ts"]
 }
