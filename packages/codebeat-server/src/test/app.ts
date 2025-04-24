@@ -1,4 +1,5 @@
 import type { ContextProps } from '../shared'
+import { handleError } from '@/lib'
 import { Hono } from 'hono'
 import { logger } from 'hono/logger'
 import { prettyJSON } from 'hono/pretty-json'
@@ -13,6 +14,8 @@ app.use('*', logReqJSONBody())
 
 app.use('*', serviceMiddleWare())
 app.use('/api/*', logResJSONBody())
+
+app.onError(handleError)
 app.route('/api', api)
 
 export default app

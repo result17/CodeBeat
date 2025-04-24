@@ -2,6 +2,7 @@ import type { ExecutionContext } from '@cloudflare/workers-types'
 import { Hono } from 'hono'
 import { logger } from 'hono/logger'
 import { prettyJSON } from 'hono/pretty-json'
+import { handleError } from './lib'
 import { api } from './routes'
 import { initServices, logReqJSONBody } from './shared'
 
@@ -10,6 +11,8 @@ app.use('*', logger())
 app.use('*', prettyJSON())
 app.use('*', logReqJSONBody())
 app.route('/api', api)
+
+app.onError(handleError)
 
 app.get('/hello', (c) => {
   return c.html('<p>Hello from codebeat-server</p>')
