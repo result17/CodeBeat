@@ -1,0 +1,32 @@
+POST http://localhost:3000/api/heartbeat
+Content-Type: application/json
+Accept: application/json
+
+{
+  "cursorpos": 125,
+  "entity": "/usr/test_data/main.go",
+  "language": "Go",
+  "lineno": 19,
+  "lines": 38,
+  "project": "test-cli",
+  "projectPath": null,
+  "time": 1585598059100,
+  "userAgent": "vscode_codebeat_0.0.1"
+}
+
+### Valid heartbeat data (expect 201 response with record)
+POST http://localhost:3000/api/heartbeat/list
+Content-Type: application/json
+Accept: application/json
+
+[{
+  "cursorpos": 125,
+  "entity": "/usr/test_data/main.go",
+  "language": "Go", 
+  "lineno": 19,
+  "lines": 38,
+  "project": "test-cli",
+  "projectPath": null,
+  "time": 1585598059100,
+  "userAgent": "vscode_codebeat_0.0.1"
+}]

@@ -51,14 +51,14 @@ export function logResJSONBody(): MiddlewareHandler {
     await next()
     if (c.req.header('Accept')?.includes('application/json')) {
       try {
-        const response = await c.res.clone().json()
-        const isError = (response as ErrorSchema).code !== undefined
+        const response = await c.res.clone().json<ErrorSchema>()
+        const isError = response.code !== undefined && response.message !== undefined
 
         formatLog('Response JSON body', {
           path: c.req.path,
           method: c.req.method,
           status: c.res.status,
-          response: isError ? formatErrorResponse(response as ErrorSchema) : response,
+          response: isError ? formatErrorResponse(response) : response,
         }, {
           level: isError ? 'error' : 'info',
         })
