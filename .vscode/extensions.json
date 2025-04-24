@@ -2,6 +2,6 @@
   "recommendations": [
     "amodio.tsl-problem-matcher",
     "emeraldwalk.runonsave",
-    "denoland.vscode-deno"
+    "humao.rest-client"
   ]
 }
