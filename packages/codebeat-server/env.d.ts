@@ -1,3 +1,4 @@
+/// <reference types="@cloudflare/workers-types" />
 interface Env {
   DATABASE_URL: string
   DIRECT_DATABASE_URL: string

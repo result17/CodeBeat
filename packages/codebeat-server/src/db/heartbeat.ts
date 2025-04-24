@@ -1,14 +1,13 @@
 import type { Heartbeat, Prisma } from '@prisma/client'
 import type { AcceleratedFindManyArgs } from '../shared/types'
 import type { PrismaInstance } from './prisma'
-import { getEndOfTodayDay, getStartOfTodayDay } from '../shared'
 
 export type HeartbeatRecordResponse = Omit<Heartbeat, 'recvAt' | 'createdAt'>
 
-interface HeartbeatManager {
+export interface HeartbeatManager {
   create: (data: Prisma.HeartbeatCreateInput) => Promise<HeartbeatRecordResponse>
   createMany: (data: Prisma.HeartbeatCreateInput[]) => Promise<HeartbeatRecordResponse[]>
-  queryRecords: (startDate?: Date, endDate?: Date) => Promise<HeartbeatRecordResponse[]>
+  queryRecordsFilterRecvAt: (startDate: Date, endDate: Date) => Promise<HeartbeatRecordResponse[]>
 }
 
 export function getHeartbeatManager(prisma: PrismaInstance): HeartbeatManager {
@@ -42,7 +41,7 @@ export function getHeartbeatManager(prisma: PrismaInstance): HeartbeatManager {
         throw new Error(`Failed to create heartbeats: ${error instanceof Error ? error.message : String(error)}`)
       }
     },
-    async queryRecords(startDate = getStartOfTodayDay(), endDate = getEndOfTodayDay()) {
+    async queryRecordsFilterRecvAt(startDate, endDate) {
       try {
         const args: AcceleratedFindManyArgs = {
           where: {

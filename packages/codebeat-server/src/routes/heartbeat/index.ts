@@ -17,7 +17,6 @@ export function handleZodError(
   c: Context,
 ) {
   if (!result.success) {
-    console.error(result.error.message)
     return c.json(
       {
         code: 'BAD_REQUEST',

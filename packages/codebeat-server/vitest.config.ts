@@ -1,17 +1,21 @@
-import process from 'node:process'
 import dotenv from 'dotenv'
+import tsconfigPaths from 'vite-tsconfig-paths'
 import { defineConfig } from 'vitest/config'
 
-dotenv.config()
-dotenv.config({ path: process.env.VITE_ENV || '.local.vars' })
+dotenv.config({ path: '.env.local' })
 
 export default defineConfig({
+  plugins: [tsconfigPaths()],
   envDir: './',
   test: {
     environment: 'node',
     setupFiles: [],
     coverage: {
       provider: 'v8',
+    },
+    // 启用process.env支持
+    env: {
+      NODE_ENV: 'test',
     },
   },
 })

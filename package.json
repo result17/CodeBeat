@@ -25,7 +25,8 @@
     "s:migrate": "pnpm -C packages/codebeat-server run migrate",
     "s:migrate_local": "pnpm -C packages/codebeat-server run migrate_local",
     "s:test": "pnpm -C packages/codebeat-server run test",
-    "s:studio": "pnpm -C packages/codebeat-server run studio"
+    "s:studio": "pnpm -C packages/codebeat-server run studio",
+    "s:wdeploy": "pnpm -C packages/codebeat-server run wdeploy"
   },
   "dependencies": {
     "@cloudflare/workers-types": "catalog:devtool",
@@ -41,6 +42,7 @@
     "@prisma/client": "catalog:server",
     "@typescript-eslint/utils": "catalog:devtool",
     "eslint": "catalog:devtool",
+    "vite-tsconfig-paths": "catalog:test",
     "vitest": "catalog:test"
   },
   "lint-staged": {

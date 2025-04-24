@@ -11,7 +11,7 @@ describe('post heartbeat Endpoint', () => {
     lines: 38,
     project: 'test-cli',
     projectPath: null,
-    time: 1585598059.1,
+    time: 1585598059100,
     userAgent: 'vscode_codebeat_0.0.1',
   }
   it('should throw an zod error', async () => {

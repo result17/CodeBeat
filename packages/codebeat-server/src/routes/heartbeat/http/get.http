@@ -1,0 +1,15 @@
+### Request without date parameters (expect 400 error)
+GET http://localhost:3000/api/heartbeat
+Accept: application/json
+
+### Request with start time later than end time (expect 400 error)
+GET http://localhost:3000/api/heartbeat?start=1745108632000&end=1745100782000
+Accept: application/json
+
+### Request with invalid date format (expect 400 error)
+GET http://localhost:3000/api/heartbeat?start=1745108632&end=1745100782
+Accept: application/json
+
+### Request with valid date parameters (expect 200 response with heartbeat records array)
+GET http://localhost:3000/api/heartbeat?start=1745380802000&end=1745413201000
+Accept: application/json

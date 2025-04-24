@@ -1,4 +1,5 @@
 export * from './context'
+export * from './duration'
+export * from './error'
 export * from './middleware'
 export * from './types'
-export * from './utils'

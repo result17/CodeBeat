@@ -1,5 +1,11 @@
 import { z } from '@hono/zod-openapi'
 
+export const UnixMillisSchema = z.number()
+  .int()
+  .min(0)
+  .refine(v => v.toString().length >= 13)
+  .refine(v => v < 253402300799000)
+
 const BaseHeartbeatSchema = z.object({
   entity: z.string().nonempty().openapi({
     param: {
@@ -43,12 +49,7 @@ const BaseHeartbeatSchema = z.object({
       example: '/user/testdata',
     },
   }),
-  time: z.number().gt(0).refine(
-    (value) => {
-      return /^\d+\.\d+$/.test(String(value))
-    },
-    { message: 'The timestamp must be a decimal with at least one fractional digit.' },
-  ).openapi({
+  time: UnixMillisSchema.openapi({
     param: {
       description: 'When cli send heartbeat',
       example: 1585598059.1,

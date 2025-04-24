@@ -1,5 +1,7 @@
-import type { HeartbeatRecordResponse } from '../../db/heartbeat'
-import { formatMilliseconds } from '../../shared'
+import type { HeartbeatRecordResponse } from '../db/heartbeat'
+
+/** Maximum keepalive interval in milliseconds */
+const KEEPALIVE_MILLISECONDS = 10 * 1000
 
 /**
  * Heartbeat duration summary data
@@ -20,24 +22,49 @@ interface GrandTotal {
 /**
  * Heartbeat time range data
  */
-interface HeartbeatRangeData {
-  /** First heartbeat record */
-  start: HeartbeatRecordResponse
-  /** Last heartbeat record */
-  end: HeartbeatRecordResponse
+export interface HeartbeatRangeData {
   /** Duration summary */
   grandTotal: GrandTotal
   /** Grouped heartbeat records */
   ranges: HeartbeatRecordResponse[][]
 }
 
-/** Maximum keepalive interval in milliseconds */
-const KEEPALIVE_MILLISECONDS = 10 * 1000
+export function getStartOfTodayDay() {
+  const now = new Date()
+  const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  return startOfDay
+}
 
+export function getEndOfTodayDay() {
+  const now = new Date()
+  const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999)
+  return endOfDay
+}
+
+/**
+ * Format milliseconds to time string
+ * @param ms - milliseconds
+ * @returns formatted string:
+ *   - "0 min" if less than 1 minute
+ *   - "x min(s)" if less than 1 hour
+ *   - "x hrs y mins" if 1 hour or more
+ */
+export function formatMilliseconds(ms: number): string {
+  if (ms < 0)
+    return '0 min'
+
+  const hours = Math.floor(ms / 3_600_000)
+  const minutes = Math.floor((ms % 3_600_000) / 60_000)
+
+  if (hours > 0) {
+    return `${hours} hr${hours > 1 ? 's' : ''} ${minutes} min${minutes !== 1 ? 's' : ''}`
+  }
+  return `${minutes} min${minutes !== 1 ? 's' : ''}`
+}
 /**
  * fomateTime
  */
-function millisecondsToTimeComponents(totalMs: number): {
+export function millisecondsToTimeComponents(totalMs: number): {
   hours: number
   minutes: number
   seconds: number
@@ -53,10 +80,19 @@ function millisecondsToTimeComponents(totalMs: number): {
 /**
  * create heartbeat recors and calculate duration time
  */
-export function getRangerData(records: HeartbeatRecordResponse[]): HeartbeatRangeData | null {
+export function getRangerData(records: HeartbeatRecordResponse[]): HeartbeatRangeData {
   // Validate input parameters
   if (!Array.isArray(records) || records.length === 0) {
-    return null
+    return {
+      ranges: [],
+      grandTotal: {
+        hours: 0,
+        minutes: 0,
+        seconds: 0,
+        text: '',
+        total_ms: 0,
+      },
+    }
   }
 
   // Create array copy to avoid modifying original data
@@ -65,7 +101,6 @@ export function getRangerData(records: HeartbeatRecordResponse[]): HeartbeatRang
   )
 
   const start = sortedRecords[0]
-  const end = sortedRecords[sortedRecords.length - 1]
 
   // Handle single record case
   if (sortedRecords.length === 1) {
@@ -73,8 +108,6 @@ export function getRangerData(records: HeartbeatRecordResponse[]): HeartbeatRang
     const { hours, minutes, seconds } = millisecondsToTimeComponents(total_ms)
 
     return {
-      start,
-      end,
       ranges: [[start]],
       grandTotal: {
         hours,
@@ -118,8 +151,6 @@ export function getRangerData(records: HeartbeatRecordResponse[]): HeartbeatRang
   const { hours, minutes, seconds } = millisecondsToTimeComponents(total_ms)
 
   return {
-    start,
-    end,
     ranges,
     grandTotal: {
       hours,

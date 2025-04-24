@@ -1,10 +1,11 @@
 import type { Context } from 'hono'
-import type { PrismaInstance } from '../db'
+import type { HeartbeatManager, PrismaInstance } from '../db'
 import type { ContextProps } from './types'
-import { getPrismaClientInstance } from '../db'
+import { getHeartbeatManager, getPrismaClientInstance } from '../db'
 import { createHeartbeatService } from '../service'
 
 let prismaClient: PrismaInstance | null = null
+let heartbeatManager: HeartbeatManager | null = null
 
 export function getContextProps(c: Context): ContextProps {
   try {
@@ -22,7 +23,10 @@ export function initServices(env: Env) {
   if (!prismaClient) {
     prismaClient = getPrismaClientInstance(env.DATABASE_URL || env.DIRECT_DATABASE_URL)
   }
-  const heartbeatService = createHeartbeatService(prismaClient)
+  if (!heartbeatManager) {
+    heartbeatManager = getHeartbeatManager(prismaClient)
+  }
+  const heartbeatService = createHeartbeatService(heartbeatManager)
   return {
     heartbeat: heartbeatService,
   }

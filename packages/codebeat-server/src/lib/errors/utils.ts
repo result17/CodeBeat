@@ -1,8 +1,9 @@
 import type { Context } from 'hono'
 import type { ZodIssue } from 'zod'
 import { codeToStatus, statusToCode } from '@/shared/error'
+import { z } from '@hono/zod-openapi'
 import { HTTPException } from 'hono/http-exception'
-import { z, ZodError } from 'zod'
+import { ZodError } from 'zod'
 
 // Props to cal.com: https://github.com/calcom/cal.com/blob/5d325495a9c30c5a9d89fc2adfa620b8fde9346e/packages/lib/server/getServerErrorFromUnknown.ts#L17
 export function parseZodErrorIssues(issues: ZodIssue[]): string {
