@@ -7,7 +7,11 @@
     "noEmit": true,
     "outDir": "dist",
     "sourceMap": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
   },
   "includes": ["env.d.ts", "vite-env.d.ts"]
 }
