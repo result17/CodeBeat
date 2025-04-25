@@ -1,4 +1,5 @@
 import type { heartbeatApi } from './index'
+import { openApiErrorResponses } from '@/lib'
 import { createRoute } from '@hono/zod-openapi'
 import { getContextProps } from '../../shared'
 import { HeartbeatResultSchema, HeartbeatResultsSchema, HeartbeatSchema, HeartbeatsSchema } from './schema'
@@ -27,6 +28,7 @@ const heartbeatRoute = createRoute({
       },
       description: 'Created a heartbeat record',
     },
+    ...openApiErrorResponses,
   },
 })
 

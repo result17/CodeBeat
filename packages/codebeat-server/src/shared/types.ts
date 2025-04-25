@@ -1,7 +1,8 @@
-import type { createHeartbeatService } from '../service'
+import type { createDurationService, createHeartbeatService } from '../service'
 
 interface Services {
   heartbeat: ReturnType<typeof createHeartbeatService>
+  duration: ReturnType<typeof createDurationService>
 }
 export interface ContextProps {
   services: Services

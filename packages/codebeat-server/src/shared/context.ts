@@ -2,7 +2,7 @@ import type { Context } from 'hono'
 import type { HeartbeatManager, PrismaInstance } from '../db'
 import type { ContextProps } from './types'
 import { getHeartbeatManager, getPrismaClientInstance } from '../db'
-import { createHeartbeatService } from '../service'
+import { createDurationService, createHeartbeatService } from '../service'
 
 let prismaClient: PrismaInstance | null = null
 let heartbeatManager: HeartbeatManager | null = null
@@ -27,7 +27,9 @@ export function initServices(env: Env) {
     heartbeatManager = getHeartbeatManager(prismaClient)
   }
   const heartbeatService = createHeartbeatService(heartbeatManager)
+  const durationService = createDurationService(heartbeatManager)
   return {
     heartbeat: heartbeatService,
+    duration: durationService,
   }
 }

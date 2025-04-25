@@ -6,7 +6,7 @@ const KEEPALIVE_MILLISECONDS = 10 * 1000
 /**
  * Heartbeat duration summary data
  */
-interface GrandTotal {
+export interface GrandTotal {
   /** Hours */
   hours: number
   /** Minutes */

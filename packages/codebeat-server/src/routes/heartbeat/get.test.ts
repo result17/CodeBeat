@@ -5,7 +5,7 @@ import app from '@/test/app'
 import { describe, expect, it } from 'vitest'
 import { HeartbeatErrorMsg } from './errorMsg'
 
-describe('get heartbeat Endpoint', () => {
+describe('get heartbeat endpoint', () => {
   it(HeartbeatErrorMsg.NoneDate, async () => {
     const res = await app.request('/api/heartbeat', {
       method: 'GET',
@@ -37,7 +37,7 @@ describe('get heartbeat Endpoint', () => {
   }, 10000)
 })
 
-it('return records that meet the conditions.', async () => {
+it('should return records that meet the conditions.', async () => {
   const res = await app.request('/api/heartbeat?start=1745380802000&end=1745413201000', {
     method: 'GET',
   })

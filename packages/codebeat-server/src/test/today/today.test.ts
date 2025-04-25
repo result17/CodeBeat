@@ -1,5 +1,5 @@
+import { getRangerData } from '@/shared'
 import { describe, expect, it } from 'vitest'
-import { getRangerData } from './index'
 import { heartbeats as records } from './testData/today_heartbeat'
 
 describe('heartbeat duration calculation', () => {

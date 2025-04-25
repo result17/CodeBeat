@@ -1,5 +1,5 @@
 import type { heartbeatApi } from './index'
-import { ApiError } from '@/lib'
+import { ApiError, openApiErrorResponses } from '@/lib'
 import { getContextProps } from '@/shared'
 import { createRoute } from '@hono/zod-openapi'
 import { z } from 'zod'
@@ -20,6 +20,7 @@ const heartbeatsRoute = createRoute({
       },
       description: 'Get a heartbeat record',
     },
+    ...openApiErrorResponses,
   },
 })
 

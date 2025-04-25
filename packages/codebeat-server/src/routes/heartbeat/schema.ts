@@ -78,8 +78,8 @@ export const HeartbeatResultSchema = z.object({
       description: 'Heartbeat record id (Using string takes place of bigInt)',
       example: '418',
     }),
-  }).refine((data) => {
-    if (data.lineno !== null && data.lines !== null && data.lines < data.lineno) {
+  }).refine(({ lineno, lines }) => {
+    if (lineno !== null && lines !== null && lines < lineno) {
       return false
     }
     return true
