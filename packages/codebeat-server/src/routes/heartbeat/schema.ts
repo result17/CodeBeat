@@ -1,10 +1,5 @@
+import { UnixMillisSchema } from '@/shared'
 import { z } from '@hono/zod-openapi'
-
-export const UnixMillisSchema = z.number()
-  .int()
-  .min(0)
-  .refine(v => v.toString().length >= 13)
-  .refine(v => v < 253402300799000)
 
 const BaseHeartbeatSchema = z.object({
   entity: z.string().nonempty().openapi({
