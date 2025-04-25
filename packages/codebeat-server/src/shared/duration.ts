@@ -2,6 +2,8 @@ import type { HeartbeatRecordResponse } from '../db/heartbeat'
 
 /** Maximum keepalive interval in milliseconds */
 const KEEPALIVE_MILLISECONDS = 10 * 1000
+const MILLISECONDS_PER_HOUR = 3_600_000
+const MILLISECONDS_PER_MINUTE = 60_000
 
 /**
  * Heartbeat duration summary data
@@ -50,11 +52,12 @@ export function getEndOfTodayDay() {
  *   - "x hrs y mins" if 1 hour or more
  */
 export function formatMilliseconds(ms: number): string {
-  if (ms < 0)
+  if (ms <= 0)
     return '0 min'
 
-  const hours = Math.floor(ms / 3_600_000)
-  const minutes = Math.floor((ms % 3_600_000) / 60_000)
+  // 使用命名常量提高可读性
+  const hours = Math.floor(ms / MILLISECONDS_PER_HOUR)
+  const minutes = Math.floor((ms % MILLISECONDS_PER_HOUR) / MILLISECONDS_PER_MINUTE)
 
   if (hours > 0) {
     return `${hours} hr${hours > 1 ? 's' : ''} ${minutes} min${minutes !== 1 ? 's' : ''}`

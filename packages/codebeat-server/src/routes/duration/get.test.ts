@@ -19,6 +19,5 @@ describe('get duration endpoint', () => {
     expect(res.status).toBe(200)
     const body = await res.json<GrandTotal>()
     expect(body.text).toBeDefined()
-    console.log(body)
   })
 })

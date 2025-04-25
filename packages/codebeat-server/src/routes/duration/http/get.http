@@ -1,0 +1,7 @@
+### get today's heartbeat duaration
+GET http://localhost:3000/api/duration/today
+Accept: application/json
+
+### get spec date\'s heartbeat duaration
+GET http://localhost:3000/api/duration?start=1745380802000&end=1745413201000
+Accept: application/json
