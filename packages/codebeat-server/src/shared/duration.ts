@@ -1,7 +1,7 @@
 import type { HeartbeatRecordResponse } from '../db/heartbeat'
 
 /** Maximum keepalive interval in milliseconds */
-const KEEPALIVE_MILLISECONDS = 10 * 1000
+const KEEPALIVE_MILLISECONDS = 30 * 1000
 const MILLISECONDS_PER_HOUR = 3_600_000
 const MILLISECONDS_PER_MINUTE = 60_000
 
@@ -85,7 +85,7 @@ export function millisecondsToTimeComponents(totalMs: number): {
  */
 export function getRangerData(records: HeartbeatRecordResponse[]): HeartbeatRangeData {
   // Validate input parameters
-  if (!Array.isArray(records) || records.length === 0) {
+  if (!Array.isArray(records) || records.length > 2) {
     return {
       ranges: [],
       grandTotal: {
@@ -104,23 +104,6 @@ export function getRangerData(records: HeartbeatRecordResponse[]): HeartbeatRang
   )
 
   const start = sortedRecords[0]
-
-  // Handle single record case
-  if (sortedRecords.length === 1) {
-    const total_ms = KEEPALIVE_MILLISECONDS
-    const { hours, minutes, seconds } = millisecondsToTimeComponents(total_ms)
-
-    return {
-      ranges: [[start]],
-      grandTotal: {
-        hours,
-        minutes,
-        seconds,
-        text: formatMilliseconds(total_ms),
-        total_ms,
-      },
-    }
-  }
 
   const ranges: HeartbeatRecordResponse[][] = [[start]]
 
@@ -141,8 +124,11 @@ export function getRangerData(records: HeartbeatRecordResponse[]): HeartbeatRang
     }
   }
 
+  // signgle heartbeat is invalid
+  const filterSignleRangeData = ranges.filter(range => range.length > 1)
+
   // Calculate total active duration more precisely
-  const total_ms = ranges.reduce((total, range) => {
+  const total_ms = filterSignleRangeData.reduce((total, range) => {
     const rangeStart = range[0].sendAt
     const rangeEnd = range[range.length - 1].sendAt
     const rangeDuration = rangeEnd.getTime() - rangeStart.getTime()

@@ -1,7 +1,7 @@
-import type { EventArgs } from '../heartbeatParams'
+import type { EventParams } from '../heartbeatParams'
 import { ref, useEvent } from 'reactive-vscode'
-import { debug, tasks, window, workspace } from 'vscode'
-import { collectHeartbeatArgs } from '../heartbeatParams'
+import vscode, { debug, tasks, window, workspace } from 'vscode'
+import { collectHeartbeatParams, shouldSendHeartbeat } from '../heartbeatParams'
 import { logger } from '../utils'
 
 export const onDidChangeTextEditorSelection = useEvent(window.onDidChangeTextEditorSelection)
@@ -17,11 +17,15 @@ export const onDidStartDebugSession = useEvent(debug.onDidStartDebugSession)
 export const onDidTerminateDebugSession = useEvent(debug.onDidTerminateDebugSession)
 
 export function useOnEvent() {
-  const heartbeatParams = ref<EventArgs | null>(null)
+  const heartbeatParams = ref<EventParams | null>(null)
 
-  const updateHeartbeatParams = () => {
+  const updateHeartbeatParams = (isWrite: boolean = false) => {
     try {
-      heartbeatParams.value = collectHeartbeatArgs()
+      // when heartbeatParams changes, it's effect will send a heartbeat record to cli
+      if (shouldSendHeartbeat(isWrite)) {
+        const params = collectHeartbeatParams()
+        heartbeatParams.value = params
+      }
     }
     catch (error) {
       logger.warn('Failed to collect heartbeat args:', error)
@@ -29,11 +33,15 @@ export function useOnEvent() {
     }
   }
 
-  onDidChangeActiveTextEditor(updateHeartbeatParams)
+  onDidChangeActiveTextEditor(() => updateHeartbeatParams())
 
-  onDidChangeTextEditorSelection(updateHeartbeatParams)
+  onDidChangeTextEditorSelection((e) => {
+    if (e.kind !== vscode.TextEditorSelectionChangeKind.Command) {
+      updateHeartbeatParams()
+    }
+  })
 
-  onDidSaveTextDocument(updateHeartbeatParams)
+  onDidSaveTextDocument(() => updateHeartbeatParams(true))
 
   return heartbeatParams
 }

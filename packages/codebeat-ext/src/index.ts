@@ -1,13 +1,23 @@
 import { execFile } from 'node:child_process'
 import process from 'node:process'
 import * as dotenv from 'dotenv'
-import { computed, defineExtension, extensionContext, useStatusBarItem, watchEffect } from 'reactive-vscode'
+import { computed, defineExtension, extensionContext, reactive, useStatusBarItem, watchEffect } from 'reactive-vscode'
 import { ExtensionMode, StatusBarAlignment } from 'vscode'
 import { useOnEvent } from './composables'
 import { clockIconName, debounceMs } from './constants'
 import { getCliLocation } from './utils'
 
 dotenv.config()
+
+interface ExtensionState {
+  file: string
+  lastHeartbeatSentTime: number
+}
+
+export const extensionState = reactive<ExtensionState>({
+  file: '',
+  lastHeartbeatSentTime: 0,
+})
 
 const { activate, deactivate } = defineExtension(() => {
   let timeout: NodeJS.Timeout | null = null
@@ -46,6 +56,8 @@ const { activate, deactivate } = defineExtension(() => {
     }
     timeout = setTimeout(() => {
       console.info(`To send heartbeat params is ${args.value} and the cli location is ${cli}`)
+      extensionState.file = params.value?.['--entity'] ?? ''
+      extensionState.lastHeartbeatSentTime = Date.now()
       // TODO file not found ENOENT
       const proc = execFile(cli, args.value, (error, stdout, stderr) => {
         if (error) {
