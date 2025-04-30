@@ -1,28 +1,27 @@
-import { execFile } from 'node:child_process'
 import process from 'node:process'
 import * as dotenv from 'dotenv'
 import { computed, defineExtension, extensionContext, reactive, useStatusBarItem, watchEffect } from 'reactive-vscode'
 import { ExtensionMode, StatusBarAlignment } from 'vscode'
 import { useOnEvent } from './composables'
 import { clockIconName, debounceMs } from './constants'
-import { getCliLocation } from './utils'
+import { logger, queryTodayDuration, sendHeartbeat, shouldQueryTodayDuration } from './utils'
 
 dotenv.config()
 
 interface ExtensionState {
   file: string
   lastHeartbeatSentTime: number
+  lastQueryDurationTime: number
 }
 
 export const extensionState = reactive<ExtensionState>({
   file: '',
   lastHeartbeatSentTime: 0,
+  lastQueryDurationTime: 0,
 })
 
 const { activate, deactivate } = defineExtension(() => {
   let timeout: NodeJS.Timeout | null = null
-
-  const cli = getCliLocation()
 
   const statusBar = useStatusBarItem({
     id: 'com.github.result17',
@@ -54,25 +53,24 @@ const { activate, deactivate } = defineExtension(() => {
     if (timeout) {
       clearTimeout(timeout)
     }
-    timeout = setTimeout(() => {
-      console.info(`To send heartbeat params is ${args.value} and the cli location is ${cli}`)
+    timeout = setTimeout(async () => {
+      // update ext state
       extensionState.file = params.value?.['--entity'] ?? ''
       extensionState.lastHeartbeatSentTime = Date.now()
-      // TODO file not found ENOENT
-      const proc = execFile(cli, args.value, (error, stdout, stderr) => {
-        if (error) {
-          console.error('Fail:', error.message)
-          return
+
+      const heartbeatResult = await sendHeartbeat(args.value)
+
+      if (heartbeatResult && heartbeatResult.code !== null && heartbeatResult.code === 0) {
+        logger.info(`heartbeatResult code is ${heartbeatResult?.code}, should query is ${shouldQueryTodayDuration()}`)
+        if (shouldQueryTodayDuration()) {
+          extensionState.lastQueryDurationTime = Date.now()
+          const todayDuration = await queryTodayDuration()
+          if (todayDuration && todayDuration.stdout) {
+            // update statusBar text to today duration
+            statusBar.text = `${clockIconName} ${todayDuration.stdout}`
+          }
         }
-        if (stderr) {
-          console.error('STDERR:', stderr)
-          return
-        }
-        console.log('STDOUT:', stdout)
-      })
-      proc.on('close', (code, signal) => {
-        console.info(`Cli file closed. Exit code is ${code} and sinagl is ${signal}.`)
-      })
+      }
     }, debounceMs)
   })
 })

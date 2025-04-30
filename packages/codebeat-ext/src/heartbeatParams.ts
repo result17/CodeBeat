@@ -1,11 +1,12 @@
+import type { BaseCliParams } from './utils'
 import { computed, useActiveTextEditor, useTextEditorSelection, useWorkspaceFolders } from 'reactive-vscode'
 import { env, version } from 'vscode'
 import { useSelf } from './composables/self'
 import { heartbeatTimeInterval } from './constants'
 import { extensionState } from './index'
+import { baseCliParams } from './utils'
 
-export interface EventParams {
-  '--api-url'?: string
+export interface EventParams extends BaseCliParams {
   '--entity': string
   '--plugin': string
   '--language': string
@@ -58,7 +59,7 @@ export function collectHeartbeatParams(): EventParams | null {
   }
 
   const Params: EventParams = {
-    '--api-url': 'http://127.0.0.1:3000',
+    ...baseCliParams,
     '--entity': entity,
     '--plugin': plugin.value,
     '--language': language,
