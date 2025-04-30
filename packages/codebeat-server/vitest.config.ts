@@ -13,9 +13,5 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
     },
-    // 启用process.env支持
-    env: {
-      NODE_ENV: 'test',
-    },
   },
 })
