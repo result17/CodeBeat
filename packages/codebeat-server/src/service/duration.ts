@@ -10,7 +10,7 @@ interface DurationService {
 export function createDurationService(heartbeatManager: HeartbeatManager): DurationService {
   return {
     async getTodayDuration() {
-      return this.getSpecDateDuration(getEndOfTodayDay(), getStartOfTodayDay())
+      return this.getSpecDateDuration(getStartOfTodayDay(), getEndOfTodayDay())
     },
     async getSpecDateDuration(startDate: Date, endDate: Date) {
       const records = (await heartbeatManager.queryRecordsFilterRecvAt(startDate, endDate))

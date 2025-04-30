@@ -60,9 +60,9 @@ export function formatMilliseconds(ms: number): string {
   const minutes = Math.floor((ms % MILLISECONDS_PER_HOUR) / MILLISECONDS_PER_MINUTE)
 
   if (hours > 0) {
-    return `${hours} hr${hours > 1 ? 's' : ''} ${minutes} min${minutes !== 1 ? 's' : ''}`
+    return `${hours} hr${hours > 1 ? 's' : ''} ${minutes} min${minutes > 1 ? 's' : ''}`
   }
-  return `${minutes} min${minutes !== 1 ? 's' : ''}`
+  return `${minutes} min${minutes > 1 ? 's' : ''}`
 }
 /**
  * fomateTime
@@ -85,7 +85,7 @@ export function millisecondsToTimeComponents(totalMs: number): {
  */
 export function getRangerData(records: HeartbeatRecordResponse[]): HeartbeatRangeData {
   // Validate input parameters
-  if (!Array.isArray(records) || records.length > 2) {
+  if (!Array.isArray(records) || records.length < 1) {
     return {
       ranges: [],
       grandTotal: {
@@ -97,7 +97,6 @@ export function getRangerData(records: HeartbeatRecordResponse[]): HeartbeatRang
       },
     }
   }
-
   // Create array copy to avoid modifying original data
   const sortedRecords = [...records].sort(
     (a, b) => a.sendAt.getTime() - b.sendAt.getTime(),
@@ -124,11 +123,8 @@ export function getRangerData(records: HeartbeatRecordResponse[]): HeartbeatRang
     }
   }
 
-  // signgle heartbeat is invalid
-  const filterSignleRangeData = ranges.filter(range => range.length > 1)
-
   // Calculate total active duration more precisely
-  const total_ms = filterSignleRangeData.reduce((total, range) => {
+  const total_ms = ranges.reduce((total, range) => {
     const rangeStart = range[0].sendAt
     const rangeEnd = range[range.length - 1].sendAt
     const rangeDuration = rangeEnd.getTime() - rangeStart.getTime()
