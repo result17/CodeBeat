@@ -1,17 +1,17 @@
 {
   "compilerOptions": {
     "lib": ["esnext"],
-    "types": ["node"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "types": ["node", "@cloudflare/workers-types"],
     "allowImportingTsExtensions": true,
     "strict": true,
     "noEmit": true,
     "outDir": "dist",
     "sourceMap": true,
-    "esModuleInterop": true,
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/*"]
-    }
+    "esModuleInterop": true
   },
   "includes": ["env.d.ts", "vite-env.d.ts"]
 }
