@@ -2,7 +2,7 @@ import process from 'node:process'
 import * as dotenv from 'dotenv'
 import { computed, defineExtension, extensionContext, reactive, useStatusBarItem, watchEffect } from 'reactive-vscode'
 import { ExtensionMode, StatusBarAlignment } from 'vscode'
-import { useOnEvent } from './composables'
+import { useChartView, useOnEvent } from './composables'
 import { clockIconName, debounceMs } from './constants'
 import { logger, queryTodayDuration, sendHeartbeat, shouldQueryTodayDuration } from './utils'
 
@@ -21,7 +21,10 @@ export const extensionState = reactive<ExtensionState>({
 })
 
 const { activate, deactivate } = defineExtension(() => {
+  logger.show()
   let timeout: NodeJS.Timeout | null = null
+  // Register webview view provider
+  useChartView()
 
   const statusBar = useStatusBarItem({
     id: 'com.github.result17',

@@ -19,6 +19,25 @@
     "*"
   ],
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "codebeat-chart",
+          "title": "codebeat chart",
+          "icon": "$(clock)"
+        }
+      ]
+    },
+    "views": {
+      "codebeat-chart": [{
+        "type": "webview",
+        "id": "codebeat-chart-webview",
+        "name": "codebeat heartbeat record"
+      }]
+    },
+    "activationEvents": [
+      "onView:codebeat-chart-webview"
+    ],
     "commands": [
       {
         "category": "CodeBeat",
