@@ -32,7 +32,7 @@ export interface TimeRange {
 /**
  * Heartbeat time range data
  */
-export interface HeartbeatRangeData {
+export interface SummaryData {
   /** Duration summary */
   grandTotal: GrandTotal
   /** heartbeat records timeline */
@@ -87,7 +87,7 @@ export function millisecondsToTimeComponents(totalMs: number): {
   return { hours, minutes, seconds }
 }
 
-export function getRangerData(records: HeartbeatRecordResponse[]): HeartbeatRangeData {
+export function getRangerData(records: HeartbeatRecordResponse[]): SummaryData {
   // Validate input parameters
   if (!Array.isArray(records) || records.length < 1) {
     return {

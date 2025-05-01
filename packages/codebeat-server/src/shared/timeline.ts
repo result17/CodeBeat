@@ -1,6 +1,6 @@
 import type { GrandTotal } from '@/routes/duration/schema'
 import type { HeartbeatRecordResponse } from '../db/heartbeat'
-import type { HeartbeatRangeData, TimeRange } from './duration'
+import type { SummaryData, TimeRange } from './duration'
 import { formatMilliseconds, millisecondsToTimeComponents } from './duration'
 
 export type HeartbeatTimeItem = Pick<HeartbeatRecordResponse, 'id' | 'project' | 'sendAt'>
@@ -81,7 +81,7 @@ export class HeartbeatTimeline {
     this.totalMs += this.lastRange.duration
   }
 
-  public summary(): HeartbeatRangeData {
+  public summary(): SummaryData {
     this.calcTimeRangeList()
     const grandTotal: GrandTotal = {
       ...millisecondsToTimeComponents(this.totalMs),

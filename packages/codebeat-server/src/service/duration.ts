@@ -1,10 +1,11 @@
 import type { HeartbeatManager } from '@/db/heartbeat'
-import type { HeartbeatRangeData } from '@/shared'
+import type { SummaryData } from '@/shared'
 import { getEndOfTodayDay, getRangerData, getStartOfTodayDay } from '@/shared'
 
 interface DurationService {
-  getTodayDuration: () => Promise<HeartbeatRangeData>
-  getSpecDateDuration: (startDate: Date, endDate: Date) => Promise<HeartbeatRangeData>
+  getTodayDuration: () => Promise<Pick<SummaryData, 'grandTotal'>>
+  getSpecDateDuration: (startDate: Date, endDate: Date) => Promise<Pick<SummaryData, 'grandTotal'>>
+  getSpecDataSummary: (startDate: Date, endDate: Date) => Promise<SummaryData>
 }
 
 export function createDurationService(heartbeatManager: HeartbeatManager): DurationService {
@@ -13,9 +14,11 @@ export function createDurationService(heartbeatManager: HeartbeatManager): Durat
       return this.getSpecDateDuration(getStartOfTodayDay(), getEndOfTodayDay())
     },
     async getSpecDateDuration(startDate: Date, endDate: Date) {
+      return { grandTotal: (await this.getSpecDataSummary(startDate, endDate)).grandTotal }
+    },
+    async getSpecDataSummary(startDate: Date, endDate: Date) {
       const records = (await heartbeatManager.queryRecordsFilterRecvAt(startDate, endDate))
-      const rangerData = getRangerData(records)
-      return rangerData
+      return getRangerData(records)
     },
   }
 }
