@@ -45,6 +45,9 @@ interface CommandResult {
  * @param command
  * @param args command arguments
  * @param options optional config
+ * @param options.timeout command running timeout
+ * @param options.cwd working directory
+ * @param options.env node env
  * @returns Promise<CommandResult>
  * @throws error
  */
