@@ -1,7 +1,6 @@
 import type { HeartbeatRecordResponse } from '../db/heartbeat'
+import { HeartbeatTimeline } from './timeline'
 
-/** Maximum keepalive interval in milliseconds */
-const KEEPALIVE_MILLISECONDS = 30 * 1000
 const MILLISECONDS_PER_HOUR = 3_600_000
 const MILLISECONDS_PER_MINUTE = 60_000
 
@@ -21,14 +20,23 @@ export interface GrandTotal {
   total_ms: number
 }
 
+export interface TimeRange {
+  /** Start timestamp */
+  start: number
+  /** heartbeat duration */
+  duration: number
+  /** project name */
+  project: string
+}
+
 /**
  * Heartbeat time range data
  */
 export interface HeartbeatRangeData {
   /** Duration summary */
   grandTotal: GrandTotal
-  /** Grouped heartbeat records */
-  ranges: HeartbeatRecordResponse[][]
+  /** heartbeat records timeline */
+  timeline: TimeRange[]
 }
 
 export function getStartOfTodayDay() {
@@ -55,7 +63,6 @@ export function formatMilliseconds(ms: number): string {
   if (ms <= 0)
     return '0 min'
 
-  // 使用命名常量提高可读性
   const hours = Math.floor(ms / MILLISECONDS_PER_HOUR)
   const minutes = Math.floor((ms % MILLISECONDS_PER_HOUR) / MILLISECONDS_PER_MINUTE)
 
@@ -65,7 +72,7 @@ export function formatMilliseconds(ms: number): string {
   return `${minutes} min${minutes > 1 ? 's' : ''}`
 }
 /**
- * fomateTime
+ * formate duration
  */
 export function millisecondsToTimeComponents(totalMs: number): {
   hours: number
@@ -80,14 +87,10 @@ export function millisecondsToTimeComponents(totalMs: number): {
   return { hours, minutes, seconds }
 }
 
-/**
- * create heartbeat recors and calculate duration time
- */
 export function getRangerData(records: HeartbeatRecordResponse[]): HeartbeatRangeData {
   // Validate input parameters
   if (!Array.isArray(records) || records.length < 1) {
     return {
-      ranges: [],
       grandTotal: {
         hours: 0,
         minutes: 0,
@@ -95,54 +98,10 @@ export function getRangerData(records: HeartbeatRecordResponse[]): HeartbeatRang
         text: '',
         total_ms: 0,
       },
+      timeline: [],
     }
   }
-  // Create array copy to avoid modifying original data
-  const sortedRecords = [...records].sort(
-    (a, b) => a.sendAt.getTime() - b.sendAt.getTime(),
-  )
-
-  const start = sortedRecords[0]
-
-  const ranges: HeartbeatRecordResponse[][] = [[start]]
-
-  // Group consecutive heartbeat records with improved algorithm
-  for (let i = 1; i < sortedRecords.length; i++) {
-    const current = sortedRecords[i]
-    const lastRange = ranges[ranges.length - 1]
-    const lastRecord = lastRange[lastRange.length - 1]
-
-    const lastAliveTime = lastRecord.sendAt.getTime() + KEEPALIVE_MILLISECONDS
-    const currentTime = current.sendAt.getTime()
-
-    if (currentTime <= lastAliveTime) {
-      lastRange.push(current)
-    }
-    else {
-      ranges.push([current])
-    }
-  }
-
-  // Calculate total active duration more precisely
-  const total_ms = ranges.reduce((total, range) => {
-    const rangeStart = range[0].sendAt
-    const rangeEnd = range[range.length - 1].sendAt
-    const rangeDuration = rangeEnd.getTime() - rangeStart.getTime()
-
-    // Only add keepalive for the last record in range
-    return total + rangeDuration + KEEPALIVE_MILLISECONDS
-  }, 0)
-
-  const { hours, minutes, seconds } = millisecondsToTimeComponents(total_ms)
-
-  return {
-    ranges,
-    grandTotal: {
-      hours,
-      minutes,
-      seconds,
-      text: formatMilliseconds(total_ms),
-      total_ms,
-    },
-  }
+  const timeline = new HeartbeatTimeline(records)
+  const summary = timeline.summary()
+  return summary
 }
