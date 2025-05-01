@@ -1,6 +1,6 @@
 {
   "publisher": "result17",
-  "name": "codbeat-server",
+  "name": "codebeat-server",
   "displayName": "CodeBeat-server",
   "type": "module",
   "license": "MIT",
