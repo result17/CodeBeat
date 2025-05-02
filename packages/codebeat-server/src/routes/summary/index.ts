@@ -1,6 +1,7 @@
 import { OpenAPIHono } from '@hono/zod-openapi'
-import { registerGetSpecSummary } from './get'
+import { registerGetSpecSummary, registerGetTodaySummary } from './get'
 
 export const summaryAPI = new OpenAPIHono()
 
 registerGetSpecSummary(summaryAPI)
+registerGetTodaySummary(summaryAPI)

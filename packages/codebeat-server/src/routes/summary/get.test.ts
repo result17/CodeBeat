@@ -8,4 +8,10 @@ describe('get summary endpoint', () => {
     })
     expect(res.status).toBe(200)
   })
+  it('should return today\'s heartbeat summary', async () => {
+    const res = await app.request('/api/summary/today', {
+      method: 'GET',
+    })
+    expect(res.status).toBe(200)
+  })
 })

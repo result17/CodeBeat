@@ -144,7 +144,7 @@ export async function runCommand(
 
 export async function queryTodayDuration() {
   try {
-    return await runCommand(codebeatCli, [...Object.entries(baseCliParams).flat(), '--today'])
+    return await runCommand(codebeatCli, [...Object.entries(baseCliParams).flat(), '--today-duration', 'true'])
   }
   catch {
     logger.error('fail to query today duration')
