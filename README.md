@@ -78,3 +78,5 @@ pnpm dev
 - [] when opening new file, codebeat-ext can't collect heartbeatparams
 - [] when codebeat-cli is not found, download it automatically.
 - [] show duration when changing project folder
+- [] debug build heartbeat collection
+- [] project cicd
