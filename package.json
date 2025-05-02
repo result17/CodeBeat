@@ -31,6 +31,7 @@
   "dependencies": {
     "@cloudflare/workers-types": "catalog:devtool",
     "@hono/node-server": "catalog:devtool",
+    "d3": "catalog:extension",
     "dotenv-cli": "catalog:build",
     "tsx": "catalog:server",
     "wrangler": "catalog:server",
@@ -40,6 +41,7 @@
     "@antfu/eslint-config": "catalog:devtool",
     "@antfu/nip": "catalog:devtool",
     "@prisma/client": "catalog:server",
+    "@types/d3": "catalog:devtool",
     "@typescript-eslint/utils": "catalog:devtool",
     "eslint": "catalog:devtool",
     "vite-tsconfig-paths": "catalog:test",

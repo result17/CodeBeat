@@ -80,7 +80,7 @@
     "bumpp": "catalog:devtool",
     "esno": "catalog:build",
     "pnpm": "catalog:devtool",
-    "reactive-vscode": "catalog:plugin",
+    "reactive-vscode": "catalog:extension",
     "tsup": "catalog:build",
     "typescript": "catalog:devtool",
     "vite": "catalog:build",
