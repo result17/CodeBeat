@@ -26,17 +26,19 @@
     "s:migrate_local": "pnpm -C packages/codebeat-server run migrate_local",
     "s:test": "pnpm -C packages/codebeat-server run test",
     "s:studio": "pnpm -C packages/codebeat-server run studio",
-    "s:wdeploy": "pnpm -C packages/codebeat-server run wdeploy"
+    "s:wdeploy": "pnpm -C packages/codebeat-server run wdeploy",
+    "w:dev": "pnpm -C packages/codebeat-ext-webview run dev"
   },
   "dependencies": {
+    "@vitejs/plugin-vue": "catalog:view",
     "d3": "catalog:extension",
+    "vue": "catalog:view",
     "zod": "catalog:deps"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:devtool",
     "@antfu/nip": "catalog:devtool",
     "@cloudflare/workers-types": "catalog:devtool",
-
     "@hono/node-server": "catalog:devtool",
     "@prisma/client": "catalog:server",
     "@types/d3": "catalog:devtool",

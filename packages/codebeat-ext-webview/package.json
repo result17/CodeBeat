@@ -1,0 +1,29 @@
+{
+  "publisher": "result17",
+  "name": "codebeat-ext-webview",
+  "displayName": "CodeBeat-ext-webview",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "packageManager": "pnpm@10.8.1",
+  "description": "",
+  "author": "result17 <rescp17@gmail.com>",
+  "engines": {
+    "vscode": "^1.97.0"
+  },
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite dev",
+    "lint": "eslint --fix"
+  },
+  "dependencies": {
+    "vue": "catalog:view"
+  },
+  "devDependencies": {
+    "@antfu/ni": "catalog:devtool",
+    "pnpm": "catalog:devtool",
+    "typescript": "catalog:devtool",
+    "vite": "catalog:build",
+    "vitest": "catalog:test"
+  }
+}

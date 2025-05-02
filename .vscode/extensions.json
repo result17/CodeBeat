@@ -1,6 +1,7 @@
 {
   "recommendations": [
     "emeraldwalk.runonsave",
-    "humao.rest-client"
+    "humao.rest-client",
+    "dbaeumer.vscode-eslint"
   ]
 }
