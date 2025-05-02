@@ -26,6 +26,7 @@ catalogs:
     pnpm: ^10.8.1
     ts-node: ^10.9.2
     typescript: ^5.8.2
+    vite-plugin-node: ^5.0.1
     vscode-ext-gen: ^1.0.0
   extension:
     d3: ^7.9.0

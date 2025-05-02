@@ -13,7 +13,7 @@
         "${workspaceFolder}/packages/codebeat-ext/dist/**/*.js"
       ],
       "cwd": "${workspaceFolder}/packages/codebeat-ext",
-      "preLaunchTask": "npm: p:dev",
+      "preLaunchTask": "npm: e:dev",
       "envFile": "${workspaceFolder}/packages/codebeat-ext/.env",
       "env": {
         "NODE_ENV": "development"

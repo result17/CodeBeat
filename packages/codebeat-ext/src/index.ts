@@ -44,7 +44,7 @@ const { activate, deactivate } = defineExtension(() => {
     for (const entire of Object.entries(params.value)) {
       list.push(...entire)
     }
-    if (process.env.IS_LOCAL === 'true' || extensionContext.value?.extensionMode === ExtensionMode.Development) {
+    if (process.env.IS_LOCAL === 'true' || (extensionContext.value && extensionContext.value.extensionMode === ExtensionMode.Development)) {
       list.unshift('--local-save', '--dlog')
     }
     return list

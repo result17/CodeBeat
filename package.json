@@ -29,23 +29,26 @@
     "s:wdeploy": "pnpm -C packages/codebeat-server run wdeploy"
   },
   "dependencies": {
-    "@cloudflare/workers-types": "catalog:devtool",
-    "@hono/node-server": "catalog:devtool",
     "d3": "catalog:extension",
-    "dotenv-cli": "catalog:build",
-    "tsx": "catalog:server",
-    "wrangler": "catalog:server",
     "zod": "catalog:deps"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:devtool",
     "@antfu/nip": "catalog:devtool",
+    "@cloudflare/workers-types": "catalog:devtool",
+
+    "@hono/node-server": "catalog:devtool",
     "@prisma/client": "catalog:server",
     "@types/d3": "catalog:devtool",
     "@typescript-eslint/utils": "catalog:devtool",
+    "dotenv-cli": "catalog:build",
     "eslint": "catalog:devtool",
+    "tsx": "catalog:server",
+    "vite": "catalog:build",
+    "vite-plugin-node": "catalog:devtool",
     "vite-tsconfig-paths": "catalog:test",
-    "vitest": "catalog:test"
+    "vitest": "catalog:test",
+    "wrangler": "catalog:server"
   },
   "lint-staged": {
     "*": "eslint --fix"

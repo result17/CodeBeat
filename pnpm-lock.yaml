@@ -71,6 +71,9 @@ catalogs:
     typescript:
       specifier: ^5.8.2
       version: 5.8.2
+    vite-plugin-node:
+      specifier: ^5.0.1
+      version: 5.0.1
     vscode-ext-gen:
       specifier: ^1.0.0
       version: 1.0.2
@@ -121,9 +124,6 @@ importers:
       '@hono/node-server':
         specifier: catalog:devtool
         version: 1.14.1(hono@4.7.7)
-      '@types/d3':
-        specifier: catalog:devtool
-        version: 7.4.3
       d3:
         specifier: catalog:extension
         version: 7.9.0
@@ -133,6 +133,12 @@ importers:
       tsx:
         specifier: catalog:server
         version: 4.19.3
+      vite:
+        specifier: catalog:build
+        version: 6.2.6(@types/node@22.13.10)(jiti@2.4.2)(tsx@4.19.3)(yaml@2.7.1)
+      vite-plugin-node:
+        specifier: catalog:devtool
+        version: 5.0.1(vite@6.2.6(@types/node@22.13.10)(jiti@2.4.2)(tsx@4.19.3)(yaml@2.7.1))
       wrangler:
         specifier: catalog:server
         version: 4.12.0(@cloudflare/workers-types@4.20250418.0)
@@ -149,6 +155,9 @@ importers:
       '@prisma/client':
         specifier: catalog:server
         version: 6.6.0(prisma@6.6.0(typescript@5.8.2))(typescript@5.8.2)
+      '@types/d3':
+        specifier: catalog:devtool
+        version: 7.4.3
       '@typescript-eslint/utils':
         specifier: catalog:devtool
         version: 8.30.1(eslint@9.24.0(jiti@2.4.2))(typescript@5.8.2)
@@ -922,6 +931,10 @@ packages:
 
   '@reactive-vscode/reactivity@0.2.14':
     resolution: {integrity: sha512-Rb3+kBX9A55C+4OKqVe4XGWtG7eGWo+E/8n0eSmbpmOEdZq3r5+SNEfEe3U0OdaCMT2r59R6kkK2QVfZpdBKhA==}
+
+  '@rollup/pluginutils@4.2.1':
+    resolution: {integrity: sha512-iKnFXr7NkdZAIHiIWE+BX5ULi/ucVFYWD6TbAV+rZctiRTY2PL6tsIKhoIOaoskiWAkgu+VsbXgUVDNLHf+InQ==}
+    engines: {node: '>= 8.0.0'}
 
   '@rollup/rollup-android-arm-eabi@4.40.0':
     resolution: {integrity: sha512-+Fbls/diZ0RDerhE8kyC6hjADCXA1K4yVNlH0EYfd2XjyH0UGgzaQ8MlT0pCXAThfxv3QUAczHaL+qSv1E4/Cg==}
@@ -3621,6 +3634,15 @@ packages:
     engines: {node: ^18.0.0 || ^20.0.0 || >=22.0.0}
     hasBin: true
 
+  vite-plugin-node@5.0.1:
+    resolution: {integrity: sha512-xdR4UW1h2ZM1wBf4pjwzuty/mX6F/GViB8h1iqOpxr81pa5OuWb3IJghl66v4e7Srsi2p5o22n9G7G46FeZK9Q==}
+    peerDependencies:
+      '@swc/core': ^1.7.26
+      vite: ^6.2.2
+    peerDependenciesMeta:
+      '@swc/core':
+        optional: true
+
   vite-tsconfig-paths@5.1.4:
     resolution: {integrity: sha512-cYj0LRuLV2c2sMqhqhGpaO3LretdtMn/BVX4cPLanIZuwwrkVl+lK84E/miEXkCHWXuq65rhNN4rXsBcOB3S4w==}
     peerDependencies:
@@ -4425,6 +4447,11 @@ snapshots:
       '@prisma/debug': 6.6.0
 
   '@reactive-vscode/reactivity@0.2.14': {}
+
+  '@rollup/pluginutils@4.2.1':
+    dependencies:
+      estree-walker: 2.0.2
+      picomatch: 2.3.1
 
   '@rollup/rollup-android-arm-eabi@4.40.0':
     optional: true
@@ -7507,6 +7534,15 @@ snapshots:
       - terser
       - tsx
       - yaml
+
+  vite-plugin-node@5.0.1(vite@6.2.6(@types/node@22.13.10)(jiti@2.4.2)(tsx@4.19.3)(yaml@2.7.1)):
+    dependencies:
+      '@rollup/pluginutils': 4.2.1
+      chalk: 4.1.2
+      debug: 4.4.0
+      vite: 6.2.6(@types/node@22.13.10)(jiti@2.4.2)(tsx@4.19.3)(yaml@2.7.1)
+    transitivePeerDependencies:
+      - supports-color
 
   vite-tsconfig-paths@5.1.4(typescript@5.8.2)(vite@6.2.6(@types/node@22.13.10)(jiti@2.4.2)(tsx@4.19.3)(yaml@2.7.1)):
     dependencies:
