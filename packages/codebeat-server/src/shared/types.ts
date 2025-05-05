@@ -1,32 +1,34 @@
-import type { createDurationService, createHeartbeatService } from '../service'
-
-interface Services {
-  heartbeat: ReturnType<typeof createHeartbeatService>
-  duration: ReturnType<typeof createDurationService>
+/**
+ * Heartbeat duration summary data
+ */
+export interface GrandTotal {
+  /** Hours */
+  hours: number
+  /** Minutes */
+  minutes: number
+  /** Seconds */
+  seconds: number
+  /** Formatted time string */
+  text: string
+  /** Total milliseconds */
+  total_ms: number
 }
-export interface ContextProps {
-  services: Services
+
+export interface TimeRange {
+  /** Start timestamp */
+  start: number
+  /** heartbeat duration */
+  duration: number
+  /** project name */
+  project: string
 }
 
-declare module 'hono' {
-  interface ExecutionContext {
-    props: ContextProps
-  }
-}
-
-export interface AcceleratedFindManyArgs {
-  where?: {
-    recvAt?: {
-      gte?: Date
-      lte?: Date
-    }
-  }
-  omit?: {
-    recvAt?: boolean
-    createdAt?: boolean
-  }
-  cacheStrategy?: {
-    ttl?: number
-    swr?: number
-  }
+/**
+ * Heartbeat time range data
+ */
+export interface SummaryData {
+  /** Duration summary */
+  grandTotal: GrandTotal
+  /** heartbeat records timeline */
+  timeline: TimeRange[]
 }

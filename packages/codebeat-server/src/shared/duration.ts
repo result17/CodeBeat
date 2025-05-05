@@ -1,43 +1,5 @@
-import type { HeartbeatRecordResponse } from '../db/heartbeat'
-import { HeartbeatTimeline } from './timeline'
-
 const MILLISECONDS_PER_HOUR = 3_600_000
 const MILLISECONDS_PER_MINUTE = 60_000
-
-/**
- * Heartbeat duration summary data
- */
-export interface GrandTotal {
-  /** Hours */
-  hours: number
-  /** Minutes */
-  minutes: number
-  /** Seconds */
-  seconds: number
-  /** Formatted time string */
-  text: string
-  /** Total milliseconds */
-  total_ms: number
-}
-
-export interface TimeRange {
-  /** Start timestamp */
-  start: number
-  /** heartbeat duration */
-  duration: number
-  /** project name */
-  project: string
-}
-
-/**
- * Heartbeat time range data
- */
-export interface SummaryData {
-  /** Duration summary */
-  grandTotal: GrandTotal
-  /** heartbeat records timeline */
-  timeline: TimeRange[]
-}
 
 export function getStartOfTodayDay() {
   const now = new Date()
@@ -85,23 +47,4 @@ export function millisecondsToTimeComponents(totalMs: number): {
   const hours = Math.floor(totalSeconds / 3600)
 
   return { hours, minutes, seconds }
-}
-
-export function getRangerData(records: HeartbeatRecordResponse[]): SummaryData {
-  // Validate input parameters
-  if (!Array.isArray(records) || records.length < 1) {
-    return {
-      grandTotal: {
-        hours: 0,
-        minutes: 0,
-        seconds: 0,
-        text: '',
-        total_ms: 0,
-      },
-      timeline: [],
-    }
-  }
-  const timeline = new HeartbeatTimeline(records)
-  const summary = timeline.summary()
-  return summary
 }

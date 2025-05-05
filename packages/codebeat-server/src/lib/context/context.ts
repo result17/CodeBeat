@@ -1,8 +1,8 @@
+import type { HeartbeatManager, PrismaInstance } from '@/db'
+import type { ContextProps } from '@/types'
 import type { Context } from 'hono'
-import type { HeartbeatManager, PrismaInstance } from '../db'
-import type { ContextProps } from './types'
-import { getHeartbeatManager, getPrismaClientInstance } from '../db'
-import { createDurationService, createHeartbeatService } from '../service'
+import { getHeartbeatManager, getPrismaClientInstance } from '@/db'
+import { createDurationService, createHeartbeatService } from '@/service'
 
 let prismaClient: PrismaInstance | null = null
 let heartbeatManager: HeartbeatManager | null = null

@@ -1,7 +1,7 @@
+import type { HeartbeatRecordResponse } from '@/db/heartbeat'
 import type { GrandTotal } from '@/routes/duration/schema'
-import type { HeartbeatRecordResponse } from '../db/heartbeat'
-import type { SummaryData, TimeRange } from './duration'
-import { formatMilliseconds, millisecondsToTimeComponents } from './duration'
+import type { SummaryData, TimeRange } from '@/shared'
+import { formatMilliseconds, millisecondsToTimeComponents } from '@/shared/duration'
 
 export type HeartbeatTimeItem = Pick<HeartbeatRecordResponse, 'id' | 'project' | 'sendAt'>
 

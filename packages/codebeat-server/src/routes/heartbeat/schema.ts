@@ -1,4 +1,4 @@
-import { UnixMillisSchema } from '@/shared'
+import { UnixMillisSchema } from '@/lib'
 import { z } from '@hono/zod-openapi'
 
 const BaseHeartbeatSchema = z.object({

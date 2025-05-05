@@ -17,10 +17,12 @@
     "lint": "eslint --fix"
   },
   "dependencies": {
+    "d3": "catalog:extension",
     "vue": "catalog:view"
   },
   "devDependencies": {
     "@antfu/ni": "catalog:devtool",
+    "codebeat-server": "workspace:*",
     "pnpm": "catalog:devtool",
     "typescript": "catalog:devtool",
     "vite": "catalog:build",

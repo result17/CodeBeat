@@ -1,9 +1,9 @@
 import type { MiddlewareHandler } from 'hono'
-import type { ContextProps } from './types'
+import type { ContextProps } from '../../types'
 import process from 'node:process'
 import { createDurationService } from '@/service/duration'
-import { getHeartbeatManager, getPrismaClientInstance } from '../db'
-import { createHeartbeatService } from '../service'
+import { getHeartbeatManager, getPrismaClientInstance } from '../../db'
+import { createHeartbeatService } from '../../service'
 
 export function serviceMiddleWare(): MiddlewareHandler<{ Variables: ContextProps }> {
   const { DIRECT_DATABASE_URL, DATABASE_URL } = process.env

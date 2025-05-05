@@ -36,8 +36,8 @@ export function verifyStartAndEndDate(c: Context) {
       })
     }
     return {
-        start: startDate,
-        end: endDate
+      start: startDate,
+      end: endDate,
     }
   }
   catch (err) {

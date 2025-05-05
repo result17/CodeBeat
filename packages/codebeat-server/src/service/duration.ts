@@ -1,6 +1,7 @@
 import type { HeartbeatManager } from '@/db/heartbeat'
 import type { SummaryData } from '@/shared'
-import { getEndOfTodayDay, getRangerData, getStartOfTodayDay } from '@/shared'
+import { getRangerData } from '@/lib'
+import { getEndOfTodayDay, getStartOfTodayDay } from '@/shared'
 
 interface DurationService {
   getTodayDuration: () => Promise<Pick<SummaryData, 'grandTotal'>>

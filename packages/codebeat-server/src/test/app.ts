@@ -1,11 +1,10 @@
-import type { ContextProps } from '../shared'
-import { handleError } from '@/lib'
+import type { ContextProps } from '@/types'
+import { handleError, logReqJSONBody, logResJSONBody } from '@/lib'
 import { Hono } from 'hono'
 import { logger } from 'hono/logger'
 import { prettyJSON } from 'hono/pretty-json'
+import { serviceMiddleWare } from '../lib/middleware/node_middleware'
 import { api } from '../routes'
-import { logReqJSONBody, logResJSONBody } from '../shared'
-import { serviceMiddleWare } from '../shared/node_middleware'
 
 const app = new Hono<{ Variables: ContextProps }>()
 app.use('*', logger())

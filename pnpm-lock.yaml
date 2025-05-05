@@ -226,6 +226,9 @@ importers:
 
   packages/codebeat-ext-webview:
     dependencies:
+      d3:
+        specifier: catalog:extension
+        version: 7.9.0
       vue:
         specifier: catalog:view
         version: 3.5.13(typescript@5.8.2)
@@ -233,6 +236,9 @@ importers:
       '@antfu/ni':
         specifier: catalog:devtool
         version: 23.3.1
+      codebeat-server:
+        specifier: workspace:*
+        version: link:../codebeat-server
       pnpm:
         specifier: catalog:devtool
         version: 10.8.1
@@ -282,6 +288,9 @@ importers:
       ts-node:
         specifier: catalog:devtool
         version: 10.9.2(@types/node@22.13.10)(typescript@5.8.2)
+      tsup:
+        specifier: catalog:build
+        version: 8.4.0(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)(yaml@2.7.1)
       typescript:
         specifier: catalog:devtool
         version: 5.8.2

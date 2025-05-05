@@ -1,1 +1,1 @@
-export { StartAndDateErrorMsg as HeartbeatErrorMsg } from '@/shared'
+export { StartAndDateErrorMsg as HeartbeatErrorMsg } from '@/lib'

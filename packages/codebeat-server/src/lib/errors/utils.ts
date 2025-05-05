@@ -1,9 +1,30 @@
 import type { Context } from 'hono'
 import type { ZodIssue } from 'zod'
-import { codeToStatus, statusToCode } from '@/shared/error'
 import { z } from '@hono/zod-openapi'
 import { HTTPException } from 'hono/http-exception'
 import { ZodError } from 'zod'
+
+export function statusToCode(status: number): ErrorCode {
+  switch (status) {
+    case 400:
+      return 'BAD_REQUEST'
+    case 500:
+      return 'INTERNAL_SERVER_ERROR'
+    default:
+      return 'INTERNAL_SERVER_ERROR'
+  }
+}
+
+export function codeToStatus(code: ErrorCode) {
+  switch (code) {
+    case 'BAD_REQUEST':
+      return 400
+    case 'INTERNAL_SERVER_ERROR':
+      return 500
+    default:
+      return 500
+  }
+}
 
 // Props to cal.com: https://github.com/calcom/cal.com/blob/5d325495a9c30c5a9d89fc2adfa620b8fde9346e/packages/lib/server/getServerErrorFromUnknown.ts#L17
 export function parseZodErrorIssues(issues: ZodIssue[]): string {

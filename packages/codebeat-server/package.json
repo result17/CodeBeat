@@ -4,6 +4,14 @@
   "displayName": "CodeBeat-server",
   "type": "module",
   "license": "MIT",
+  "exports": {
+    ".": "./dist/shared/index.js"
+  },
+  "main": "./dist/shared/index.mjs",
+  "types": "./dist/shared/index.d.ts",
+  "files": [
+    "dist/shared"
+  ],
   "scripts": {
     "test": "pnpm prepare_node && vitest run",
     "test:watch": "pnpm prepare_node && vitest watch",
@@ -16,7 +24,8 @@
     "studio": "dotenv -e .dev.vars -- npx prisma studio",
     "dev": "pnpm prepare_node && dotenv -e .local.vars tsx watch ./src/test/start.ts",
     "wdev": "pnpm prepare && dotenv -e .dev.vars wrangler dev",
-    "wdeploy": "wrangler deploy"
+    "wdeploy": "wrangler deploy",
+    "share": "tsup --config src/tsup.config.ts"
   },
   "dependencies": {
     "@cloudflare/workers-types": "catalog:devtool",
@@ -32,6 +41,7 @@
   "devDependencies": {
     "prisma": "catalog:server",
     "ts-node": "catalog:devtool",
+    "tsup": "catalog:build",
     "typescript": "catalog:devtool"
   }
 }
