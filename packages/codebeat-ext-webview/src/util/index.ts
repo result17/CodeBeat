@@ -5,3 +5,9 @@ export function formatHour(hours: number) {
     return '12p'
   return `${hours % 12}${hours < 12 ? 'a' : 'p'}`
 };
+
+export function formatDayTime(date: Date) {
+  const hour = formatHour(date.getHours())
+  const [hourNum, ap] = [hour.slice(0, hour.length - 1), hour.slice(hour.length - 1)]
+  return `${hourNum}:${date.getMinutes().toString().padStart(2, '0')}${ap}m`
+}

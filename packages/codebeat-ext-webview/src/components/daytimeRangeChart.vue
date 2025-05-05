@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import type { TimeRange } from 'codebeat-server';
-import * as d3 from 'd3';
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
-import { formatHour } from '../util';
+import type { TimeRange } from 'codebeat-server'
+import { formatMilliseconds } from 'codebeat-server'
+import * as d3 from 'd3'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { formatDayTime, formatHour } from '../util'
 
 const props = defineProps<Props>()
 
@@ -17,6 +18,7 @@ interface ProjectSchedule {
   project: string
   start: Date
   end: Date
+  duration: number
 }
 
 interface Props {
@@ -54,6 +56,7 @@ const processedData = computed<ProjectSchedule[]>(() => {
       project,
       start: startDate,
       end: endDate,
+      duration,
     }
   })
 })
@@ -97,7 +100,6 @@ function initChart() {
   const yScale = d3.scaleBand()
     .domain(processedData.value.map(d => d.project))
     .range([margin.top, height.value - margin.bottom])
-    .padding(0.2)
 
   // set axis
   const xAxis = d3.axisTop(xScale)
@@ -127,14 +129,16 @@ function initChart() {
     .attr('transform', `translate(${margin.left}, 0)`)
     .call(yAxis)
 
-  for (const { start, project, end } of processedData.value) {
+  for (const { start, project, end, duration } of processedData.value) {
     svg.append('rect')
       .attr('class', 'time-block')
       .attr('x', xScale(start))
-      .attr('y', yScale(project)!)
+      .attr('y', yScale(project)! + yScale.bandwidth() * 0.1)
       .attr('width', xScale(end) - xScale(start))
-      .attr('height', yScale.bandwidth())
+      .attr('height', yScale.bandwidth() * 0.8)
       .attr('fill', colorScale(project))
+      .append('title')
+      .text(`${formatMilliseconds(duration)} from ${formatDayTime(start)} to ${formatDayTime(end)}`)
   }
   svg.append('line')
     .attr('class', 'x-axis')
