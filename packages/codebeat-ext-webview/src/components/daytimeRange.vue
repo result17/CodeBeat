@@ -11,7 +11,7 @@ function TIME_FORMATTER(date: Date) {
   const hours = date.getHours()
   return formatHour(hours)
 }
-const Y_LINE_HEIGHT = 50
+const Y_LINE_HEIGHT = 32
 
 interface ProjectSchedule {
   project: string
@@ -26,22 +26,24 @@ interface Props {
 const chartContainer = ref<HTMLElement | null>(null)
 const width = ref(800)
 
-const margin = { top: 40, right: 30, bottom: 40, left: 120 }
+const margin = { top: 40, right: 30, bottom: 40, left: 130 }
+
+const validData = computed(() => props.data.filter(({ duration }) => duration > 0))
 
 const uniqueProgramSize = computed(() => {
-  return props.data.reduce<Set<string>>((set, { project }) => {
+  return validData.value.reduce<Set<string>>((set, { project }) => {
     if (!set.has(project)) {
       set.add(project)
     }
     return set
-  }, new Set()).size
+  }, new Set())
 })
 
-const height = computed(() => uniqueProgramSize.value * Y_LINE_HEIGHT)
+const height = computed(() => uniqueProgramSize.value.size * Y_LINE_HEIGHT + margin.top + margin.bottom)
 
 // trans timestamp to Date
 const processedData = computed<ProjectSchedule[]>(() => {
-  return props.data.filter(({ duration }) => duration > 0).map(({
+  return validData.value.map(({
     project,
     start,
     duration,
@@ -117,6 +119,9 @@ function initChart() {
     .call(xAxis)
 
   const yAxis = d3.axisLeft(yScale)
+    .tickSize(0)
+    .tickSizeOuter(0)
+
   svg.append('g')
     .attr('class', 'y-axis')
     .attr('transform', `translate(${margin.left}, 0)`)
@@ -130,6 +135,25 @@ function initChart() {
       .attr('width', xScale(end) - xScale(start))
       .attr('height', yScale.bandwidth())
       .attr('fill', colorScale(project))
+  }
+  svg.append('line')
+    .attr('class', 'x-axis')
+    .attr('x1', width.value - margin.right)
+    .attr('x2', width.value - margin.right)
+    .attr('y1', margin.top)
+    .attr('y2', (uniqueProgramSize.value.size) * Y_LINE_HEIGHT + margin.top)
+    .attr('stroke', '#666')
+    .attr('stroke-width', 1)
+
+  for (let i = 0; i < uniqueProgramSize.value.size; i++) {
+    svg.append('line')
+      .attr('class', 'y-axis')
+      .attr('x1', margin.left)
+      .attr('x2', width.value - margin.right)
+      .attr('y1', (i + 1) * Y_LINE_HEIGHT + margin.top)
+      .attr('y2', (i + 1) * Y_LINE_HEIGHT + margin.top)
+      .attr('stroke', '#666')
+      .attr('stroke-width', 1)
   }
 }
 
@@ -158,10 +182,8 @@ onBeforeUnmount(() => {
 .schedule-chart {
   width: 100%;
   max-width: 1000px;
-  margin: 20px auto;
   border: 1px solid #eee;
   border-radius: 8px;
-  padding: 10px;
 }
 
 .x-axis path,

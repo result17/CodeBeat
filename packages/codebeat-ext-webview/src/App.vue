@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import DaytimeRange from './components/daytimeRange.vue';
+import DaytimeRange from './components/daytimeRangeChart.vue';
 import timeline from './mockData';
 </script>
 
