@@ -8,10 +8,14 @@ export default defineConfig({
     emptyOutDir: true,
     minify: true,
     sourcemap: false,
+    manifest: false,
     rollupOptions: {
+      input: {
+        main: 'src/main.ts',
+      },
       output: {
-        assetFileNames: 'assets/[name].[hash].[ext]',
-        entryFileNames: 'assets/[name].[hash].js',
+        assetFileNames: 'codebeat-webview.[ext]',
+        entryFileNames: 'codebeat-webview.js',
       },
     },
   },
