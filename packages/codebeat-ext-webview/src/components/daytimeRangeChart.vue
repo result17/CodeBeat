@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { TimeRange } from 'codebeat-server'
 import { formatMilliseconds } from 'codebeat-server'
-import * as d3 from 'd3'
+import { axisLeft, axisTop, scaleBand, scaleOrdinal, scaleTime, schemeCategory10, select, timeHour } from 'd3'
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { formatDayTime, formatHour } from '../util'
 
@@ -60,9 +60,9 @@ const processedData = computed<ProjectSchedule[]>(() => {
     }
   })
 })
-const colorScale = d3.scaleOrdinal<string>()
+const colorScale = scaleOrdinal<string>()
   .domain(processedData.value.map(d => d.project))
-  .range(d3.schemeCategory10)
+  .range(schemeCategory10)
 
 // init
 function initChart() {
@@ -70,10 +70,10 @@ function initChart() {
     return
 
   // clear old svg
-  d3.select(chartContainer.value).selectAll('*').remove()
+  select(chartContainer.value).selectAll('*').remove()
 
   // create svg container
-  const svg = d3.select(chartContainer.value)
+  const svg = select(chartContainer.value)
     .append('svg')
     .attr('width', width.value)
     .attr('height', height.value)
@@ -93,17 +93,17 @@ function initChart() {
     return [dayStart, dayEnd]
   })()
 
-  const xScale = d3.scaleTime()
+  const xScale = scaleTime()
     .domain(dayRange)
     .range([margin.left, width.value - margin.right])
 
-  const yScale = d3.scaleBand()
+  const yScale = scaleBand()
     .domain(processedData.value.map(d => d.project))
     .range([margin.top, height.value - margin.bottom])
 
   // set axis
-  const xAxis = d3.axisTop(xScale)
-    .ticks(d3.timeHour.every(2))
+  const xAxis = axisTop(xScale)
+    .ticks(timeHour.every(2))
     .tickFormat((d: unknown) => {
       if (!(d instanceof Date))
         return ''
@@ -120,7 +120,7 @@ function initChart() {
     .attr('transform', `translate(0, ${margin.top})`)
     .call(xAxis)
 
-  const yAxis = d3.axisLeft(yScale)
+  const yAxis = axisLeft(yScale)
     .tickSize(0)
     .tickSizeOuter(0)
 

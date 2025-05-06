@@ -1,18 +1,21 @@
-import { createSingletonComposable, ref, useWebviewView } from 'reactive-vscode'
+import { createSingletonComposable, ref, useAbsolutePath, useFileUri, useWebviewView } from 'reactive-vscode'
+import { workspace } from 'vscode'
+import { logger } from '../utils'
 
-export const useChartView = createSingletonComposable(() => {
-  const html = ref(`<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CodeBeat Chart</title>
-</head>
-<body>
-    <h2>codebeat chart</h2>
-    <div id="chart-container"></div>
-</body>
-</html>`)
+export const useChartView = createSingletonComposable(async () => {
+  const { fs: { readFile } } = workspace
+  const absHTMLPath = useAbsolutePath('dist/webview/index.html')
+  logger.info(`absPath is : ${absHTMLPath.value}`)
+  const HTMLFileURI = useFileUri(absHTMLPath)
+  const HTMLContent = (await readFile(HTMLFileURI.value)).toString()
+  const html = ref(HTMLContent)
+  logger.info(HTMLContent)
+  // const path = useFileUri(join(self.value?.extensionPath ?? '', 'dist/webview/index.html')).value.fsPath
+  // const html = ref(readFileSync(join(cwd(), 'dist/webview/index.html')).toString('utf-8'))
 
-  return useWebviewView('codebeat-chart-webview', html.value)
+  return useWebviewView('codebeat-chart-webview', html.value, {
+    webviewOptions: {
+      enableScripts: true,
+    },
+  })
 })
