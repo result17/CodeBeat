@@ -31,7 +31,7 @@ export class HeartbeatTimeline {
 
   private move() {
     if (this.prevIndex < this.timeline.length - 1) {
-      this.prevHeartbeat = this.timeline[this.prevIndex++]
+      this.prevHeartbeat = this.timeline[++this.prevIndex]
     }
   }
 
@@ -62,7 +62,7 @@ export class HeartbeatTimeline {
       else {
         // if both are same project
         if (project === prev.project) {
-          this.lastRange.duration = sendTime - prev.sendAt.getTime()
+          this.lastRange.duration = sendTime - this.lastRange.start
         }
         else {
           // if they aren't same project, then add a new range
