@@ -12,6 +12,8 @@ window.addEventListener('message', (event) => {
 </script>
 
 <template>
-  <h1>{{ messageRef || 'webview' }}</h1>
+  <h1 v-if="messageRef">
+    {{ messageRef }}
+  </h1>
   <DaytimeRange v-if="timeline" :data="timeline" />
 </template>

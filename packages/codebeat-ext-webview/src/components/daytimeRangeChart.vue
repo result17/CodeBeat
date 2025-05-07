@@ -4,6 +4,7 @@ import { formatMilliseconds } from 'codebeat-server'
 import { axisLeft, axisTop, scaleBand, scaleOrdinal, scaleTime, schemeCategory10, select, timeHour } from 'd3'
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { formatDayTime, formatHour } from '../util'
+import IxProject from './IxProject.vue'
 
 const props = defineProps<Props>()
 
@@ -26,9 +27,14 @@ interface Props {
 }
 
 const chartContainer = ref<HTMLElement | null>(null)
-const width = ref(800)
+const width = ref(0)
 
-const margin = { top: 40, right: 30, bottom: 40, left: 130 }
+const margin = computed(() => {
+  if (width.value <= 300) {
+    return { top: 40, right: 10, bottom: 40, left: 80 }
+  }
+  return { top: 40, right: 30, bottom: 40, left: 100 }
+})
 
 const validData = computed(() => props.data.filter(({ duration }) => duration > 0))
 
@@ -41,7 +47,7 @@ const uniqueProgramSize = computed(() => {
   }, new Set())
 })
 
-const height = computed(() => uniqueProgramSize.value.size * Y_LINE_HEIGHT + margin.top + margin.bottom)
+const height = computed(() => uniqueProgramSize.value.size * Y_LINE_HEIGHT + margin.value.top + margin.value.bottom)
 
 // trans timestamp to Date
 const processedData = computed<ProjectSchedule[]>(() => {
@@ -95,11 +101,11 @@ function initChart() {
 
   const xScale = scaleTime()
     .domain(dayRange)
-    .range([margin.left, width.value - margin.right])
+    .range([margin.value.left, width.value - margin.value.right])
 
   const yScale = scaleBand()
     .domain(processedData.value.map(d => d.project))
-    .range([margin.top, height.value - margin.bottom])
+    .range([margin.value.top, height.value - margin.value.bottom])
 
   // set axis
   const xAxis = axisTop(xScale)
@@ -114,20 +120,41 @@ function initChart() {
         return ''
       }
     })
+    .tickSizeOuter(0)
+    .tickSizeInner(6)
 
   svg.append('g')
     .attr('class', 'x-axis')
-    .attr('transform', `translate(0, ${margin.top})`)
+    .attr('transform', `translate(0, ${margin.value.top})`)
     .call(xAxis)
 
   const yAxis = axisLeft(yScale)
     .tickSize(0)
     .tickSizeOuter(0)
+    .tickSizeInner(6)
+    .tickFormat((d: string) => {
+      const text = select(document.createElement('div'))
+        .text(d)
+        .style('font-size', '12px')
+        .style('font-family', 'sans-serif')
+        .node()
+        ?.textContent || d
+
+      const maxWidth = margin.value.left
+      // each font is about 7 pixels
+      const ellipsis = text.length > maxWidth / 7 ? '...' : ''
+      const displayText = text.slice(0, Math.floor(maxWidth / 7)) + ellipsis
+
+      return displayText
+    })
 
   svg.append('g')
     .attr('class', 'y-axis')
-    .attr('transform', `translate(${margin.left}, 0)`)
+    .attr('transform', `translate(${margin.value.left}, 0)`)
     .call(yAxis)
+    .selectAll('.tick text')
+    .append('title')
+    .text(d => d as string)
 
   for (const { start, project, end, duration } of processedData.value) {
     svg.append('rect')
@@ -142,21 +169,21 @@ function initChart() {
   }
   svg.append('line')
     .attr('class', 'x-axis')
-    .attr('x1', width.value - margin.right)
-    .attr('x2', width.value - margin.right)
-    .attr('y1', margin.top)
-    .attr('y2', (uniqueProgramSize.value.size) * Y_LINE_HEIGHT + margin.top)
-    .attr('stroke', '#666')
+    .attr('x1', width.value - margin.value.right)
+    .attr('x2', width.value - margin.value.right)
+    .attr('y1', margin.value.top)
+    .attr('y2', (uniqueProgramSize.value.size) * Y_LINE_HEIGHT + margin.value.top)
+    .attr('stroke', 'currentColor')
     .attr('stroke-width', 1)
 
   for (let i = 0; i < uniqueProgramSize.value.size; i++) {
     svg.append('line')
       .attr('class', 'y-axis')
-      .attr('x1', margin.left)
-      .attr('x2', width.value - margin.right)
-      .attr('y1', (i + 1) * Y_LINE_HEIGHT + margin.top)
-      .attr('y2', (i + 1) * Y_LINE_HEIGHT + margin.top)
-      .attr('stroke', '#666')
+      .attr('x1', margin.value.left)
+      .attr('x2', width.value - margin.value.right)
+      .attr('y1', (i + 1) * Y_LINE_HEIGHT + margin.value.top)
+      .attr('y2', (i + 1) * Y_LINE_HEIGHT + margin.value.top)
+      .attr('stroke', 'currentColor')
       .attr('stroke-width', 1)
   }
 }
@@ -169,6 +196,7 @@ function handleResize() {
 }
 
 onMounted(() => {
+  handleResize()
   initChart()
   window.addEventListener('resize', handleResize)
 })
@@ -179,24 +207,25 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div ref="chartContainer" class="schedule-chart" />
+  <div>
+    <div class="schedule-title">
+      <IxProject /><span>PROJECTS</span>
+    </div>
+    <div ref="chartContainer" class="schedule-chart" />
+  </div>
 </template>
 
 <style scoped>
+.schedule-title {
+  display: flex;
+  gap: 0.125rem;
+  padding-block: 10px;
+}
 .schedule-chart {
   width: 100%;
   max-width: 1000px;
   border: 1px solid #eee;
   border-radius: 8px;
-}
-
-.x-axis path,
-.y-axis path,
-.x-axis line,
-.y-axis line {
-  fill: none;
-  stroke: #666;
-  shape-rendering: crispEdges;
 }
 
 .time-block {

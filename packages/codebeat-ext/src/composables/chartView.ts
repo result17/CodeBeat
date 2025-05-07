@@ -1,7 +1,7 @@
 import { computed, createSingletonComposable, ref, useAbsolutePath, useFileUri, useWebviewView, watch, watchEffect } from 'reactive-vscode'
 import { Uri } from 'vscode'
-import { useSelf } from './self'
 import { logger } from '../utils'
+import { useSelf } from './self'
 
 // Constants for webview resources
 const WEBVIEW_RESOURCES_DIR = 'dist/webview'
@@ -22,7 +22,8 @@ export const useChartView = createSingletonComposable(async () => {
   const html = computed(() => `<!DOCTYPE html>
                       <html>
                         <head>
-                        ${cspSourceRef.value && isInitialized.value ? `
+                        ${cspSourceRef.value && isInitialized.value
+                          ? `
                           <meta charset="UTF-8">
                           <meta http-equiv="Content-Security-Policy"
                             content="default-src 'none';
@@ -31,16 +32,19 @@ export const useChartView = createSingletonComposable(async () => {
                                     style-src ${cspSourceRef.value} 'unsafe-inline';">
                           <base href="${styleUriRef.value?.with({ path: '/' }).toString()}">
                           <link rel="stylesheet" href="${styleUriRef.value}">
-                        ` : ''}
+                        `
+                          : ''}
                         </head>
                         <body>
                           <div id="app">${!isInitialized.value ? 'Loading...' : ''}</div>
-                          ${cspSourceRef.value && isInitialized.value ? `
+                          ${cspSourceRef.value && isInitialized.value
+                            ? `
                             <script src="${scriptUriRef.value}"></script>
-                          ` : ''}
+                          `
+                            : ''}
                         </body>
                       </html>`)
-  const webview = useWebviewView('codebeat-chart-webview', html.value, {
+  const webview = useWebviewView('codebeat-chart-webview', html, {
     webviewOptions: {
       enableScripts: true,
       localResourceRoots: [DistFileURI.value],
@@ -49,7 +53,8 @@ export const useChartView = createSingletonComposable(async () => {
   })
 
   watchEffect(() => {
-    if (!webview.view.value) return
+    if (!webview.view.value)
+      return
 
     cspSourceRef.value = webview.view.value.webview.cspSource ?? ''
 
@@ -59,11 +64,11 @@ export const useChartView = createSingletonComposable(async () => {
         const resourceBaseUri = Uri.joinPath(extensionUri, WEBVIEW_RESOURCES_DIR)
 
         styleUriRef.value = webviewPanel.asWebviewUri(
-          Uri.joinPath(resourceBaseUri, CSS_FILE_NAME)
+          Uri.joinPath(resourceBaseUri, CSS_FILE_NAME),
         )
 
         scriptUriRef.value = webviewPanel.asWebviewUri(
-          Uri.joinPath(resourceBaseUri, JS_FILE_NAME)
+          Uri.joinPath(resourceBaseUri, JS_FILE_NAME),
         )
 
         isInitialized.value = true
@@ -71,9 +76,10 @@ export const useChartView = createSingletonComposable(async () => {
           styleUri: styleUriRef.value?.toString(),
           scriptUri: scriptUriRef.value?.toString(),
           cspSource: cspSourceRef.value,
-          baseHref: styleUriRef.value?.with({ path: '/' }).toString()
+          baseHref: styleUriRef.value?.with({ path: '/' }).toString(),
         })
-      } catch (error) {
+      }
+      catch (error) {
         logger.error('Failed to initialize webview resources', error)
       }
     }
@@ -99,11 +105,11 @@ export const useChartView = createSingletonComposable(async () => {
             logger.info(webviewPanel.html)
           }
         }
-      } catch (error) {
+      }
+      catch (error) {
         logger.error('Failed to update webview content', error)
       }
     }
-
   })
   return webview
 })

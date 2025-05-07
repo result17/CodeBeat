@@ -8,6 +8,7 @@
   ],
   "scripts": {
     "e:build": "pnpm -C packages/codebeat-ext run build",
+    "ew:build": "pnpm -C packages/codebeat-ext-webview run build",
     "e:dev": "pnpm -C packages/codebeat-ext run dev",
     "e:prepare": "pnpm -C packages/codebeat-ext run prepare",
     "e:update": "pnpm -C packages/codebeat-ext run update",

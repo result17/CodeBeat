@@ -20,12 +20,12 @@ export const extensionState = reactive<ExtensionState>({
   lastQueryDurationTime: 0,
 })
 
-const { activate, deactivate } = defineExtension(async () => {
+const { activate, deactivate } = defineExtension(() => {
   logger.show()
   let timeout: NodeJS.Timeout | null = null
   // Register webview view provider
-  await useChartView()
-
+ useChartView()
+  
   const statusBar = useStatusBarItem({
     id: 'com.github.result17',
     alignment: StatusBarAlignment.Left,
