@@ -31,9 +31,9 @@ const width = ref(0)
 
 const margin = computed(() => {
   if (width.value <= 300) {
-    return { top: 40, right: 10, bottom: 40, left: 80 }
+    return { top: 40, right: 10, bottom: 20, left: 60 }
   }
-  return { top: 40, right: 30, bottom: 40, left: 100 }
+  return { top: 40, right: 20, bottom: 20, left: 80 }
 })
 
 const validData = computed(() => props.data.filter(({ duration }) => duration > 0))
@@ -223,9 +223,8 @@ onBeforeUnmount(() => {
 }
 .schedule-chart {
   width: 100%;
-  max-width: 1000px;
-  border: 1px solid #eee;
   border-radius: 8px;
+  background-color: var(--vscode-editor-background);
 }
 
 .time-block {

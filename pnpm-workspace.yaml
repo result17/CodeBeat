@@ -1,5 +1,5 @@
 packages:
-- packages/*
+  - packages/*
 
 catalogs:
   build:
@@ -45,5 +45,23 @@ catalogs:
   view:
     '@vitejs/plugin-vue': ^5.2.3
     vue: ^3.5.13
+  conflicts_build_:
+    tsup: ''
+  conflicts_build_c:
+    tsup: c
+  conflicts_build_ca:
+    tsup: ca
+  conflicts_build_cat:
+    tsup: cat
+  conflicts_build_cata:
+    tsup: cata
+  conflicts_build_catal:
+    tsup: catal
+  conflicts_build_catalo:
+    tsup: catalo
+  conflicts_build_catalog:
+    tsup: catalog
 onlyBuiltDependencies:
-- esbuild
+  - esbuild
+catalog:
+  codebeat-ext-webview: workspa

@@ -1,19 +1,28 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import type { IMessage } from './shared'
+import { ICommand } from './shared'
+import { onBeforeMount, shallowRef } from 'vue'
 import DaytimeRange from './components/daytimeRangeChart.vue'
-import timeline from './mockData'
+import type { SummaryData, TimeRange } from 'codebeat-server'
 
-const messageRef = ref('')
+const timelineRef = shallowRef<TimeRange[]>([])
 
-window.addEventListener('message', (event) => {
+const { postMessage } = window.acquireVsCodeApi()
+
+onBeforeMount(() => {
+  postMessage<IMessage<undefined>>({
+    command: ICommand.summary_today_query,
+  })
+})
+
+window.addEventListener('message', (event: MessageEvent<IMessage<SummaryData>>) => {
   const message = event.data
-  console.log(message)
+  if (message.data) {
+    timelineRef.value = message.data.timeline
+  }
 })
 </script>
 
 <template>
-  <h1 v-if="messageRef">
-    {{ messageRef }}
-  </h1>
-  <DaytimeRange v-if="timeline" :data="timeline" />
+  <DaytimeRange v-if="timelineRef.length > 0" :data="timelineRef" />
 </template>

@@ -1,14 +1,16 @@
+import type { IMessage } from 'codebeat-ext-webview'
+import type { SummaryData } from 'codebeat-server'
+import { ICommand } from 'codebeat-ext-webview'
 import { computed, createSingletonComposable, ref, useAbsolutePath, useFileUri, useWebviewView, watch, watchEffect } from 'reactive-vscode'
 import { Uri } from 'vscode'
-import { logger } from '../utils'
+import { logger, queryTodaySummary } from '../utils'
 import { useSelf } from './self'
-
 // Constants for webview resources
 const WEBVIEW_RESOURCES_DIR = 'dist/webview'
 const CSS_FILE_NAME = 'codebeat-webview.css'
 const JS_FILE_NAME = 'codebeat-webview.js'
 
-export const useChartView = createSingletonComposable(async () => {
+export const useChartView = createSingletonComposable(() => {
   const absDist = useAbsolutePath('dist/webview')
   const cspSourceRef = ref('')
   const DistFileURI = useFileUri(absDist)
@@ -50,6 +52,27 @@ export const useChartView = createSingletonComposable(async () => {
       localResourceRoots: [DistFileURI.value],
       enableCommandUris: true,
     },
+    async onDidReceiveMessage(message: IMessage<undefined>) {
+      if (message.command && message.command === ICommand.summary_today_query) {
+        const commandResult = await queryTodaySummary()
+        if (commandResult) {
+          const out = commandResult.stdout
+          logger.info('command stdout is', out)
+          try {
+            const summaryData = JSON.parse(out) as SummaryData
+            await webview.postMessage({
+              message: ICommand.summary_today_response,
+              data:  summaryData
+            })
+          }
+          catch (error) {
+            if (error instanceof Error) {
+              logger.error('failed to query summary data or post message', error)
+            }
+          }
+        }
+      }
+    },
   })
 
   watchEffect(() => {
@@ -72,12 +95,6 @@ export const useChartView = createSingletonComposable(async () => {
         )
 
         isInitialized.value = true
-        logger.info('Webview resource URIs initialized', {
-          styleUri: styleUriRef.value?.toString(),
-          scriptUri: scriptUriRef.value?.toString(),
-          cspSource: cspSourceRef.value,
-          baseHref: styleUriRef.value?.with({ path: '/' }).toString(),
-        })
       }
       catch (error) {
         logger.error('Failed to initialize webview resources', error)
@@ -86,7 +103,6 @@ export const useChartView = createSingletonComposable(async () => {
   })
 
   watch([html], () => {
-    logger.info('Webview HTML content:', html.value)
     // Update webview content and refresh if needed
     if (webview.view.value) {
       try {
@@ -102,7 +118,6 @@ export const useChartView = createSingletonComposable(async () => {
           if (webview.view.value.visible) {
             logger.info('Forcing webview refresh')
             webview.forceRefresh()
-            logger.info(webviewPanel.html)
           }
         }
       }

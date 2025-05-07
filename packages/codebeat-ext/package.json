@@ -77,6 +77,8 @@
     "@types/vscode": "catalog:devtool",
     "@vscode/vsce": "catalog:devtool",
     "bumpp": "catalog:devtool",
+    "codebeat-ext-webview": "workspace:*",
+    "codebeat-server": "workspace:*",
     "esno": "catalog:build",
     "pnpm": "catalog:devtool",
     "reactive-vscode": "catalog:extension",

@@ -38,7 +38,7 @@ interface CommandResult {
   stderr: string
   code: number | null
   signal: NodeJS.Signals | null
-  duration: number
+  execTime: number
 }
 
 /**
@@ -99,13 +99,13 @@ export async function runCommand(
       })
     })
 
-    const duration = Date.now() - startTime
+    const execTime = Date.now() - startTime
     const result: CommandResult = {
       stdout,
       stderr,
       code,
       signal: child.signalCode,
-      duration,
+      execTime,
     }
 
     if (stderr) {
@@ -158,5 +158,14 @@ export async function sendHeartbeat(args: string[]) {
   }
   catch {
     logger.error('fail to send heartbeat')
+  }
+}
+
+export async function queryTodaySummary() {
+  try {
+    return await runCommand(codebeatCli, [...Object.entries(baseCliParams).flat(), '--today-summary', 'true'])
+  }
+  catch {
+    logger.error('fail to query today duration')
   }
 }

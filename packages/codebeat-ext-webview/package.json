@@ -8,13 +8,22 @@
   "packageManager": "pnpm@10.8.1",
   "description": "",
   "author": "result17 <rescp17@gmail.com>",
+  "exports": {
+    ".": "./dist/shared/index.js"
+  },
+  "main": "./dist/shared/index.js",
+  "types": "./dist/shared/index.d.ts",
+  "files": [
+    "dist/shared"
+  ],
   "engines": {
     "vscode": "^1.97.0"
   },
   "scripts": {
     "build": "vite build",
     "dev": "vite dev",
-    "lint": "eslint --fix"
+    "lint": "eslint --fix",
+    "share": "tsup --config src/tsup.config.ts"
   },
   "dependencies": {
     "d3": "catalog:extension",
@@ -22,8 +31,10 @@
   },
   "devDependencies": {
     "@antfu/ni": "catalog:devtool",
+    "@types/vscode": "catalog:devtool",
     "codebeat-server": "workspace:*",
     "pnpm": "catalog:devtool",
+    "tsup": "catalog:build",
     "typescript": "catalog:devtool",
     "vite": "catalog:build",
     "vitest": "catalog:test"
