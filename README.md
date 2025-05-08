@@ -80,3 +80,5 @@ pnpm dev
 - [] show duration when changing project folder
 - [] debug build heartbeat collection
 - [] project cicd
+- [] when extension is activated, then fetch render data
+- [] save necessary data in vscode context
