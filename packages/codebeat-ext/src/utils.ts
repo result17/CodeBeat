@@ -1,10 +1,14 @@
+import type { SummaryData } from 'codebeat-server'
+import type { useWebviewView } from 'reactive-vscode'
 import { spawn } from 'node:child_process'
 import { homedir } from 'node:os'
 import { join } from 'node:path'
 import * as process from 'node:process'
+import { ICommand } from 'codebeat-ext-webview'
 import { useLogger, useOutputChannel } from 'reactive-vscode'
 import { queryTodayDurationInterval } from './constants'
 import { extensionState } from './index'
+import { todaySummaryData } from './state'
 
 export interface BaseCliParams {
   '--api-url'?: string
@@ -29,7 +33,7 @@ export function getCliLocation() {
 
 const codebeatCli = getCliLocation()
 
-export function shouldQueryTodayDuration() {
+export function shouldQueryTodayData() {
   return Date.now() >= extensionState.lastQueryDurationTime + queryTodayDurationInterval
 }
 
@@ -157,7 +161,7 @@ export async function sendHeartbeat(args: string[]) {
     return await runCommand(codebeatCli, args)
   }
   catch {
-    logger.error('fail to send heartbeat')
+    logger.error('Fail to send heartbeat')
   }
 }
 
@@ -166,6 +170,51 @@ export async function queryTodaySummary() {
     return await runCommand(codebeatCli, [...Object.entries(baseCliParams).flat(), '--today-summary', 'true'])
   }
   catch {
-    logger.error('fail to query today duration')
+    logger.error('Fail to query today summary')
+  }
+}
+
+export function parseSummary(commandResult: CommandResult | undefined) {
+  if (!commandResult) {
+    throw new Error('Summary is not defined')
+  }
+  try {
+    const out = commandResult.stdout
+    logger.info('command stdout is', out)
+    const summaryData = JSON.parse(out) as SummaryData
+    return summaryData
+  }
+  catch (error) {
+    logger.error('failed to parse summary data', error)
+    throw error
+  }
+}
+
+export async function queryAndPostTodaySummaryMessage(webview: ReturnType<typeof useWebviewView>, retry: boolean = false) {
+  let isPosted = false
+  try {
+    let summaryData: SummaryData
+    if (!retry && todaySummaryData.value) {
+      summaryData = todaySummaryData.value
+    }
+    else {
+      const commandResult = await queryTodaySummary()
+      summaryData = parseSummary(commandResult)
+      todaySummaryData.value = summaryData
+    }
+    logger.info(`Prepare to post [${ICommand.summary_today_response}]`)
+    isPosted = !!await (webview.postMessage({
+      message: ICommand.summary_today_response,
+      data: summaryData,
+    }))
+    return summaryData
+  }
+  catch (error) {
+    if (error instanceof Error) {
+      logger.error('Failed to parse summary data', error)
+    }
+    if (!isPosted) {
+      logger.error(`Failed to post [${ICommand.summary_today_response}]`, error)
+    }
   }
 }

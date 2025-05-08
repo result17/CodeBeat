@@ -2,9 +2,13 @@
 import type { TimeRange } from 'codebeat-server'
 import { formatMilliseconds } from 'codebeat-server'
 import { axisLeft, axisTop, scaleBand, scaleOrdinal, scaleTime, schemeCategory10, select, timeHour } from 'd3'
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { formatDayTime, formatHour } from '../util'
 import IxProject from './IxProject.vue'
+
+interface Props {
+  data: TimeRange[]
+}
 
 const props = defineProps<Props>()
 
@@ -20,10 +24,6 @@ interface ProjectSchedule {
   start: Date
   end: Date
   duration: number
-}
-
-interface Props {
-  data: TimeRange[]
 }
 
 const chartContainer = ref<HTMLElement | null>(null)
@@ -188,6 +188,8 @@ function initChart() {
   }
 }
 
+watch([processedData], initChart)
+
 function handleResize() {
   if (chartContainer.value) {
     width.value = chartContainer.value.offsetWidth
@@ -225,15 +227,5 @@ onBeforeUnmount(() => {
   width: 100%;
   border-radius: 8px;
   background-color: var(--vscode-editor-background);
-}
-
-.time-block {
-  stroke: #fff;
-  stroke-width: 1;
-  transition: opacity 0.2s;
-}
-
-.time-block:hover {
-  opacity: 0.8;
 }
 </style>

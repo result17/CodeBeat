@@ -1,28 +1,32 @@
 <script setup lang="ts">
-import type { IMessage } from './shared'
-import { ICommand } from './shared'
-import { onBeforeMount, shallowRef } from 'vue'
-import DaytimeRange from './components/daytimeRangeChart.vue'
 import type { SummaryData, TimeRange } from 'codebeat-server'
+import type { IMessage } from './shared'
+import { onBeforeMount, onBeforeUnmount, ref, shallowRef } from 'vue'
+import DaytimeRange from './components/DaytimeRangeChartView.vue'
+import LastUpdatedAt from './components/LastUpdatedAt.vue'
+import { ICommand } from './shared'
+import { addMessageListener, postMsg, removeAllMessageListeners } from './util'
 
 const timelineRef = shallowRef<TimeRange[]>([])
-
-const { postMessage } = window.acquireVsCodeApi()
+const lastUpdateRef = ref(0)
 
 onBeforeMount(() => {
-  postMessage<IMessage<undefined>>({
+  postMsg({
     command: ICommand.summary_today_query,
+  })
+  addMessageListener((event: MessageEvent<IMessage<SummaryData>>) => {
+    const message = event.data
+    if (message.data) {
+      timelineRef.value = message.data.timeline
+      lastUpdateRef.value = Date.now()
+    }
   })
 })
 
-window.addEventListener('message', (event: MessageEvent<IMessage<SummaryData>>) => {
-  const message = event.data
-  if (message.data) {
-    timelineRef.value = message.data.timeline
-  }
-})
+onBeforeUnmount(removeAllMessageListeners)
 </script>
 
 <template>
   <DaytimeRange v-if="timelineRef.length > 0" :data="timelineRef" />
+  <LastUpdatedAt :update-at="lastUpdateRef" />
 </template>

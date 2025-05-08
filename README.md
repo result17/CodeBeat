@@ -77,8 +77,8 @@ pnpm dev
 - [x] database connection log
 - [x] when opening new file, codebeat-ext can't collect heartbeatparams
 - [] when codebeat-cli is not found, download it automatically.
-- [] show duration when changing project folder
-- [] debug build heartbeat collection
+- [x] show duration when changing project folder
+- [x] debug build heartbeat collection
 - [] project cicd
-- [] when extension is activated, then fetch render data
-- [] save necessary data in vscode context
+- [x] when extension is activated, then fetch render data
+- [x] save necessary data in vscode context
