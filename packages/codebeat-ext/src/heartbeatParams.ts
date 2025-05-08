@@ -49,7 +49,19 @@ export function collectHeartbeatParams(): EventParams | null {
     workspace => workspace.uri === document.uri,
   ) ?? workspaces.value?.[0] ?? null
 
-  const { line: lineno, character: cursorPos } = selection.value.start
+  const params: EventParams = {
+    ...baseCliParams,
+    '--entity': entity,
+    '--plugin': plugin.value,
+    '--language': language,
+    '--lines-in-file': String(lines),
+  }
+
+  if (selection.value) {
+    const { line: lineno, character: cursorPos } = selection.value.start
+    params['--lineno'] = String(lineno)
+    params['--cursorpos'] = String(cursorPos)
+  }
 
   const alternateProjectName = currentWorkspace?.name
   const projectFolder = currentWorkspace?.uri.fsPath
@@ -58,21 +70,11 @@ export function collectHeartbeatParams(): EventParams | null {
     return null
   }
 
-  const Params: EventParams = {
-    ...baseCliParams,
-    '--entity': entity,
-    '--plugin': plugin.value,
-    '--language': language,
-    '--lineno': String(lineno),
-    '--cursorpos': String(cursorPos),
-    '--lines-in-file': String(lines),
-  }
-
   if (alternateProjectName) {
-    Params['--alternate-project'] = alternateProjectName
+    params['--alternate-project'] = alternateProjectName
   }
   if (projectFolder) {
-    Params['--project-path'] = projectFolder
+    params['--project-path'] = projectFolder
   }
-  return Params
+  return params
 }
