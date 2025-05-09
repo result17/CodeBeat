@@ -32,7 +32,7 @@ npx nip tsx
 
 <!-- configs -->
 
-## prsima & database
+## prisma & database
 <code>Prisma ORM</code> supports two [connection URLs](https://www.prisma.io/docs/orm/reference/connection-urls).<br/>
 With prsma postgres(Connection URL starts with prisma):
 ```env
@@ -82,3 +82,4 @@ pnpm dev
 - [] project cicd
 - [x] when extension is activated, then fetch render data
 - [x] save necessary data in vscode context
+- [] projects pie charts
