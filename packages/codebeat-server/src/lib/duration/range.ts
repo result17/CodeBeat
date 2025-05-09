@@ -1,22 +1,23 @@
 import type { HeartbeatRecordResponse } from '@/db/heartbeat'
 import type { SummaryData } from '@/shared/types'
-import { HeartbeatTimeline } from './timeline'
+import { HeartbeatSummaryData } from './timeline'
 
 export function getRangerData(records: HeartbeatRecordResponse[]): SummaryData {
+  const invalidRet = {
+    grandTotal: {
+      hours: 0,
+      minutes: 0,
+      seconds: 0,
+      text: '',
+      total_ms: 0,
+    },
+    timeline: [],
+  }
+
   // Validate input parameters
   if (!Array.isArray(records) || records.length < 1) {
-    return {
-      grandTotal: {
-        hours: 0,
-        minutes: 0,
-        seconds: 0,
-        text: '',
-        total_ms: 0,
-      },
-      timeline: [],
-    }
+    return invalidRet
   }
-  const timeline = new HeartbeatTimeline(records)
-  const summary = timeline.summary()
-  return summary
+  const timeline = new HeartbeatSummaryData(records)
+  return timeline.getSummary()
 }
