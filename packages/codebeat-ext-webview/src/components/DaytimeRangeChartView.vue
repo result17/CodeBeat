@@ -4,7 +4,7 @@ import { formatMilliseconds } from 'codebeat-server'
 import { axisLeft, axisTop, scaleBand, scaleOrdinal, scaleTime, schemeCategory10, select, timeHour } from 'd3'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { formatDayTime, formatHour } from '../util'
-import IxProject from './IxProject.vue'
+import IxTimeline from './IxTimeline.vue'
 
 interface Props {
   data: TimeRange[]
@@ -198,8 +198,9 @@ function handleResize() {
 }
 
 onMounted(() => {
-  handleResize()
-  initChart()
+  if (processedData.value.length > 0) {
+    handleResize()
+  }
   window.addEventListener('resize', handleResize)
 })
 
@@ -211,7 +212,7 @@ onBeforeUnmount(() => {
 <template>
   <div>
     <div class="schedule-title">
-      <IxProject /><span>PROJECTS</span>
+      <IxTimeline /><span>Timeline</span>
     </div>
     <div ref="chartContainer" class="schedule-chart" />
   </div>

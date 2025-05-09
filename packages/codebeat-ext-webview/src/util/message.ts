@@ -1,6 +1,7 @@
 import type { IMessage } from '../shared'
 import { watch } from 'vue'
-import { isCommunicating } from '../state'
+import { MessageResponseStatus } from '../shared'
+import { isCommunicating, lastCommunicatingCostTime, messageStatus } from '../state'
 
 let lastCommunicationTime: number | undefined
 
@@ -9,7 +10,8 @@ watch([isCommunicating], () => {
     lastCommunicationTime = Date.now()
   }
   else if (lastCommunicationTime) {
-    console.log(`Communication spent ${(Date.now() - lastCommunicationTime) / 1000} sec(s)`)
+    const cost = (Date.now() - lastCommunicationTime)
+    lastCommunicatingCostTime.value = cost
   }
 })
 
@@ -46,12 +48,14 @@ export function postMsg<T>(message: IMessage<T>): void {
 
     updateTimer = window.setTimeout(() => {
       isCommunicating.value = false
+      messageStatus.value = MessageResponseStatus.TIMEOUT
       updateTimer = null // Clear timer reference after execution
     }, MESSAGE_TIMEOUT_MS)
   }
   catch (error) {
     // Ensure state is cleaned up on error
     isCommunicating.value = false
+    messageStatus.value = MessageResponseStatus.FAIL
     clearExistingTimer()
     throw new Error(`Failed to post message: ${error instanceof Error ? error.message : String(error)}`)
   }
@@ -83,6 +87,8 @@ export function addMessageListener<T>(listener: OnMessage<T>) {
   }
   const wrappedListener = (e: Parameters<OnMessage<T>>[0]) => {
     isCommunicating.value = false
+    messageStatus.value = MessageResponseStatus.SUCCESS
+    clearExistingTimer()
     listener(e)
   }
   if (!messageListeners.has(wrappedListener)) {

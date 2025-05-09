@@ -4,6 +4,7 @@ import type { IMessage } from './shared'
 import { onBeforeMount, onBeforeUnmount, ref, shallowRef } from 'vue'
 import DaytimeRange from './components/DaytimeRangeChartView.vue'
 import LastUpdatedAt from './components/LastUpdatedAt.vue'
+import NoData from './components/NoDataView.vue'
 import { ICommand } from './shared'
 import { addMessageListener, postMsg, removeAllMessageListeners } from './util'
 
@@ -28,5 +29,6 @@ onBeforeUnmount(removeAllMessageListeners)
 
 <template>
   <DaytimeRange v-if="timelineRef.length > 0" :data="timelineRef" />
+  <NoData v-if="timelineRef.length === 0" />
   <LastUpdatedAt :update-at="lastUpdateRef" />
 </template>

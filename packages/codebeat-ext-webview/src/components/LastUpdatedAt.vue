@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { formatDate, ICommand } from '../shared'
-import { isCommunicating } from '../state'
+import { computed, ref, watchEffect } from 'vue'
+import { formatDate, ICommand, MessageResponseStatus } from '../shared'
+import { isCommunicating, lastCommunicatingCostTime, messageStatus } from '../state'
 import { postMsg } from '../util'
 import IxUpdate from './lxUpdate.vue'
 
@@ -11,13 +11,31 @@ interface Props {
 }
 
 const { updateAt } = defineProps<Props>()
+const isRotating = ref(false)
+let timeoutId: ReturnType<typeof setTimeout> | null = null
+
+watchEffect(() => {
+  if (isCommunicating.value) {
+    isRotating.value = true
+  }
+  else {
+    if (timeoutId) {
+      window.clearTimeout(timeoutId)
+    }
+    timeoutId = setTimeout(() => {
+      isRotating.value = false
+    }, Math.max(1000, lastCommunicatingCostTime.value))
+  }
+})
+
 const dateStr = computed(() => updateAt > 0 ? formatDate(new Date(updateAt)) : '')
 </script>
 
 <template>
   <div class="update-cmp">
     <IxUpdate
-      :class="{ rotating: isCommunicating }"
+      class="down"
+      :is-rotating="isRotating"
       @click="() => {
         if (isCommunicating) return
         postMsg({
@@ -26,22 +44,27 @@ const dateStr = computed(() => updateAt > 0 ? formatDate(new Date(updateAt)) : '
       }"
     /><span>Last updated at {{ dateStr }}</span>
   </div>
+  <div v-show="messageStatus === MessageResponseStatus.SUCCESS" class="update-cmp">
+    <span>costed {{ (lastCommunicatingCostTime / 1000).toFixed(3) }} sec(s)</span>
+  </div>
+  <div v-show="messageStatus === MessageResponseStatus.TIMEOUT" class="update-cmp">
+    <span class="timeout">Update timed out</span>
+  </div>
 </template>
 
 <style scoped>
 .update-cmp {
   display: flex;
   gap: 0.125rem;
-  padding-block: 10px;
+  padding-top: 10px;
   justify-content: end;
 }
 
-.rotating {
-  animation: spin 1s linear infinite;
+.down {
+  transform: translateY(1px);
 }
 
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+.timeout {
+  color: var(--vscode-errorForeground);
 }
 </style>
