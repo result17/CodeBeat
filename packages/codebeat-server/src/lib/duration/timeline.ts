@@ -2,22 +2,16 @@ import type { HeartbeatRecordResponse } from '@/db/heartbeat'
 import type { GrandTotal } from '@/routes/duration/schema'
 import type { SummaryData, TimeRange } from '@/shared'
 import { formatMilliseconds, millisecondsToTimeComponents } from '@/shared/duration'
+import { HeartbeatCollection } from '../heartbeat'
 
 export type HeartbeatTimeItem = Pick<HeartbeatRecordResponse, 'id' | 'project' | 'sendAt'>
 
-export class HeartbeatTimeline {
+export class HeartbeatTimeline extends HeartbeatCollection {
   private prevHeartbeat: HeartbeatTimeItem | null = null
   /** In this time range, heartbeat record will be merged */
-  static readonly HEARTBEAT_RANGE_TIME: number = 15 * 60 * 1000
-  private readonly timeline: HeartbeatTimeItem[] = []
-  static readonly UNKNOWN_PROJECT_NAME: string = 'UNKNOWN'
   private prevIndex: number = -1
   private totalMs: number = 0
   private timeRanges: TimeRange[] = []
-
-  constructor(list: HeartbeatRecordResponse[]) {
-    this.timeline = list.map(({ id, project, sendAt }) => ({ id, project, sendAt })).sort((a, b) => a.sendAt.getTime() - b.sendAt.getTime())
-  }
 
   private prev(curTime: number) {
     if (this.prevHeartbeat) {

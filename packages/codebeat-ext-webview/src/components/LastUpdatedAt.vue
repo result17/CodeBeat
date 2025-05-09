@@ -56,7 +56,6 @@ const dateStr = computed(() => updateAt > 0 ? formatDate(new Date(updateAt)) : '
 .update-cmp {
   display: flex;
   gap: 0.125rem;
-  padding-top: 10px;
   justify-content: end;
 }
 

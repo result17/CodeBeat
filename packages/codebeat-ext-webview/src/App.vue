@@ -30,5 +30,11 @@ onBeforeUnmount(removeAllMessageListeners)
 <template>
   <DaytimeRange v-if="timelineRef.length > 0" :data="timelineRef" />
   <NoData v-if="timelineRef.length === 0" />
-  <LastUpdatedAt :update-at="lastUpdateRef" />
+  <LastUpdatedAt class="pt-10" :update-at="lastUpdateRef" />
 </template>
+
+<style>
+.pt-10 {
+  padding-top: 10px;
+}
+</style>
