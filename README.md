@@ -83,3 +83,4 @@ pnpm dev
 - [x] when extension is activated, then fetch render data
 - [x] save necessary data in vscode context
 - [] projects pie charts
+- [] summary date calculation performance benchmark
