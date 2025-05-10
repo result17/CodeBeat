@@ -19,5 +19,5 @@ export function getRangerData(records: HeartbeatRecordResponse[]): SummaryData {
     return invalidRet
   }
   const timeline = new HeartbeatSummaryData(records)
-  return timeline.getSummary()
+  return timeline.getFormattedSummary()
 }

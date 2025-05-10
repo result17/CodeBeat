@@ -1,7 +1,7 @@
 import type { ErrorSchema } from '@/lib'
 import type { HeartbeatResults } from './schema'
-import { statusToCode } from '@/shared'
-import app from '@/test/app'
+import { statusToCode } from '@/lib'
+import app from '@/local/app'
 import { describe, expect, it } from 'vitest'
 import { HeartbeatErrorMsg } from './errorMsg'
 

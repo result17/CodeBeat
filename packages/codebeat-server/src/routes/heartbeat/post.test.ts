@@ -1,6 +1,6 @@
 import type { HeartbeatResult } from './schema'
 import { describe, expect, it } from 'vitest'
-import app from '../../test/app'
+import app from '../../local/app'
 
 describe('post heartbeat Endpoint', () => {
   const heartbeatData = {

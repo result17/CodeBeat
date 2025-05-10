@@ -1,5 +1,5 @@
 import type { GrandTotal } from './schema'
-import app from '@/test/app'
+import app from '@/local/app'
 import { describe, expect, it } from 'vitest'
 
 describe('get duration endpoint', () => {

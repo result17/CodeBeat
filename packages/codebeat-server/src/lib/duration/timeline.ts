@@ -1,7 +1,6 @@
 import type { HeartbeatRecordResponse } from '@/db'
-import type { GrandTotal } from '@/routes/duration/schema'
 import type { SummaryData, TimeRange } from '@/shared'
-import { formatMilliseconds, millisecondsToTimeComponents } from '@/shared/duration'
+import { getGrandTotalWithMS } from '@/shared/duration'
 import { HeartbeatCollection } from '../heartbeat'
 
 export interface HeartbeatRecordRange extends HeartbeatRecordResponse {
@@ -88,11 +87,7 @@ export class HeartbeatTimeline extends HeartbeatCollection {
 
   protected summary() {
     this.calcTimeRangeList()
-    const grandTotal: GrandTotal = {
-      ...millisecondsToTimeComponents(this.totalMs),
-      text: formatMilliseconds(this.totalMs),
-      total_ms: this.totalMs,
-    }
+    const grandTotal = getGrandTotalWithMS(this.totalMs)
     return {
       grandTotal,
       timeline: this.timeRanges,
@@ -115,7 +110,7 @@ export class HeartbeatSummaryData extends HeartbeatTimeline {
     super(list)
   }
 
-  public override getSummary(): SummaryData {
+  public getFormattedSummary(): SummaryData {
     const ret = super.getSummary()
     const timeline = ret.timeline.map(range => ({
       project: range.project ?? HeartbeatSummaryData.UNKNOWN_PROJECT_NAME,

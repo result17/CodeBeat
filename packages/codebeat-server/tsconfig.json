@@ -1,7 +1,9 @@
 {
   "compilerOptions": {
+    "target": "ESNext",
     "lib": ["esnext"],
     "baseUrl": ".",
+    "moduleResolution": "node",
     "paths": {
       "@/*": ["src/*"]
     },

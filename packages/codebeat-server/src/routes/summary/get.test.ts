@@ -1,4 +1,4 @@
-import app from '@/test/app'
+import app from '@/local/app'
 import { describe, expect, it } from 'vitest'
 
 describe('get summary endpoint', () => {

@@ -1,3 +1,5 @@
+import type { GrandTotal } from './types'
+
 const MILLISECONDS_PER_HOUR = 3_600_000
 const MILLISECONDS_PER_MINUTE = 60_000
 
@@ -24,9 +26,9 @@ export function getEndOfTodayDay() {
 export function formatMilliseconds(ms: number): string {
   if (ms <= 0)
     return '0 min'
-
-  const hours = Math.floor(ms / MILLISECONDS_PER_HOUR)
-  const minutes = Math.floor((ms % MILLISECONDS_PER_HOUR) / MILLISECONDS_PER_MINUTE)
+  const intNum = Math.ceil(ms)
+  const hours = Math.floor(intNum / MILLISECONDS_PER_HOUR)
+  const minutes = Math.floor((intNum % MILLISECONDS_PER_HOUR) / MILLISECONDS_PER_MINUTE)
 
   if (hours > 0) {
     return `${hours} hr${hours > 1 ? 's' : ''} ${minutes} min${minutes > 1 ? 's' : ''}`
@@ -47,4 +49,14 @@ export function millisecondsToTimeComponents(totalMs: number): {
   const hours = Math.floor(totalSeconds / 3600)
 
   return { hours, minutes, seconds }
+}
+
+export function getGrandTotalWithMS(ms: number | bigint) {
+  const msInt = typeof ms === 'bigint' ? Number(ms) : ms
+  const grandTotal: GrandTotal = {
+    ...millisecondsToTimeComponents(msInt),
+    text: formatMilliseconds(msInt),
+    total_ms: msInt,
+  }
+  return grandTotal
 }
