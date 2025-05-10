@@ -1,5 +1,5 @@
 packages:
-  - packages/*
+- packages/*
 
 catalogs:
   build:
@@ -45,47 +45,5 @@ catalogs:
   view:
     '@vitejs/plugin-vue': ^5.2.3
     vue: ^3.5.13
-  conflicts_build_:
-    tsup: ''
-  conflicts_build_c:
-    tsup: c
-  conflicts_build_ca:
-    tsup: ca
-  conflicts_build_cat:
-    tsup: cat
-  conflicts_build_cata:
-    tsup: cata
-  conflicts_build_catal:
-    tsup: catal
-  conflicts_build_catalo:
-    tsup: catalo
-  conflicts_build_catalog:
-    tsup: catalog
-  conflicts_build_16_5_0:
-    dotenv: 16.5.0
-  conflicts_devtool_24_3_0:
-    '@antfu/ni': 24.3.0
-  conflicts_devtool_22_15_17:
-    '@types/node': 22.15.17
-  conflicts_devtool_1_99_1:
-    '@types/vscode': 1.99.1
-  conflicts_devtool_3_3_2:
-    '@vscode/vsce': 3.3.2
-  conflicts_devtool_10_1_0:
-    bumpp: 10.1.0
-  conflicts_build_4_8_0:
-    esno: 4.8.0
-  conflicts_devtool_10_10_0:
-    pnpm: 10.10.0
-  conflicts_extension_0_2_16:
-    reactive-vscode: 0.2.16
-  conflicts_build_8_4_0:
-    tsup: 8.4.0
-  conflicts_devtool_5_8_3:
-    typescript: 5.8.3
-  conflicts_devtool_1_0_2:
-    vscode-ext-gen: 1.0.2
 onlyBuiltDependencies:
-  - esbuild
-catalog:
-  codebeat-ext-webview: workspa
+- esbuild
