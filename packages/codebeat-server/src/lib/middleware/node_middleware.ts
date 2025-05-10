@@ -1,7 +1,8 @@
 import type { MiddlewareHandler } from 'hono'
 import type { ContextProps } from '../../types'
 import process from 'node:process'
-import { createDurationService } from '@/service/duration'
+import { getDurationManager } from '@/db/duration'
+import { createDurationNativeSQLService } from '@/service/duration'
 import { getHeartbeatManager, getPrismaClientInstance } from '../../db'
 import { createHeartbeatService } from '../../service'
 
@@ -12,8 +13,9 @@ export function serviceMiddleWare(): MiddlewareHandler<{ Variables: ContextProps
   return async (c, next) => {
     const prismaClient = getPrismaClientInstance(DATABASE_URL || DIRECT_DATABASE_URL, false)
     const heartbeatManager = getHeartbeatManager(prismaClient)
+    const durationManage = getDurationManager(prismaClient)
     const heartbeatService = createHeartbeatService(heartbeatManager)
-    const durationService = createDurationService(heartbeatManager)
+    const durationService = createDurationNativeSQLService(durationManage)
 
     c.set('services', {
       heartbeat: heartbeatService,

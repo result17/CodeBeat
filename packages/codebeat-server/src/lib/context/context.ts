@@ -1,11 +1,14 @@
 import type { HeartbeatManager, PrismaInstance } from '@/db'
+import type { DurationManager } from '@/db/duration'
 import type { ContextProps } from '@/types'
 import type { Context } from 'hono'
 import { getHeartbeatManager, getPrismaClientInstance } from '@/db'
-import { createDurationService, createHeartbeatService } from '@/service'
+import { getDurationManager } from '@/db/duration'
+import { createDurationNativeSQLService, createHeartbeatService } from '@/service'
 
 let prismaClient: PrismaInstance | null = null
 let heartbeatManager: HeartbeatManager | null = null
+let durationManager: DurationManager | null = null
 
 export function getContextProps(c: Context): ContextProps {
   try {
@@ -26,8 +29,11 @@ export function initServices(env: Env) {
   if (!heartbeatManager) {
     heartbeatManager = getHeartbeatManager(prismaClient)
   }
+  if (!durationManager) {
+    durationManager = getDurationManager(prismaClient)
+  }
   const heartbeatService = createHeartbeatService(heartbeatManager)
-  const durationService = createDurationService(heartbeatManager)
+  const durationService = createDurationNativeSQLService(durationManager)
   return {
     heartbeat: heartbeatService,
     duration: durationService,
