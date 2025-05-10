@@ -35,6 +35,7 @@
     "d3": "catalog:extension",
     "vue": "catalog:view",
     "zod": "catalog:deps"
+
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:devtool",
@@ -46,6 +47,7 @@
     "@typescript-eslint/utils": "catalog:devtool",
     "dotenv-cli": "catalog:build",
     "eslint": "catalog:devtool",
+    "tinybench": "catalog:devtool",
     "tsx": "catalog:server",
     "vite": "catalog:build",
     "vite-plugin-node": "catalog:devtool",

@@ -1,5 +1,5 @@
 packages:
-- packages/*
+  - packages/*
 
 catalogs:
   build:
@@ -24,6 +24,7 @@ catalogs:
     bumpp: ^10.0.3
     eslint: ^9.20.1
     pnpm: ^10.8.1
+    tinybench: ^4.0.1
     ts-node: ^10.9.2
     typescript: ^5.8.2
     vite-plugin-node: ^5.0.1
@@ -46,4 +47,4 @@ catalogs:
     '@vitejs/plugin-vue': ^5.2.3
     vue: ^3.5.13
 onlyBuiltDependencies:
-- esbuild
+  - esbuild
