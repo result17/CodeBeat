@@ -7,5 +7,5 @@ export default antfu({
     '@typescript-eslint/ban-ts-comment': 'warn',
   },
   ignores: ['dist/', 'out/'],
-  pnpm: true,
+  pnpm: false,
 })

@@ -74,7 +74,7 @@
   "devDependencies": {
     "@antfu/ni": "catalog:devtool",
     "@types/node": "catalog:devtool",
-    "@types/vscode": "catalog:devtool",
+    "@types/vscode": "^1.97.0",
     "@vscode/vsce": "catalog:devtool",
     "bumpp": "catalog:devtool",
     "codebeat-ext-webview": "workspace:*",
