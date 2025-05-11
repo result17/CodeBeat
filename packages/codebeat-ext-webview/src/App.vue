@@ -5,8 +5,8 @@ import { onBeforeMount, onBeforeUnmount, ref, shallowRef } from 'vue'
 import DaytimeRange from './components/DaytimeRangeChartView.vue'
 import LastUpdatedAt from './components/LastUpdatedAt.vue'
 import NoData from './components/NoDataView.vue'
+import { addMessageListener, postMsg, removeAllMessageListeners } from './lib'
 import { ICommand } from './shared'
-import { addMessageListener, postMsg, removeAllMessageListeners } from './util'
 
 const timelineRef = shallowRef<TimeRange[]>([])
 const lastUpdateRef = ref(0)

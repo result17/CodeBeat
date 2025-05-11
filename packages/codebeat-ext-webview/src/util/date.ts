@@ -11,3 +11,8 @@ export function formatDayTime(date: Date) {
   const [hourNum, ap] = [hour.slice(0, hour.length - 1), hour.slice(hour.length - 1)]
   return `${hourNum}:${date.getMinutes().toString().padStart(2, '0')}${ap}m`
 }
+
+export function formatAxisHour(date: Date | number) {
+  const hours = typeof date === 'number' ? new Date(date).getHours() : date.getHours()
+  return formatHour(hours)
+}

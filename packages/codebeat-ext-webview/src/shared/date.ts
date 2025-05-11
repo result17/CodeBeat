@@ -17,3 +17,13 @@ export function formatDate(date: Date): string {
 
   return `${year}/${month}/${day} ${hour}:${minute}`
 }
+
+export function getDayRange(date: Date) {
+  const localDayStart = new Date(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate(),
+  ).getTime()
+  const localDayEnd = localDayStart + 86_400_000
+  return [localDayStart, localDayEnd]
+}
