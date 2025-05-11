@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed, ref, watchEffect } from 'vue'
+import { postMsg } from '../lib'
 import { formatDate, ICommand, MessageResponseStatus } from '../shared'
 import { isCommunicating, lastCommunicatingCostTime, messageStatus } from '../state'
-import { postMsg } from '../util'
 import IxUpdate from './lxUpdate.vue'
 
 interface Props {
