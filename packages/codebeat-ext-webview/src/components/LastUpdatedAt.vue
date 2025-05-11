@@ -48,7 +48,7 @@ const dateStr = computed(() => updateAt > 0 ? formatDate(new Date(updateAt)) : '
     <span>costed {{ (lastCommunicatingCostTime / 1000).toFixed(3) }} sec(s)</span>
   </div>
   <div v-show="messageStatus === MessageResponseStatus.TIMEOUT" class="update-cmp">
-    <span class="timeout">Update timed out</span>
+    <span class="timeout">Time out</span>
   </div>
 </template>
 

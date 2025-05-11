@@ -53,8 +53,8 @@ export function getDurationManager(prisma: PrismaInstance): DurationManager {
       try {
         const result = await prisma.$queryRaw<Array<{
           project: string
-          start_timestamp: number
-          duration: number
+          start_timestamp: bigint
+          duration: bigint
           total_duration_ms: bigint
         }>>`
         WITH TimeRanges AS (
@@ -90,7 +90,7 @@ export function getDurationManager(prisma: PrismaInstance): DurationManager {
         SELECT 
           "project",
           CAST(EXTRACT(EPOCH FROM range_start) * 1000 AS BIGINT) as start_timestamp,
-          CAST(duration_ms AS INTEGER) as duration,
+          CAST(duration_ms AS BIGINT) as duration,
           CAST(SUM(duration_ms) OVER () AS BIGINT) as total_duration_ms
         FROM RangeDurations
         ORDER BY range_start
@@ -106,8 +106,8 @@ export function getDurationManager(prisma: PrismaInstance): DurationManager {
           grandTotal: getGrandTotalWithMS(result[0].total_duration_ms),
           timeline: result.map(item => ({
             project: item.project,
-            start: item.start_timestamp,
-            duration: item.duration,
+            start: Number(item.start_timestamp),
+            duration: Number(item.duration),
           })),
         }
       }
