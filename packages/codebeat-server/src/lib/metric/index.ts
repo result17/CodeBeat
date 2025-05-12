@@ -1,1 +1,1 @@
-export * from './collectior'
+export * from './collector'

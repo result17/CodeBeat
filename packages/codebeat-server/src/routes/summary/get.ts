@@ -1,5 +1,5 @@
 import type { summaryAPI } from './index'
-import { getContextProps, openApiErrorResponses, verifyStartAndEndDate } from '@/lib'
+import { getContextProps, openApiErrorResponses, queryStartAndEndTimeStampSchema } from '@/lib'
 import { createRoute } from '@hono/zod-openapi'
 import { SummarySchema } from './schema'
 
@@ -26,6 +26,7 @@ const specSummaryRoute = createRoute({
   tags: ['summary'],
   summary: 'Get summary of spec date',
   path: '/',
+  query: queryStartAndEndTimeStampSchema,
   responses: {
     200: {
       content: {
@@ -41,7 +42,7 @@ const specSummaryRoute = createRoute({
 
 export function registerGetSpecSummary(api: typeof summaryAPI) {
   return api.openapi(specSummaryRoute, async (c) => {
-    const { start, end } = verifyStartAndEndDate(c)
+    const { start, end } = queryStartAndEndTimeStampSchema.parse(c.req.query)
     const res = await getContextProps(c).services.duration.getSpecDateSummary(new Date(start), new Date(end))
     return c.json(res, 200)
   })

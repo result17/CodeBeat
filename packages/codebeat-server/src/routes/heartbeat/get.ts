@@ -1,5 +1,5 @@
 import type { heartbeatApi } from './index'
-import { getContextProps, openApiErrorResponses, verifyStartAndEndDate } from '@/lib'
+import { getContextProps, openApiErrorResponses, queryStartAndEndTimeStampSchema } from '@/lib'
 import { createRoute } from '@hono/zod-openapi'
 import { HeartbeatResultsSchema } from './schema'
 
@@ -8,6 +8,7 @@ const heartbeatsRoute = createRoute({
   tags: ['heartbeat'],
   summary: 'get a heartbeat record',
   path: '/',
+  query: queryStartAndEndTimeStampSchema,
   responses: {
     200: {
       content: {
@@ -23,7 +24,7 @@ const heartbeatsRoute = createRoute({
 
 export function registerGetHeartbeats(api: typeof heartbeatApi) {
   return api.openapi(heartbeatsRoute, async (c) => {
-    const { start, end } = verifyStartAndEndDate(c)
+    const { start, end } = queryStartAndEndTimeStampSchema.parse(c.req.query)
     const res = await getContextProps(c).services.heartbeat.getHeartbeats(
       new Date(start),
       new Date(end),
