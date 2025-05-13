@@ -1,2 +1,2 @@
 export * from './middleware'
-export * from './node_middleware'
+// node_middleware is only used in Node.js environment

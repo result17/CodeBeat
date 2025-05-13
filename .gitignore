@@ -14,4 +14,6 @@ src/generated
 out
 .env
 .dev.vars
+.dev.vars.*
 codebeat.log
+.wrangler

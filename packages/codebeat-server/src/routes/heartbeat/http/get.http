@@ -3,7 +3,7 @@ GET http://localhost:3000/api/heartbeat
 Accept: application/json
 
 ### Request with start time later than end time (expect 400 error)
-GET http://localhost:3000/api/heartbeat?start=1745108632000&end=1745100782000
+GET http://localhost:3000/api/heartbeat?start=1743600000000&end=1747439999999
 Accept: application/json
 
 ### Request with invalid date format (expect 400 error)
