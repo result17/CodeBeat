@@ -7,7 +7,7 @@ export type HeartbeatRecordResponse = Omit<Heartbeat, 'recvAt' | 'createdAt'>
 export interface HeartbeatManager {
   create: (data: Prisma.HeartbeatCreateInput) => Promise<HeartbeatRecordResponse>
   createMany: (data: Prisma.HeartbeatCreateInput[]) => Promise<HeartbeatRecordResponse[]>
-  queryRecordsFilterRecvAt: (startDate: Date, endDate: Date) => Promise<HeartbeatRecordResponse[]>
+  queryRecordsFilterSendAt: (startDate: Date, endDate: Date) => Promise<HeartbeatRecordResponse[]>
 }
 
 export function getHeartbeatManager(prisma: PrismaInstance): HeartbeatManager {
@@ -41,11 +41,11 @@ export function getHeartbeatManager(prisma: PrismaInstance): HeartbeatManager {
         throw new Error(`Failed to create heartbeats: ${error instanceof Error ? error.message : String(error)}`)
       }
     },
-    async queryRecordsFilterRecvAt(startDate, endDate) {
+    async queryRecordsFilterSendAt(startDate, endDate) {
       try {
         const args: AcceleratedFindManyArgs = {
           where: {
-            recvAt: {
+            sendAt: {
               gte: startDate,
               lte: endDate,
             },

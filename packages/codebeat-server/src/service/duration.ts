@@ -20,7 +20,7 @@ export function createDurationService(heartbeatManager: HeartbeatManager): Durat
       return { grandTotal: (await this.getSpecDateSummary(startDate, endDate)).grandTotal }
     },
     async getSpecDateSummary(startDate: Date, endDate: Date) {
-      const records = (await heartbeatManager.queryRecordsFilterRecvAt(startDate, endDate))
+      const records = (await heartbeatManager.queryRecordsFilterSendAt(startDate, endDate))
       return getRangerData(records)
     },
     async getTodaySummary() {

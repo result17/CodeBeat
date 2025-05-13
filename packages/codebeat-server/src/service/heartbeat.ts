@@ -10,7 +10,7 @@ interface HeartbeatService {
 export function createHeartbeatService(heartbeatManager: HeartbeatManager): HeartbeatService {
   return {
     async getHeartbeats(startDate: Date, endDate: Date) {
-      const records = (await heartbeatManager.queryRecordsFilterRecvAt(startDate, endDate)).map(({ sendAt, id, ...rest }) => ({
+      const records = (await heartbeatManager.queryRecordsFilterSendAt(startDate, endDate)).map(({ sendAt, id, ...rest }) => ({
         ...rest,
         time: sendAt.getTime(),
         id: id.toString(),

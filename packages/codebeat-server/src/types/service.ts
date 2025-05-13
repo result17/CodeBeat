@@ -20,7 +20,7 @@ declare module 'hono' {
 
 export interface AcceleratedFindManyArgs {
   where?: {
-    recvAt?: {
+    sendAt?: {
       gte?: Date
       lte?: Date
     }
