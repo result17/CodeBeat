@@ -12,7 +12,8 @@ export function createMetricService(heartbeatManager: HeartbeatManager): MetricS
     getSpecDateMetricDurationRatio: async <T extends HeartbeatMetrics>(metric: T, startDate: Date, endDate: Date) => {
       const heartbeatRecords = await heartbeatManager.queryRecordsFilterSendAt(startDate, endDate)
       const collector = new HeartbeatMetricCollector(heartbeatRecords, metric)
-      return collector.getMetricRatios()
+      const metricRatios = collector.getMetricRatios()
+      return metricRatios
     },
   }
 }

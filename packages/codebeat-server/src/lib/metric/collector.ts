@@ -71,4 +71,11 @@ export class HeartbeatMetricCollector<T extends HeartbeatMetrics> extends Heartb
     this.traversalTimeline()
     return Array.from(this.metricMapper.values())
   }
+
+  public override dispose() {
+    super.dispose()
+    this.metricMapper.clear()
+    this.timeRanges.length = 0
+    this.totalMs = 0
+  }
 }

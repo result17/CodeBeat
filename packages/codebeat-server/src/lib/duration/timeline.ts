@@ -100,16 +100,18 @@ export class HeartbeatTimeline extends HeartbeatCollection {
     }
     return this.summaryData
   }
+
+  public dispose() {
+    this.summaryData = undefined
+    this.timeRanges.length = 0
+    this.totalMs = 0
+  }
 }
 
 /**
  * Summary data for heartbeat records serves api.
  */
 export class HeartbeatSummaryData extends HeartbeatTimeline {
-  constructor(list: HeartbeatRecordResponse[]) {
-    super(list)
-  }
-
   public getFormattedSummary(): SummaryData {
     const ret = super.getSummary()
     const timeline = ret.timeline.map(range => ({
