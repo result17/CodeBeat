@@ -3,5 +3,5 @@ dist/
 *.env
 .wrangler
 .dev.vars
-.local.vars
+.prod.vars
 .env.*

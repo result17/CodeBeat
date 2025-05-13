@@ -38,9 +38,8 @@ export function getDurationManager(prisma: PrismaInstance): DurationManager {
             FROM TimeRanges
           ) grouped
           GROUP BY "project", range_group
-        )
-        -- Step 3: Sum all durations
-        SELECT COALESCE(SUM(duration_ms), 0) as total_duration_ms
+        )        -- Step 3: Sum all durations
+        SELECT COALESCE(CAST(SUM(duration_ms) AS BIGINT), CAST(0 AS BIGINT)) as total_duration_ms
         FROM RangeDurations
         `
         return result[0]?.total_duration_ms || 0n
@@ -102,6 +101,7 @@ export function getDurationManager(prisma: PrismaInstance): DurationManager {
             timeline: [],
           }
         }
+        console.log('result', result[0])
         return {
           grandTotal: getGrandTotalWithMS(result[0].total_duration_ms),
           timeline: result.map(item => ({

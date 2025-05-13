@@ -42,7 +42,7 @@ const specSummaryRoute = createRoute({
 
 export function registerGetSpecSummary(api: typeof summaryAPI) {
   return api.openapi(specSummaryRoute, async (c) => {
-    const { start, end } = queryStartAndEndTimeStampSchema.parse(c.req.query)
+    const { start, end } = queryStartAndEndTimeStampSchema.parse(c.req.query())
     const res = await getContextProps(c).services.duration.getSpecDateSummary(new Date(start), new Date(end))
     return c.json(res, 200)
   })

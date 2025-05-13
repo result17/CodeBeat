@@ -22,11 +22,12 @@ export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext) {
     try {
       const services = initServices(env)
-
+      const runtimeEnv = env.RUNTIME_ENV || 'production'
       return app.fetch(request, env, {
         ...ctx,
         props: {
           services,
+          env: runtimeEnv,
         },
       })
     }

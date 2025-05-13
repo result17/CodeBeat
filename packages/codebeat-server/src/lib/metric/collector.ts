@@ -36,7 +36,7 @@ export class HeartbeatMetricCollector<T extends HeartbeatMetrics> extends Heartb
 
   private traversalTimeline() {
     if (this.timeRanges.length === 0) {
-      throw new Error('No timeline data available')
+      console.warn('No timeline data available')
     }
 
     for (const range of this.timeRanges) {

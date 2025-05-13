@@ -1,5 +1,6 @@
 export * from './context'
 export * from './duration'
 export * from './errors'
+export * from './metric'
 export * from './middleware'
 export * from './verify'

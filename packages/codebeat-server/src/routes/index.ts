@@ -1,6 +1,7 @@
 import { OpenAPIHono } from '@hono/zod-openapi'
 import { durationAPI } from './duration'
 import { heartbeatApi } from './heartbeat'
+import { metricAPI } from './metric'
 import { summaryAPI } from './summary'
 
 export const api = new OpenAPIHono()
@@ -38,3 +39,4 @@ api.doc('/doc', {
 api.route('/heartbeat', heartbeatApi)
 api.route('/duration', durationAPI)
 api.route('/summary', summaryAPI)
+api.route('/metric', metricAPI)

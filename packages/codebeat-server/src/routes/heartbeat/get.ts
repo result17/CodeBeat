@@ -8,7 +8,9 @@ const heartbeatsRoute = createRoute({
   tags: ['heartbeat'],
   summary: 'get a heartbeat record',
   path: '/',
-  query: queryStartAndEndTimeStampSchema,
+  request: {
+    query: queryStartAndEndTimeStampSchema,
+  },
   responses: {
     200: {
       content: {
@@ -24,7 +26,7 @@ const heartbeatsRoute = createRoute({
 
 export function registerGetHeartbeats(api: typeof heartbeatApi) {
   return api.openapi(heartbeatsRoute, async (c) => {
-    const { start, end } = queryStartAndEndTimeStampSchema.parse(c.req.query)
+    const { start, end } = c.req.valid('query')
     const res = await getContextProps(c).services.heartbeat.getHeartbeats(
       new Date(start),
       new Date(end),

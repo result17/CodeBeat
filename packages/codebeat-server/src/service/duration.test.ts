@@ -36,6 +36,7 @@ describe('heartbeat duration calculation', () => {
     expect(res.grandTotal).toBeDefined()
 
     const sqlRes = await durationSQLService.getSpecDateDuration(yesterday, today)
+    console.log(typeof res.grandTotal.total_ms, typeof sqlRes.grandTotal.total_ms)
     expect(sqlRes).toBeDefined()
     expect(sqlRes.grandTotal).toBeDefined()
 

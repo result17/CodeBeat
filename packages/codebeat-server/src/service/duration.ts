@@ -24,8 +24,7 @@ export function createDurationService(heartbeatManager: HeartbeatManager): Durat
       return getRangerData(records)
     },
     async getTodaySummary() {
-      const records = (await heartbeatManager.queryRecordsFilterRecvAt(getStartOfTodayDay(), getEndOfTodayDay()))
-      return getRangerData(records)
+      return this.getSpecDateSummary(getStartOfTodayDay(), getEndOfTodayDay())
     },
   }
 }
@@ -33,7 +32,7 @@ export function createDurationService(heartbeatManager: HeartbeatManager): Durat
 export function createDurationNativeSQLService(duration: DurationManager): DurationService {
   return {
     async getTodayDuration() {
-      return this.getSpecDateDuration(getStartOfTodayDay(), getEndOfTodayDay());
+      return this.getSpecDateDuration(getStartOfTodayDay(), getEndOfTodayDay())
     },
     async getSpecDateDuration(startDate: Date, endDate: Date) {
       return { grandTotal: getGrandTotalWithMS(await duration.getSendAtDuration(startDate, endDate)) }
@@ -42,7 +41,7 @@ export function createDurationNativeSQLService(duration: DurationManager): Durat
       return duration.getSummary(startDate, endDate)
     },
     async getTodaySummary() {
-      return this.getSpecDateSummary(getStartOfTodayDay(), getEndOfTodayDay());
+      return this.getSpecDateSummary(getStartOfTodayDay(), getEndOfTodayDay())
     },
   }
 }

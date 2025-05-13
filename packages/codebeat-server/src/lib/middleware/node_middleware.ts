@@ -4,10 +4,10 @@ import process from 'node:process'
 import { getDurationManager } from '@/db/duration'
 import { createDurationNativeSQLService } from '@/service/duration'
 import { getHeartbeatManager, getPrismaClientInstance } from '../../db'
-import { createHeartbeatService } from '../../service'
+import { createHeartbeatService, createMetricService } from '../../service'
 
 export function serviceMiddleWare(): MiddlewareHandler<{ Variables: ContextProps }> {
-  const { DIRECT_DATABASE_URL, DATABASE_URL } = process.env
+  const { DIRECT_DATABASE_URL, DATABASE_URL, RUNTIME_ENV } = process.env
   console.log('Database url: ', DATABASE_URL)
 
   return async (c, next) => {
@@ -16,11 +16,14 @@ export function serviceMiddleWare(): MiddlewareHandler<{ Variables: ContextProps
     const durationManage = getDurationManager(prismaClient)
     const heartbeatService = createHeartbeatService(heartbeatManager)
     const durationService = createDurationNativeSQLService(durationManage)
+    const metricService = createMetricService(heartbeatManager)
 
     c.set('services', {
       heartbeat: heartbeatService,
       duration: durationService,
+      metric: metricService,
     })
+    c.set('env', RUNTIME_ENV)
     return await next()
   }
 }

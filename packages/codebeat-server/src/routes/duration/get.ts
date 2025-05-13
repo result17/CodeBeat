@@ -26,7 +26,9 @@ const specDurationRoute = createRoute({
   tags: ['duration'],
   summary: 'Get heartbeats duration of spec date',
   path: '/',
-  query: queryStartAndEndTimeStampSchema,
+  request: {
+    query: queryStartAndEndTimeStampSchema,
+  },
   responses: {
     200: {
       content: {
@@ -49,7 +51,7 @@ export function registerGetTodayDuration(api: typeof durationAPI) {
 
 export function registerGetSpecDateDuration(api: typeof durationAPI) {
   return api.openapi(specDurationRoute, async (c) => {
-    const { start, end } = queryStartAndEndTimeStampSchema.parse(c.req.query)
+    const { start, end } = c.req.valid('query')
     const res = await getContextProps(c).services.duration.getSpecDateDuration(new Date(start), new Date(end))
     return c.json(res.grandTotal, 200)
   })

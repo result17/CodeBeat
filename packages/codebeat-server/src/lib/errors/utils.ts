@@ -1,32 +1,63 @@
 import type { Context } from 'hono'
-import type { ZodIssue } from 'zod'
+import type { ClientErrorStatusCode, ServerErrorStatusCode } from 'hono/utils/http-status'
+import type { ZodError, ZodIssue } from 'zod'
 import { z } from '@hono/zod-openapi'
 import { HTTPException } from 'hono/http-exception'
-import { ZodError } from 'zod'
 
+import { getContextProps } from '../context'
+
+// Define all possible error codes for the application
+export const ErrorCodes = [
+  'BAD_REQUEST', // 400
+  'UNAUTHORIZED', // 401
+  'FORBIDDEN', // 403
+  'NOT_FOUND', // 404
+  'VALIDATION_ERROR', // 400
+  'CONFLICT', // 409
+  'INTERNAL_SERVER_ERROR', // 500
+] as const
+
+export const ErrorCodeEnum = z.enum(ErrorCodes)
+export type ErrorCode = z.infer<typeof ErrorCodeEnum>
+
+// Map HTTP status codes to error codes
 export function statusToCode(status: number): ErrorCode {
   switch (status) {
     case 400:
       return 'BAD_REQUEST'
-    case 500:
-      return 'INTERNAL_SERVER_ERROR'
+    case 401:
+      return 'UNAUTHORIZED'
+    case 403:
+      return 'FORBIDDEN'
+    case 404:
+      return 'NOT_FOUND'
+    case 409:
+      return 'CONFLICT'
     default:
       return 'INTERNAL_SERVER_ERROR'
   }
 }
 
-export function codeToStatus(code: ErrorCode) {
+export function codeToStatus(code: ErrorCode): ClientErrorStatusCode | ServerErrorStatusCode {
   switch (code) {
     case 'BAD_REQUEST':
       return 400
+    case 'UNAUTHORIZED':
+      return 401
+    case 'FORBIDDEN':
+      return 403
+    case 'NOT_FOUND':
+      return 404
+    case 'VALIDATION_ERROR':
+      return 400
+    case 'CONFLICT':
+      return 409
     case 'INTERNAL_SERVER_ERROR':
-      return 500
-    default:
       return 500
   }
 }
 
-// Props to cal.com: https://github.com/calcom/cal.com/blob/5d325495a9c30c5a9d89fc2adfa620b8fde9346e/packages/lib/server/getServerErrorFromUnknown.ts#L17
+// Zod error handler
 export function parseZodErrorIssues(issues: ZodIssue[]): string {
   return issues
     .map(i =>
@@ -39,81 +70,96 @@ export function parseZodErrorIssues(issues: ZodIssue[]): string {
     .join('; ')
 }
 
-function errorMessageFromZod({ issues }: ZodError) {
-  return parseZodErrorIssues(issues)
-}
-
+// Custom API error class
 export class ApiError extends HTTPException {
   public readonly code: ErrorCode
 
   constructor({
     code,
     message,
+    cause,
   }: {
     code: ErrorCode
-    message: HTTPException['message']
+    message: string
+    cause?: Error
   }) {
-    const status = codeToStatus(code)
-    super(status, { message })
+    const status = codeToStatus(code) as ClientErrorStatusCode
+    super(status, { message, cause })
     this.code = code
   }
 }
 
-export function handleError(err: Error, c: Context): Response {
-  if (err instanceof ZodError) {
-    return c.json<ErrorSchema>(
-      {
-        code: 'BAD_REQUEST',
-        message: errorMessageFromZod(err),
-      },
+export function createErrorResponse(code: ErrorCode, message: string, details?: unknown) {
+  const detailIsObject = typeof details === 'object' && details !== null
+  const response: ErrorSchema = {
+    code,
+    message,
+    ...(detailIsObject && { details }),
+  }
+  return response
+}
+
+export function handZodError(result:
+  | {
+    success: true
+    data: unknown
+  }
+  | {
+    success: false
+    error: ZodError
+  }, c: Context) {
+  // Handle validation errors
+  if (!result.success) {
+    const { error } = result
+    const message = parseZodErrorIssues(error.issues)
+    const code = statusToCode(400)
+    return c.json(
+      createErrorResponse(code, message, error.flatten()),
       { status: 400 },
     )
   }
+}
 
-  /**
-   * This is a custom error that we throw in our code so we can handle it
-   */
+// Main error handler
+export function handleError(err: Error, c: Context): Response {
   if (err instanceof ApiError) {
-    const code = statusToCode(err.status)
-
-    return c.json<ErrorSchema>(
-      {
-        code,
-        message: err.message,
-      },
-      { status: err.status },
+    return c.json(
+      createErrorResponse(err.code, err.message),
+      codeToStatus(err.code),
     )
   }
 
   if (err instanceof HTTPException) {
     const code = statusToCode(err.status)
-    return c.json<ErrorSchema>(
-      {
-        code,
-        message: err.message,
-      },
+    return c.json(
+      createErrorResponse(code, err.message),
       { status: err.status },
     )
   }
 
-  return c.json<ErrorSchema>(
-    {
-      code: 'INTERNAL_SERVER_ERROR',
-      message: err.message ?? 'Something went wrong',
-    },
+  console.error('Unhandled error:', err)
 
+  const env = getContextProps(c).env
+
+  const isProduction = env === 'production'
+  const isDevelopment = env === 'development'
+
+  return c.json(
+    createErrorResponse(
+      'INTERNAL_SERVER_ERROR',
+      isProduction
+        ? 'An unexpected error occurred'
+        : err.message || 'Unknown error',
+      isDevelopment
+        ? {
+            stack: err.stack,
+            cause: err.cause,
+          }
+        : undefined,
+    ),
     { status: 500 },
   )
 }
-
-export const ErrorCodes = [
-  'BAD_REQUEST',
-  'INTERNAL_SERVER_ERROR',
-] as const
-
-export const ErrorCodeEnum = z.enum(ErrorCodes)
-
-export type ErrorCode = z.infer<typeof ErrorCodeEnum>
 
 export function createErrorSchema(code: ErrorCode) {
   return z.object({
@@ -124,6 +170,9 @@ export function createErrorSchema(code: ErrorCode) {
     message: z.string().openapi({
       description: 'A human readable message describing the issue.',
       example: '<string>',
+    }),
+    details: z.unknown().optional().openapi({
+      description: 'Additional error details (validation errors, etc).',
     }),
   })
 }
