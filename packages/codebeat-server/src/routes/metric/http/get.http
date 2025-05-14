@@ -1,0 +1,30 @@
+# Duration Metric API Examples
+
+### Get project duration distribution
+# Returns time spent on each project
+GET http://localhost:3000/api/metric/duration/project?start=1745971200000&end=1748649599999
+
+### Get language duration distribution
+# Returns time spent using each programming language
+GET http://localhost:3000/api/metric/duration/language?start=1745971200000&end=1748649599999
+
+### Get file type duration distribution
+# Returns time spent on each file type
+GET http://localhost:3000/api/metric/duration/file_type?start=1745971200000&end=1748649599999
+
+# Time Range:
+# - start: 2025-05-01T00:00:00.000Z (1745971200000)
+# - end:   2025-05-31T23:59:59.999Z (1748649599999)
+
+# Response Schema:
+# {
+#   "metric": "project", // The type of metric (project/language/file_type)
+#   "ratios": [
+#     {
+#       "value": "ProjectName", // Metric value (e.g., project name)
+#       "duration": 3600000,    // Duration in milliseconds
+#       "ratio": 0.25,         // Percentage of total time (0-1)
+#       "durationText": "1h"    // Human-readable duration
+#     }
+#   ]
+# }

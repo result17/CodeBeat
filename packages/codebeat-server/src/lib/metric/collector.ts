@@ -35,6 +35,8 @@ export class HeartbeatMetricCollector<T extends HeartbeatMetrics> extends Heartb
   }
 
   private traversalTimeline() {
+    // calculate the total duration
+    super.calcTimeRangeList()
     if (this.timeRanges.length === 0) {
       console.warn('No timeline data available')
     }
