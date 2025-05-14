@@ -26,5 +26,12 @@ GET http://localhost:3000/api/metric/duration/file_type?start=1745971200000&end=
 #       "ratio": 0.25,         // Percentage of total time (0-1)
 #       "durationText": "1h"    // Human-readable duration
 #     }
-#   ]
+#   ],
+#   "grandTotal": {
+#     "hours": 8, // Total hours
+#     "minutes": 32, // Total minutes
+#     "seconds": 49, // Total seconds
+#     "text": "8 hrs 32 mins", // Human-readable total time
+#     "total_ms": 30769470 // Total duration in milliseconds
+#   },
 # }

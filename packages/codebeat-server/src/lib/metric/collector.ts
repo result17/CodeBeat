@@ -1,4 +1,5 @@
 import type { HeartbeatRecordResponse } from '@/db'
+import type { MetricDurationData } from '@/shared/types'
 import { formatMilliseconds } from '@/shared'
 import { HeartbeatTimeline } from '../duration'
 
@@ -35,7 +36,7 @@ export class HeartbeatMetricCollector<T extends HeartbeatMetrics> extends Heartb
   }
 
   private traversalTimeline() {
-    // calculate the total duration
+    // calc time range list
     super.calcTimeRangeList()
     if (this.timeRanges.length === 0) {
       console.warn('No timeline data available')
@@ -72,6 +73,13 @@ export class HeartbeatMetricCollector<T extends HeartbeatMetrics> extends Heartb
   public getMetricRatios(): MetricValueDurationRatio<T>[] {
     this.traversalTimeline()
     return Array.from(this.metricMapper.values())
+  }
+
+  public getMetricData(): MetricDurationData<T> {
+    return {
+      grandTotal: this.getGrandTotal(),
+      metricRatios: this.getMetricRatios(),
+    }
   }
 
   public override dispose() {

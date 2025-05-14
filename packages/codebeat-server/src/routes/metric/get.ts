@@ -41,10 +41,12 @@ export function registerGetDurationMetric(api: typeof metricAPI) {
     const res = await getContextProps(c)
       .services
       .metric
-      .getSpecDateMetricDurationRatio(metric, new Date(start), new Date(end))
+      .getSpecDateMetricDurationRatioData(metric, new Date(start), new Date(end))
+
     return c.json({
       metric,
-      ratios: res,
+      ratios: res.metricRatios,
+      grandTotal: res.grandTotal,
     }, 200)
   })
 }

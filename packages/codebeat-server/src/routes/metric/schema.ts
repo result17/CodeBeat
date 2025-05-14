@@ -1,5 +1,6 @@
 import type { HeartbeatMetrics, MetricValueDurationRatio } from '@/lib/metric/collector'
 import { z } from '@hono/zod-openapi'
+import { GrandTotalSchema } from '../duration/schema'
 
 // Define metric types with their expected types
 const STRING_METRICS = ['project', 'language', 'entity', 'userAgent', 'projectPath'] as const
@@ -65,6 +66,7 @@ export const baseMetricSchema = z.object({
     ratio: z.number().min(0).max(1),
     durationText: z.string().min(1),
   })),
+  grandTotal: GrandTotalSchema,
 })
 
 export type BaseMetric = z.infer<typeof baseMetricSchema>

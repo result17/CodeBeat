@@ -1,19 +1,18 @@
 import type { HeartbeatManager } from '@/db'
-import type { HeartbeatMetrics, MetricValueDurationRatio } from '../lib'
+import type { HeartbeatMetrics } from '../lib'
+import type { MetricDurationData } from '../shared/types'
 import { HeartbeatMetricCollector } from '../lib'
-import { } from './duration'
 
 export interface MetricService {
-  getSpecDateMetricDurationRatio: <T extends HeartbeatMetrics>(metric: T, startDate: Date, endDate: Date) => Promise<MetricValueDurationRatio<T>[]>
+  getSpecDateMetricDurationRatioData: <T extends HeartbeatMetrics>(metric: T, startDate: Date, endDate: Date) => Promise<MetricDurationData<T>>
 }
 
 export function createMetricService(heartbeatManager: HeartbeatManager): MetricService {
   return {
-    getSpecDateMetricDurationRatio: async <T extends HeartbeatMetrics>(metric: T, startDate: Date, endDate: Date) => {
+    getSpecDateMetricDurationRatioData: async <T extends HeartbeatMetrics>(metric: T, startDate: Date, endDate: Date) => {
       const heartbeatRecords = await heartbeatManager.queryRecordsFilterSendAt(startDate, endDate)
       const collector = new HeartbeatMetricCollector(heartbeatRecords, metric)
-      const metricRatios = collector.getMetricRatios()
-      return metricRatios
+      return collector.getMetricData()
     },
   }
 }
