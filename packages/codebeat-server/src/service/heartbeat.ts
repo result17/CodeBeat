@@ -1,7 +1,7 @@
 import type { HeartbeatManager } from '@/db'
 import type { HeartbeatData, HeartbeatResult, HeartbeatResults } from '@/routes/heartbeat/schema'
 
-interface HeartbeatService {
+export interface HeartbeatService {
   getHeartbeats: (startDate: Date, endDate: Date) => Promise<HeartbeatResults>
   createHeartbeatRecord: (data: HeartbeatData) => Promise<HeartbeatResult['data']>
   createHeartbeatRecords: (data: HeartbeatData[]) => Promise<HeartbeatResult['data'][]>

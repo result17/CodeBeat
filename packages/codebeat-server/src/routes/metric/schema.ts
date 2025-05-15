@@ -58,7 +58,7 @@ export const METRIC_TYPES = {
   ALL_METRICS: [...STRING_METRICS, ...NUMBER_METRICS] as const,
 }
 
-export const baseMetricSchema = z.object({
+export const BaseMetricSchema = z.object({
   metric: z.enum(METRIC_TYPES.ALL_METRICS),
   ratios: z.array(z.object({
     value: z.union([z.string(), z.number()]),
@@ -69,4 +69,4 @@ export const baseMetricSchema = z.object({
   grandTotal: GrandTotalSchema,
 })
 
-export type BaseMetric = z.infer<typeof baseMetricSchema>
+export type BaseMetric = z.infer<typeof BaseMetricSchema>

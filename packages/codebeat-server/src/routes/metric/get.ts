@@ -2,7 +2,7 @@ import type { metricAPI } from '.'
 import { getContextProps, openApiErrorResponses, queryStartAndEndTimeStampSchema } from '@/lib'
 import { createRoute } from '@hono/zod-openapi'
 import { z } from 'zod'
-import { baseMetricSchema, METRIC_TYPES } from './schema'
+import { BaseMetricSchema, METRIC_TYPES } from './schema'
 
 const metricParamsSchema = z.object({
   metric: z.enum(METRIC_TYPES.ALL_METRICS)
@@ -26,7 +26,28 @@ export const durationMetricRoute = createRoute({
       description: 'Get a heartbeat record\'s duration metric',
       content: {
         'application/json': {
-          schema: baseMetricSchema,
+          schema: BaseMetricSchema,
+        },
+      },
+    },
+    ...openApiErrorResponses,
+  },
+})
+
+export const todayDurationMetricRoute = createRoute({
+  method: 'get',
+  tags: ['metric'],
+  summary: 'get a heartbeat record\'s today duration metric',
+  path: '/duration/today/{metric}',
+  request: {
+    params: metricParamsSchema,
+  },
+  responses: {
+    200: {
+      description: 'Get a heartbeat record\'s today duration metric',
+      content: {
+        'application/json': {
+          schema: BaseMetricSchema,
         },
       },
     },
@@ -42,6 +63,22 @@ export function registerGetDurationMetric(api: typeof metricAPI) {
       .services
       .metric
       .getSpecDateMetricDurationRatioData(metric, new Date(start), new Date(end))
+
+    return c.json({
+      metric,
+      ratios: res.metricRatios,
+      grandTotal: res.grandTotal,
+    }, 200)
+  })
+}
+
+export function registerGetTodayDurationMetric(api: typeof metricAPI) {
+  return api.openapi(durationMetricRoute, async (c) => {
+    const metric = c.req.valid('param').metric
+    const res = await getContextProps(c)
+      .services
+      .metric
+      .getTodayMetricDurationRatioData(metric)
 
     return c.json({
       metric,

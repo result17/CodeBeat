@@ -1,17 +1,13 @@
 <script setup lang="ts">
-import type { TimeRange } from 'codebeat-server'
 import type { ProjectSchedule } from '../lib'
+import type { DaytimeRangeChartViewProps } from '../types'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { DayTimeRangePainter } from '../lib'
 import IxTimeline from './IxTimeline.vue'
 
-const props = defineProps<Props>()
+const props = defineProps<DaytimeRangeChartViewProps>()
 
 let painter: DayTimeRangePainter
-
-interface Props {
-  data: TimeRange[]
-}
 
 const chartContainer = ref<HTMLElement>()
 
@@ -70,23 +66,9 @@ onBeforeUnmount(() => {
 
 <template>
   <div>
-    <div class="schedule-title">
+    <div class="chart-title">
       <IxTimeline /><span>Timeline</span>
     </div>
-    <div ref="chartContainer" class="schedule-chart" />
+    <div ref="chartContainer" class="chart-container" />
   </div>
 </template>
-
-<style scoped>
-.schedule-title {
-  display: flex;
-  gap: 0.125rem;
-  padding-block: 10px;
-}
-
-.schedule-chart {
-  width: 100%;
-  border-radius: 8px;
-  background-color: var(--vscode-editor-background);
-}
-</style>

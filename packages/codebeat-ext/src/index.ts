@@ -4,7 +4,7 @@ import { computed, defineExtension, extensionContext, reactive, useStatusBarItem
 import { ExtensionMode, StatusBarAlignment } from 'vscode'
 import { useChartView, useOnEvent } from './composables'
 import { clockIconName, debounceMs } from './constants'
-import { logger, queryAndPostTodaySummaryMessage, queryTodayDuration, sendHeartbeat, shouldQueryTodayData } from './utils'
+import { logger, queryAndPostTodaySummaryMessage, queryTodayDuration, queryTodayMetricDuration, sendHeartbeat, shouldQueryTodayData } from './utils'
 
 dotenv.config()
 
@@ -24,7 +24,7 @@ const { activate, deactivate } = defineExtension(() => {
   logger.show()
   let timeout: NodeJS.Timeout | null = null
   // Register webview view provider
-  const webview = useChartView()
+  const { webview, curQueryMetric } = useChartView()
 
   const statusBar = useStatusBarItem({
     id: 'com.github.result17',
@@ -68,8 +68,18 @@ const { activate, deactivate } = defineExtension(() => {
         logger.info(`heartbeatResult code is ${heartbeatResult?.code}, should query is ${shouldQueryFlag}`)
         if (shouldQueryFlag) {
           extensionState.lastQueryDurationTime = Date.now()
-          const [todayDurationResult] = await Promise.allSettled([queryTodayDuration(), queryAndPostTodaySummaryMessage(webview, shouldQueryFlag)])
-          if (todayDurationResult && todayDurationResult.status === 'fulfilled' && todayDurationResult.value && todayDurationResult.value.stdout) {
+          const list = [
+            queryTodayDuration(),
+            queryAndPostTodaySummaryMessage(webview, shouldQueryFlag),
+          ]
+          if (curQueryMetric.value) {
+            list.push(queryTodayMetricDuration(curQueryMetric.value))
+          }
+          const [todayDurationResult] = await Promise.allSettled(list)
+          if (todayDurationResult?.status === 'fulfilled'
+            && todayDurationResult.value
+            && 'stdout' in todayDurationResult.value
+            && todayDurationResult.value.stdout) {
             // update statusBar text to today duration
             statusBar.text = `${clockIconName} ${todayDurationResult.value.stdout}`
           }

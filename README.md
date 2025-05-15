@@ -84,3 +84,4 @@ pnpm dev
 - [x] save necessary data in vscode context
 - [] projects pie charts
 - [] summary date calculation performance benchmark
+- [] when git committing, code will be linted

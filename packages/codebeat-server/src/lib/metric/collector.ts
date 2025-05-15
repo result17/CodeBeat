@@ -79,6 +79,7 @@ export class HeartbeatMetricCollector<T extends HeartbeatMetrics> extends Heartb
     return {
       grandTotal: this.getGrandTotal(),
       metricRatios: this.getMetricRatios(),
+      metricKey: this.metric,
     }
   }
 

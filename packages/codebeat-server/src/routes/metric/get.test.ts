@@ -3,7 +3,7 @@ import type { BaseMetric } from './schema'
 import { StartAndDateErrorMsg, statusToCode } from '@/lib'
 import app from '@/local/app'
 import { describe, expect, it } from 'vitest'
-import { baseMetricSchema } from './schema'
+import { BaseMetricSchema } from './schema'
 
 describe('[GET] /metric/:metric', () => {
   const validStartTime = '1745380802000' // 2025-04-22
@@ -82,7 +82,7 @@ describe('[GET] /metric/:metric', () => {
             }),
           ]),
         })
-      } expect(baseMetricSchema.safeParse(data).success).toBe(true)
+      } expect(BaseMetricSchema.safeParse(data).success).toBe(true)
     })
 
     it('should return metric data for language metric', async () => {
@@ -106,7 +106,7 @@ describe('[GET] /metric/:metric', () => {
           ]),
         })
       }
-      expect(baseMetricSchema.safeParse(data).success).toBe(true)
+      expect(BaseMetricSchema.safeParse(data).success).toBe(true)
     })
 
     it('should handle empty time range gracefully', async () => {
@@ -125,7 +125,7 @@ describe('[GET] /metric/:metric', () => {
         metric: 'project',
         ratios: [],
       })
-      expect(baseMetricSchema.safeParse(data).success).toBe(true)
+      expect(BaseMetricSchema.safeParse(data).success).toBe(true)
     })
   })
 })

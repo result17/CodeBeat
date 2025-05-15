@@ -1,10 +1,12 @@
-import type { SummaryData } from 'codebeat-server'
+import type { HeartbeatMetrics, SummaryData } from 'codebeat-server'
 import type { useWebviewView } from 'reactive-vscode'
+import type { ZodSchema } from 'zod'
 import { spawn } from 'node:child_process'
 import { homedir } from 'node:os'
 import { join } from 'node:path'
 import * as process from 'node:process'
 import { ICommand } from 'codebeat-ext-webview'
+import { BaseMetricSchema, SummarySchema } from 'codebeat-server'
 import { useLogger, useOutputChannel } from 'reactive-vscode'
 import { queryTodayDurationInterval } from './constants'
 import { extensionState } from './index'
@@ -37,7 +39,7 @@ export function shouldQueryTodayData() {
   return Date.now() >= extensionState.lastQueryDurationTime + queryTodayDurationInterval
 }
 
-interface CommandResult {
+export interface CommandResult {
   stdout: string
   stderr: string
   code: number | null
@@ -155,6 +157,15 @@ export async function queryTodayDuration() {
   }
 }
 
+export async function queryTodayMetricDuration(metric: HeartbeatMetrics) {
+  try {
+    return await runCommand(codebeatCli, [...Object.entries(baseCliParams).flat(), '--today-metric-duration', metric])
+  }
+  catch {
+    logger.error('fail to query today metric duration')
+  }
+}
+
 export async function sendHeartbeat(args: string[]) {
   try {
     logger.info(`To send heartbeat params is ${args}.`)
@@ -175,19 +186,7 @@ export async function queryTodaySummary() {
 }
 
 export function parseSummary(commandResult: CommandResult | undefined) {
-  if (!commandResult) {
-    throw new Error('Summary is not defined')
-  }
-  try {
-    const out = commandResult.stdout
-    logger.info('command stdout is', out)
-    const summaryData = JSON.parse(out) as SummaryData
-    return summaryData
-  }
-  catch (error) {
-    logger.error('failed to parse summary data', error)
-    throw error
-  }
+  return parseCommandResult(commandResult, SummarySchema)
 }
 
 export async function queryAndPostTodaySummaryMessage(webview: ReturnType<typeof useWebviewView>, retry: boolean = false) {
@@ -215,6 +214,50 @@ export async function queryAndPostTodaySummaryMessage(webview: ReturnType<typeof
     }
     if (!isPosted) {
       logger.error(`Failed to post [${ICommand.summary_today_response}]`, error)
+    }
+  }
+}
+
+export function parseCommandResult(commandResult: CommandResult | undefined, schema: ZodSchema) {
+  if (!commandResult) {
+    throw new Error('Command result is not defined')
+  }
+  try {
+    const out = commandResult.stdout
+    logger.info('command stdout is', out)
+    const result = JSON.parse(out)
+    schema.safeParse(result)
+    if (!result) {
+      throw new Error('Command result is invalid')
+    }
+    return result
+  }
+  catch (error) {
+    logger.error('failed to parse command result', error)
+    throw error
+  }
+}
+
+export async function parseAndPostTodayMetricDuration(webview: ReturnType<typeof useWebviewView>, metric: HeartbeatMetrics, retry: boolean = false) {
+  let isPosted = false
+  try {
+    let commandResult: CommandResult | undefined
+    if (!retry && commandResult) {
+      commandResult = await queryTodayMetricDuration(metric)
+    }
+    const result = parseCommandResult(commandResult, BaseMetricSchema)
+    logger.info(`Prepare to post [${ICommand.metric_duration_project_response}]`)
+    isPosted = !!await (webview.postMessage({
+      message: ICommand.metric_duration_project_response,
+      data: result,
+    }))
+  }
+  catch (error) {
+    if (error instanceof Error) {
+      logger.error('Failed to parse metric duration data', error)
+    }
+    if (!isPosted) {
+      logger.error(`Failed to post [${ICommand.metric_duration_project_response}]`, error)
     }
   }
 }

@@ -1,8 +1,9 @@
 import type { IMessage } from 'codebeat-ext-webview'
+import type { HeartbeatMetrics, MetricDurationData, SummaryData } from 'codebeat-server'
 import { ICommand } from 'codebeat-ext-webview'
 import { computed, createSingletonComposable, ref, useAbsolutePath, useFileUri, useWebviewView, watch, watchEffect } from 'reactive-vscode'
 import { Uri } from 'vscode'
-import { logger, queryAndPostTodaySummaryMessage } from '../utils'
+import { logger, parseAndPostTodayMetricDuration, queryAndPostTodaySummaryMessage } from '../utils'
 import { useSelf } from './self'
 
 // Constants for webview resources
@@ -20,6 +21,7 @@ export const useChartView = createSingletonComposable(() => {
   const extensionUri = extension.value?.extensionUri
   // Initial loading state
   const isInitialized = ref(false)
+  const curQueryMetric = ref<HeartbeatMetrics>()
 
   const html = computed(() => `<!DOCTYPE html>
                       <html>
@@ -53,9 +55,14 @@ export const useChartView = createSingletonComposable(() => {
       localResourceRoots: [DistFileURI.value],
       enableCommandUris: true,
     },
-    async onDidReceiveMessage(message: IMessage<undefined>) {
+    async onDidReceiveMessage(message: IMessage<SummaryData | MetricDurationData<HeartbeatMetrics>>) {
       if (message.command && message.command === ICommand.summary_today_query) {
         await queryAndPostTodaySummaryMessage(webview, true)
+      }
+      if (message.command && message.command === ICommand.metric_duration_project_query) {
+        const data = message.data as MetricDurationData<HeartbeatMetrics>
+        curQueryMetric.value = data.metricKey
+        await parseAndPostTodayMetricDuration(webview, data.metricKey, true)
       }
     },
     retainContextWhenHidden: true,
@@ -112,5 +119,5 @@ export const useChartView = createSingletonComposable(() => {
       }
     }
   })
-  return webview
+  return { webview, curQueryMetric }
 })

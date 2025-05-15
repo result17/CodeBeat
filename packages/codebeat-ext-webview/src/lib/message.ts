@@ -1,7 +1,7 @@
 import type { IMessage } from '../shared'
 import { watch } from 'vue'
 import { MessageResponseStatus } from '../shared'
-import { isCommunicating, lastCommunicatingCostTime, messageStatus } from '../state'
+import { isCommunicating, lastCommunicatingCostTime, lastUpdateRef, messageStatus } from '../state'
 
 let lastCommunicationTime: number | undefined
 
@@ -88,6 +88,7 @@ export function addMessageListener<T>(listener: OnMessage<T>) {
   const wrappedListener = (e: Parameters<OnMessage<T>>[0]) => {
     isCommunicating.value = false
     messageStatus.value = MessageResponseStatus.SUCCESS
+    lastUpdateRef.value = Date.now()
     clearExistingTimer()
     listener(e)
   }

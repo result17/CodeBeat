@@ -1,4 +1,7 @@
 import type { HeartbeatMetrics, MetricValueDurationRatio } from '@/lib'
+
+export type { HeartbeatMetrics, MetricValueDurationRatio } from '@/lib'
+
 /**
  * Heartbeat duration summary data
  */
@@ -37,4 +40,5 @@ export interface SummaryData {
 export interface MetricDurationData<T extends HeartbeatMetrics> {
   grandTotal: GrandTotal
   metricRatios: MetricValueDurationRatio<T>[]
+  metricKey: T
 }
