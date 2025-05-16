@@ -23,13 +23,13 @@ function formatLog(message: string, data?: unknown, options: LogOptions = {}) {
     logEntry.stack = data.stack
     logEntry.message = data.message
   }
-
+  console.log(logEntry)
   console[level](JSON.stringify(logEntry, null, 2))
 }
 
 export function logReqJSONBody(): MiddlewareHandler {
   return async (c, next) => {
-    if (c.req.header('Content-Type')?.includes('application/json')) {
+    if (c.req.header('Content-Type')?.includes('application/json') && c.req.method !== 'GET') {
       try {
         const body = await c.req.json()
         formatLog('Request JSON body', {
@@ -49,7 +49,8 @@ export function logReqJSONBody(): MiddlewareHandler {
 export function logResJSONBody(): MiddlewareHandler {
   return async (c, next) => {
     await next()
-    if (c.req.header('Accept')?.includes('application/json')) {
+    // only response is success
+    if (c.req.header('Accept')?.includes('application/json') && c.res.ok) {
       try {
         const response = await c.res.clone().json<ErrorSchema>()
         const isError = response.code !== undefined && response.message !== undefined

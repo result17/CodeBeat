@@ -85,15 +85,8 @@ export class HeartbeatTimeline extends HeartbeatCollection {
     this.totalMs += this.lastRange.duration
   }
 
-  protected getGrandTotalWithMS() {
-    if (this.timeRanges.length === 0) {
-      this.calcTimeRangeList()
-    }
-    return getGrandTotalWithMS(this.totalMs)
-  }
-
   protected getGrandTotal() {
-    return this.getGrandTotalWithMS()
+    return getGrandTotalWithMS(this.totalMs)
   }
 
   protected summary() {

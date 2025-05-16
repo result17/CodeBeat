@@ -36,7 +36,7 @@ export const durationMetricRoute = createRoute({
 
 export const todayDurationMetricRoute = createRoute({
   method: 'get',
-  tags: ['metric'],
+  tags: ['metric', 'today'],
   summary: 'get a heartbeat record\'s today duration metric',
   path: '/duration/today/{metric}',
   request: {
@@ -73,7 +73,7 @@ export function registerGetDurationMetric(api: typeof metricAPI) {
 }
 
 export function registerGetTodayDurationMetric(api: typeof metricAPI) {
-  return api.openapi(durationMetricRoute, async (c) => {
+  return api.openapi(todayDurationMetricRoute, async (c) => {
     const metric = c.req.valid('param').metric
     const res = await getContextProps(c)
       .services

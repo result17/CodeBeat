@@ -6,8 +6,8 @@ import { describe, expect, it } from 'vitest'
 import { BaseMetricSchema } from './schema'
 
 describe('[GET] /metric/:metric', () => {
-  const validStartTime = '1745380802000' // 2025-04-22
-  const validEndTime = '1745413201000' // 2025-04-23
+  const validStartTime = '1745971200000' // 2025-04-30
+  const validEndTime = '1748649599999' // 2025-05-31
 
   describe('error scenarios', () => {
     it('should return 400 when start time is missing', async () => {
@@ -125,6 +125,30 @@ describe('[GET] /metric/:metric', () => {
         metric: 'project',
         ratios: [],
       })
+      expect(BaseMetricSchema.safeParse(data).success).toBe(true)
+    })
+
+    it('should return today metric data for language metric', async () => {
+      const res = await app.request(
+        `/api/metric/duration/today/language`,
+        { method: 'GET' },
+      )
+      expect(res.status).toBe(200)
+
+      const data = await res.json<BaseMetric>()
+      if (data.ratios.length > 0) {
+        expect(data).toMatchObject({
+          metric: 'language',
+          ratios: expect.arrayContaining([
+            expect.objectContaining({
+              value: expect.any(String),
+              duration: expect.any(Number),
+              ratio: expect.any(Number),
+              durationText: expect.any(String),
+            }),
+          ]),
+        })
+      }
       expect(BaseMetricSchema.safeParse(data).success).toBe(true)
     })
   })

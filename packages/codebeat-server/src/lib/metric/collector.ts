@@ -28,7 +28,6 @@ export class HeartbeatMetricCollector<T extends HeartbeatMetrics> extends Heartb
   constructor(list: HeartbeatRecordResponse[], metric: T) {
     super(list)
     this.metric = metric
-    this.traversalTimeline()
   }
 
   public getMetric(): T {
@@ -76,9 +75,10 @@ export class HeartbeatMetricCollector<T extends HeartbeatMetrics> extends Heartb
   }
 
   public getMetricData(): MetricDurationData<T> {
+    const metricRatios = this.getMetricRatios()
     return {
       grandTotal: this.getGrandTotal(),
-      metricRatios: this.getMetricRatios(),
+      metricRatios,
       metricKey: this.metric,
     }
   }

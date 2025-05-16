@@ -12,6 +12,10 @@ GET http://localhost:3000/api/metric/duration/language?start=1745971200000&end=1
 # Returns time spent on each file type
 GET http://localhost:3000/api/metric/duration/file_type?start=1745971200000&end=1748649599999
 
+### Get today's project duration distribution
+# Returns time spent on each project
+GET http://localhost:3000/api/metric/duration/today/project
+
 # Time Range:
 # - start: 2025-05-01T00:00:00.000Z (1745971200000)
 # - end:   2025-05-31T23:59:59.999Z (1748649599999)
