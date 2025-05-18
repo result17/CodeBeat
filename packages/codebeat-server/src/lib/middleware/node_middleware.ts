@@ -11,20 +11,26 @@ export function serviceMiddleWare(): MiddlewareHandler<{ Variables: ContextProps
   const databaseUrl = DIRECT_DATABASE_URL || DATABASE_URL
   console.log('Database url: ', databaseUrl)
 
-  return async (c, next) => {
-    const prismaClient = getPrismaClientInstance(databaseUrl, false)
-    const heartbeatManager = getHeartbeatManager(prismaClient)
-    const durationManage = getDurationManager(prismaClient)
-    const heartbeatService = createHeartbeatService(heartbeatManager)
-    const durationService = createDurationNativeSQLService(durationManage)
-    const metricService = createMetricService(heartbeatManager)
+  const prismaClient = getPrismaClientInstance(databaseUrl, false)
+  const heartbeatManager = getHeartbeatManager(prismaClient)
+  const durationManage = getDurationManager(prismaClient)
+  const heartbeatService = createHeartbeatService(heartbeatManager)
+  const durationService = createDurationNativeSQLService(durationManage)
+  const metricService = createMetricService(heartbeatManager)
 
-    c.set('services', {
-      heartbeat: heartbeatService,
-      duration: durationService,
-      metric: metricService,
-    })
-    c.set('env', RUNTIME_ENV)
+  let isInit = false
+
+  return async (c, next) => {
+    if (!isInit) {
+      c.set('services', {
+        heartbeat: heartbeatService,
+        duration: durationService,
+        metric: metricService,
+      })
+      c.set('env', RUNTIME_ENV)
+      isInit = true
+    }
+
     return await next()
   }
 }
