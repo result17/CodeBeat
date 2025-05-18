@@ -78,8 +78,8 @@ export class HeartbeatMetricCollector<T extends HeartbeatMetrics> extends Heartb
     const metricRatios = this.getMetricRatios()
     return {
       grandTotal: this.getGrandTotal(),
-      metricRatios,
-      metricKey: this.metric,
+      ratios: metricRatios,
+      metric: this.metric,
     }
   }
 

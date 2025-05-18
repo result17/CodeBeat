@@ -1,4 +1,5 @@
-import type { HeartbeatMetrics, SummaryData } from 'codebeat-server'
+import type { IMessage } from 'codebeat-ext-webview'
+import type { HeartbeatMetrics, MetricDurationData, SummaryData } from 'codebeat-server'
 import type { useWebviewView } from 'reactive-vscode'
 import type { ZodSchema } from 'zod'
 import { spawn } from 'node:child_process'
@@ -10,7 +11,7 @@ import { BaseMetricSchema, SummarySchema } from 'codebeat-server'
 import { useLogger, useOutputChannel } from 'reactive-vscode'
 import { queryTodayDurationInterval } from './constants'
 import { extensionState } from './index'
-import { todaySummaryData } from './state'
+import { todayMetricData, todaySummaryData } from './state'
 
 export interface BaseCliParams {
   '--api-url'?: string
@@ -185,8 +186,8 @@ export async function queryTodaySummary() {
   }
 }
 
-export function parseSummary(commandResult: CommandResult | undefined) {
-  return parseCommandResult(commandResult, SummarySchema)
+export function parseSummary<T>(commandResult: CommandResult | undefined): T {
+  return parseCommandResult<T>(commandResult, SummarySchema)
 }
 
 export async function queryAndPostTodaySummaryMessage(webview: ReturnType<typeof useWebviewView>, retry: boolean = false) {
@@ -198,14 +199,17 @@ export async function queryAndPostTodaySummaryMessage(webview: ReturnType<typeof
     }
     else {
       const commandResult = await queryTodaySummary()
-      summaryData = parseSummary(commandResult)
+      summaryData = parseSummary<SummaryData>(commandResult)
       todaySummaryData.value = summaryData
     }
     logger.info(`Prepare to post [${ICommand.summary_today_response}]`)
-    isPosted = !!await (webview.postMessage({
+
+    const postContent = {
       message: ICommand.summary_today_response,
       data: summaryData,
-    }))
+    } satisfies IMessage<SummaryData>
+
+    isPosted = !!await webview.postMessage(postContent)
     return summaryData
   }
   catch (error) {
@@ -218,7 +222,7 @@ export async function queryAndPostTodaySummaryMessage(webview: ReturnType<typeof
   }
 }
 
-export function parseCommandResult(commandResult: CommandResult | undefined, schema: ZodSchema) {
+export function parseCommandResult<T>(commandResult: CommandResult | undefined, schema: ZodSchema): T {
   if (!commandResult) {
     throw new Error('Command result is not defined')
   }
@@ -241,16 +245,24 @@ export function parseCommandResult(commandResult: CommandResult | undefined, sch
 export async function parseAndPostTodayMetricDuration(webview: ReturnType<typeof useWebviewView>, metric: HeartbeatMetrics, retry: boolean = false) {
   let isPosted = false
   try {
-    let commandResult: CommandResult | undefined
-    if (!retry && commandResult) {
-      commandResult = await queryTodayMetricDuration(metric)
+    let result: MetricDurationData<HeartbeatMetrics>
+    if (!retry && todayMetricData.value?.[metric]) {
+      result = todayMetricData.value[metric]
     }
-    const result = parseCommandResult(commandResult, BaseMetricSchema)
+    else {
+      const commandResult = await queryTodayMetricDuration(metric)
+      result = parseCommandResult<MetricDurationData<HeartbeatMetrics>>(commandResult, BaseMetricSchema)
+      todayMetricData.value[metric] = result
+    }
+
     logger.info(`Prepare to post [${ICommand.metric_duration_project_response}]`)
-    isPosted = !!await (webview.postMessage({
+
+    const postContent = {
       message: ICommand.metric_duration_project_response,
       data: result,
-    }))
+    } satisfies IMessage<MetricDurationData<HeartbeatMetrics>>
+
+    isPosted = !!await webview.postMessage(postContent)
   }
   catch (error) {
     if (error instanceof Error) {

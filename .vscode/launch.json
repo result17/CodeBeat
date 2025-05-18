@@ -14,7 +14,6 @@
       ],
       "cwd": "${workspaceFolder}/packages/codebeat-ext",
       "preLaunchTask": "npm: e:dev",
-      "envFile": "${workspaceFolder}/packages/codebeat-ext/.env",
       "env": {
         "NODE_ENV": "development"
       }

@@ -4,6 +4,7 @@ import type { DaytimeRangeChartViewProps } from '../types'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { DayTimeRangePainter } from '../lib'
 import IxTimeline from './IxTimeline.vue'
+import NoDataView from './NoDataView.vue'
 
 const props = defineProps<DaytimeRangeChartViewProps>()
 
@@ -52,11 +53,11 @@ watch(processedData, () => {
 })
 
 onMounted(() => {
-  painter = new DayTimeRangePainter(chartContainer.value as HTMLElement, processedData.value, uniqueProjectSet.value.size)
-  if (processedData.value.length > 0) {
-    handleResize()
+  if (chartContainer.value && processedData.value.length > 0) {
+    painter = new DayTimeRangePainter(chartContainer.value, processedData.value, uniqueProjectSet.value.size)
+    painter.draw()
+    window.addEventListener('resize', handleResize)
   }
-  window.addEventListener('resize', handleResize)
 })
 
 onBeforeUnmount(() => {
@@ -65,10 +66,9 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div>
-    <div class="chart-title">
-      <IxTimeline /><span>Timeline</span>
-    </div>
-    <div ref="chartContainer" class="chart-container" />
+  <div class="chart-title">
+    <IxTimeline /><span>Timeline</span>
   </div>
+  <div ref="chartContainer" class="chart-container" />
+  <NoDataView v-if="processedData.length === 0" />
 </template>

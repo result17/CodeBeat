@@ -64,11 +64,7 @@ export function registerGetDurationMetric(api: typeof metricAPI) {
       .metric
       .getSpecDateMetricDurationRatioData(metric, new Date(start), new Date(end))
 
-    return c.json({
-      metric,
-      ratios: res.metricRatios,
-      grandTotal: res.grandTotal,
-    }, 200)
+    return c.json(res, 200)
   })
 }
 
@@ -80,10 +76,6 @@ export function registerGetTodayDurationMetric(api: typeof metricAPI) {
       .metric
       .getTodayMetricDurationRatioData(metric)
 
-    return c.json({
-      metric,
-      ratios: res.metricRatios,
-      grandTotal: res.grandTotal,
-    }, 200)
+    return c.json(res, 200)
   })
 }

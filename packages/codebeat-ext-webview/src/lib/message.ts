@@ -5,6 +5,8 @@ import { isCommunicating, lastCommunicatingCostTime, lastUpdateRef, messageStatu
 
 let lastCommunicationTime: number | undefined
 
+const messageSet = new Set<IMessage<any>>()
+
 watch([isCommunicating], () => {
   if (isCommunicating.value) {
     lastCommunicationTime = Date.now()
@@ -32,15 +34,23 @@ const vscodeApi = window.acquireVsCodeApi()
  * @param {IMessage<T>} message - The message to post to the extension host
  * @throws {Error} If the message is invalid or posting fails
  */
-export function postMsg<T>(message: IMessage<T>): void {
+export function postMsgList<T>(messages: IMessage<T>[], saveInMemory: boolean = true): void {
   // Input validation
-  if (!message || typeof message !== 'object') {
-    throw new Error('Invalid message: must be an object')
+  if (!messages || !Array.isArray(messages)) {
+    throw new Error('Invalid messages: must be an array of objects')
   }
-
+  if (saveInMemory) {
+    messages.forEach((message) => {
+      if (!messageSet.has(message)) {
+        messageSet.add(message)
+      }
+    })
+  }
   try {
-    // Post the message
-    vscodeApi.postMessage(message)
+    // Post messages
+    messages.forEach((message) => {
+      vscodeApi.postMessage(message)
+    })
 
     // Update state and manage timer
     isCommunicating.value = true
@@ -59,6 +69,10 @@ export function postMsg<T>(message: IMessage<T>): void {
     clearExistingTimer()
     throw new Error(`Failed to post message: ${error instanceof Error ? error.message : String(error)}`)
   }
+}
+
+export function postAllMsgInCache() {
+  postMsgList(Array.from(messageSet), true)
 }
 
 /**

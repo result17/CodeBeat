@@ -85,3 +85,5 @@ pnpm dev
 - [] projects pie charts
 - [] summary date calculation performance benchmark
 - [] when git committing, code will be linted
+- [] when server shut down, codebeat cli has memory address error
+- [] when server shut down, prsima should disconnect

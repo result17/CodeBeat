@@ -6,7 +6,7 @@ import DaytimeRange from './components/DaytimeRangeChartView.vue'
 import LastUpdatedAt from './components/LastUpdatedAt.vue'
 import MetricPieChart from './components/MetricDurationRatioChartView'
 import NoData from './components/NoDataView.vue'
-import { addMessageListener, postMsg, removeAllMessageListeners } from './lib'
+import { addMessageListener, postMsgList, removeAllMessageListeners } from './lib'
 import { ICommand } from './shared'
 import { lastUpdateRef } from './state'
 
@@ -14,25 +14,30 @@ const timelineRef = shallowRef<TimeRange[]>([])
 const metricDurationRef = shallowRef<MetricDurationData<'project'>>()
 
 onBeforeMount(() => {
-  postMsg({
-    command: ICommand.summary_today_query,
-  })
-  postMsg({
-    command: ICommand.metric_duration_project_query,
-  })
+  postMsgList([
+    {
+      message: ICommand.summary_today_query,
+    },
+    {
+      message: ICommand.metric_duration_project_query,
+      data: {
+        metricKey: 'project',
+      },
+    },
+  ])
 
   addMessageListener((event: MessageEvent<IMessage<SummaryData>>) => {
-    const message = event.data
-    if (message.command === ICommand.summary_today_response && message.data) {
-      timelineRef.value = message.data.timeline
+    const posted = event.data
+    if (posted.message === ICommand.summary_today_response && posted.data) {
+      timelineRef.value = posted.data.timeline
     }
   })
 
   addMessageListener((event: MessageEvent<IMessage<MetricDurationData<'project'>>>) => {
-    const message = event.data
-    if (message.command === ICommand.metric_duration_response && message.data && message.data.metricKey === 'project') {
+    const posted = event.data
+    if (posted.message === ICommand.metric_duration_project_response && posted.data && posted.data.metric === 'project') {
       // Handle the metric duration response
-      metricDurationRef.value = message.data
+      metricDurationRef.value = posted.data
     }
   })
 })
@@ -44,7 +49,9 @@ onBeforeUnmount(removeAllMessageListeners)
   <DaytimeRange v-if="timelineRef.length > 0" :data="timelineRef" />
   <NoData v-if="timelineRef.length === 0" />
   <MetricPieChart v-if="metricDurationRef" :data="metricDurationRef" metric-key="project" />
-  <LastUpdatedAt class="pt-10" :update-at="lastUpdateRef" />
+  <div class="pt-10">
+    <LastUpdatedAt :update-at="lastUpdateRef" />
+  </div>
 </template>
 
 <style>
@@ -62,5 +69,9 @@ onBeforeUnmount(removeAllMessageListeners)
   width: 100%;
   border-radius: 8px;
   background-color: var(--vscode-editor-background);
+}
+
+.legend-label {
+  fill: var(--vscode-editor-foreground);
 }
 </style>

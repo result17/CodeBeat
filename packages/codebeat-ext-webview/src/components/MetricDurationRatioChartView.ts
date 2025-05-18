@@ -16,23 +16,6 @@ const validMetrics = new Set<HeartbeatMetrics>([
   'userAgent',
 ])
 
-// export default defineComponent(<T extends HeartbeatMetrics>(props: MetricPieChartViewProps<T>) => {
-//   const { data, metricKey } = props
-//   return () => {
-//     if (!validMetrics.has(metricKey)) {
-//       return null
-//     }
-
-//     return h('div', [
-//       h('div', { class: 'chart-title' }, [
-//         h(IxProject),
-//         h('span', metricKey),
-//       ]),
-//       h(RatioChart, { props: { data, metricKey } }),
-//     ])
-//   }
-// })
-
 export default defineComponent({
   props: {
     data: {
@@ -52,7 +35,11 @@ export default defineComponent({
 
       return h('div', [
         h('div', { class: 'chart-title' }, [
-          h(IxProject),
+          h(IxProject, {
+            style: {
+              transform: 'translateY(0.5px)',
+            },
+          }),
           h('span', props.metricKey),
         ]),
         h(RatioChart, {

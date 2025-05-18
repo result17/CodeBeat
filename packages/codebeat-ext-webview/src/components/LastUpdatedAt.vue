@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watchEffect } from 'vue'
-import { postMsg } from '../lib'
-import { formatDate, ICommand, MessageResponseStatus } from '../shared'
+import { postAllMsgInCache } from '../lib'
+import { formatDate, MessageResponseStatus } from '../shared'
 import { isCommunicating, lastCommunicatingCostTime, messageStatus } from '../state'
 import IxUpdate from './lxUpdate.vue'
 
@@ -38,9 +38,7 @@ const dateStr = computed(() => updateAt > 0 ? formatDate(new Date(updateAt)) : '
       :is-rotating="isRotating"
       @click="() => {
         if (isCommunicating) return
-        postMsg({
-          command: ICommand.summary_today_query,
-        })
+        postAllMsgInCache()
       }"
     /><span>Last updated at {{ dateStr }}</span>
   </div>

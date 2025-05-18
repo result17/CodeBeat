@@ -20,7 +20,7 @@
     "vscode": "^1.97.0"
   },
   "scripts": {
-    "build": "vite build",
+    "build": "nr share && vite build",
     "dev": "vite dev",
     "lint": "eslint --fix",
     "share": "tsup --config src/tsup.config.ts"

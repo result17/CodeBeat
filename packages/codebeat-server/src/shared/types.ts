@@ -39,6 +39,6 @@ export interface SummaryData {
 
 export interface MetricDurationData<T extends HeartbeatMetrics> {
   grandTotal: GrandTotal
-  metricRatios: MetricValueDurationRatio<T>[]
-  metricKey: T
+  ratios: MetricValueDurationRatio<T>[]
+  metric: T
 }

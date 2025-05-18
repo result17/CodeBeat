@@ -3,6 +3,10 @@ import type { ScaleOrdinal } from 'd3'
 import { arc, pie, scaleOrdinal, schemeCategory10 } from 'd3'
 import { Painter } from './painter'
 
+function isBasicType(value: unknown): boolean {
+  return typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean' || typeof value === 'bigint'
+}
+
 /**
  * A specialized painter that visualizes metric time ratios as a pie chart
  * using D3.js. It displays the proportion of time spent on each metric value.
@@ -15,19 +19,13 @@ export class MetricPiePainter<T extends HeartbeatMetrics> extends Painter {
   private colorScale!: ScaleOrdinal<string, string, never>
 
   // Padding around the chart
-  private readonly padding: number = 40
-
-  // Width reserved for the legend
-  private readonly legendWidth: number = 150
-
-  // Height of each legend item
-  private readonly legendItemHeight: number = 25
-
-  constructor(container: HTMLElement, data: MetricDurationData<T>) {
+  private readonly padding: number = 0
+  constructor(container: HTMLElement, data: MetricDurationData<T>, padding: number) {
     super(container)
     this.data = data
+    this.padding = padding
     this.setWidth(container.offsetWidth)
-    this.setHeight(Math.min(container.offsetWidth, 400))
+    this.setHeight(container.offsetWidth)
   }
 
   public setData(data: MetricDurationData<T>): boolean {
@@ -39,7 +37,7 @@ export class MetricPiePainter<T extends HeartbeatMetrics> extends Painter {
 
   public canDraw(): boolean {
     return this.container
-      && this.data.metricRatios.length > 0
+      && this.data.ratios.length > 0
       && this.width > 0
       && this.height > 0
   }
@@ -49,19 +47,24 @@ export class MetricPiePainter<T extends HeartbeatMetrics> extends Painter {
    */
   private setupScales(): void {
     this.colorScale = scaleOrdinal<string>()
-      .domain(this.data.metricRatios.map(d => String(d.value)))
+      .domain(this.data.ratios.map(d => String(d.value)))
       .range(schemeCategory10)
+  }
+
+  public getColorScale(): ScaleOrdinal<string, string, never> {
+    return this.colorScale
+  }
+
+  public getPadding() {
+    return this.padding
   }
 
   /**
    * Draws the pie chart visualization
    */
   private drawPieChart(): void {
-    // Calculate chart dimensions
-    const radius = Math.min(
-      this.width - this.legendWidth - this.padding * 2,
-      this.height - this.padding * 2,
-    ) / 2
+    // Calculate chart dimensions with larger radius
+    const radius = (this.width - this.padding * 2) / 2
     const centerX = radius + this.padding
     const centerY = this.height / 2
 
@@ -82,49 +85,38 @@ export class MetricPiePainter<T extends HeartbeatMetrics> extends Painter {
 
     // Create pie slices
     const slices = chartGroup.selectAll('path')
-      .data(pieLayout(this.data.metricRatios))
+      .data(pieLayout(this.data.ratios))
       .enter()
       .append('path')
       .attr('d', arcGenerator)
       .attr('fill', d => this.colorScale(String(d.data.value)))
-      .attr('stroke', 'white')
-      .attr('stroke-width', 2)
+      .attr('stroke', 'black')
+      .attr('stroke-width', 0.5)
 
     // Add tooltips
     slices.append('title')
       .text(d => `${d.data.value}: ${d.data.durationText} (${(d.data.ratio * 100).toFixed(1)}%)`)
-  }
 
-  /**
-   * Draws the chart legend
-   */
-  private drawLegend(): void {
-    // Create legend group
-    const legendGroup = this.svg.append('g')
-      .attr('class', 'legend')
-      .attr('transform', `translate(${this.width - this.legendWidth + this.padding}, ${this.padding})`)
+    // Add text labels on pie slices
+    const labelArc = arc<any>()
+      .outerRadius(radius * 0.8) // Position labels inside outer edge
+      .innerRadius(radius * 0.5) // Position labels away from center
 
-    // Create legend items
-    const legendItems = legendGroup.selectAll('.legend-item')
-      .data(this.data.metricRatios)
+    chartGroup.selectAll('text')
+      .data(pieLayout(this.data.ratios))
       .enter()
-      .append('g')
-      .attr('class', 'legend-item')
-      .attr('transform', (_, i) => `translate(0, ${i * this.legendItemHeight})`)
-
-    // Add color swatches
-    legendItems.append('rect')
-      .attr('width', 12)
-      .attr('height', 12)
-      .attr('fill', d => this.colorScale(String(d.value)))
-
-    // Add labels
-    legendItems.append('text')
-      .attr('x', 20)
-      .attr('y', 10)
-      .text(d => `${String(d.value)}: ${(d.ratio * 100).toFixed(1)}%`)
-      .style('font-size', '12px')
-      .style('font-family', 'sans-serif')
+      .append('text')
+      .attr('class', 'legend-label')
+      .attr('transform', d => `translate(${labelArc.centroid(d)})`)
+      .attr('dy', '0.3em')
+      .style('text-anchor', 'middle')
+      .style('font-size', '10px')
+      .style('font-weight', 'bold')
+      .text((d) => {
+        if (d.data.ratio < 0.1)
+          return ''
+        return isBasicType(d.data.value) ? String(d.data.value) : `${(d.data.ratio * 100).toFixed(2)}`
+      })
   }
 
   /**
@@ -133,7 +125,6 @@ export class MetricPiePainter<T extends HeartbeatMetrics> extends Painter {
   protected drawContext(): void {
     this.setupScales()
     this.drawPieChart()
-    this.drawLegend()
   }
 
   public override draw(clearPrev: boolean = true): boolean {

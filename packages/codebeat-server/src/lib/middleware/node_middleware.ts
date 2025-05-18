@@ -18,19 +18,13 @@ export function serviceMiddleWare(): MiddlewareHandler<{ Variables: ContextProps
   const durationService = createDurationNativeSQLService(durationManage)
   const metricService = createMetricService(heartbeatManager)
 
-  let isInit = false
-
   return async (c, next) => {
-    if (!isInit) {
-      c.set('services', {
-        heartbeat: heartbeatService,
-        duration: durationService,
-        metric: metricService,
-      })
-      c.set('env', RUNTIME_ENV)
-      isInit = true
-    }
-
+    c.set('services', {
+      heartbeat: heartbeatService,
+      duration: durationService,
+      metric: metricService,
+    })
+    c.set('env', RUNTIME_ENV)
     return await next()
   }
 }
