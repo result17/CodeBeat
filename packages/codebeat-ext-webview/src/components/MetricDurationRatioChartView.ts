@@ -33,20 +33,34 @@ export default defineComponent({
         return null
       }
 
-      return h('div', [
-        h('div', { class: 'chart-title' }, [
+      if (!props.data && props.metricKey === 'project') {
+        return h('div', { class: 'chart-title' }, [
           h(IxProject, {
             style: {
               transform: 'translateY(0.5px)',
             },
           }),
           h('span', props.metricKey),
-        ]),
-        h(RatioChart, {
-          data: props.data,
-          metricKey: props.metricKey,
-        }),
-      ])
+        ])
+      }
+
+      if (props.data && props.metricKey === 'project') {
+        return h('div', [
+          h('div', { class: 'chart-title' }, [
+            h(IxProject, {
+              style: {
+                transform: 'translateY(0.5px)',
+              },
+            }),
+            h('span', props.metricKey),
+          ]),
+          h(RatioChart, {
+            data: props.data,
+            metricKey: props.metricKey,
+          }),
+        ])
+      }
+      return null
     }
   },
 })
