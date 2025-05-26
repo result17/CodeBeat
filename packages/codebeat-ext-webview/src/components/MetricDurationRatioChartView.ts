@@ -52,7 +52,7 @@ export default defineComponent({
                 transform: 'translateY(0.5px)',
               },
             }),
-            h('span', props.metricKey),
+            h('span', 'Project'),
           ]),
           h(RatioChart, {
             data: props.data,
