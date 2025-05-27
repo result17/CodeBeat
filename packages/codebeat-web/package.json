@@ -1,0 +1,19 @@
+{
+  "name": "codebeat-web",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "packageManager": "pnpm@10.8.1",
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "vite preview",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "catalog:devtool",
+    "svelte": "catalog:web",
+    "svelte-check": "catalog:devtool"
+  }
+}

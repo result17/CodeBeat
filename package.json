@@ -34,8 +34,8 @@
     "@vitejs/plugin-vue": "catalog:view",
     "d3": "catalog:extension",
     "vue": "catalog:view",
-    "zod": "catalog:deps"
-
+    "zod": "catalog:deps",
+    "melt": "catalog:web"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:devtool",
@@ -43,10 +43,14 @@
     "@cloudflare/workers-types": "catalog:devtool",
     "@hono/node-server": "catalog:devtool",
     "@prisma/client": "catalog:server",
+    "@sveltejs/kit": "catalog:devtool",
+    "@sveltejs/vite-plugin-svelte": "catalog:devtool",
     "@types/d3": "catalog:devtool",
     "@typescript-eslint/utils": "catalog:devtool",
     "dotenv-cli": "catalog:build",
     "eslint": "catalog:devtool",
+    "svelte": "catalog:web",
+    "svelte-check": "catalog:devtool",
     "tinybench": "catalog:devtool",
     "tsx": "catalog:server",
     "vite": "catalog:build",

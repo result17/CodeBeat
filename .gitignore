@@ -17,3 +17,4 @@ out
 .dev.vars.*
 codebeat.log
 .wrangler
+.svelte-kit
