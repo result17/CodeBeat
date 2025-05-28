@@ -16,7 +16,6 @@
     "test": "pnpm prepare_node && vitest run",
     "test:watch": "pnpm prepare_node && vitest watch",
     "test:bench": "pnpm prepare_node && vitest bench",
-    "prepare": "dotenv -e .dev.vars prisma generate --no-engine",
     "prepare_node": "dotenv -e .dev.vars prisma generate",
     "prepare_worker": "dotenv -e .dev.vars.staging prisma generate --no-engine",
     "migrate": "dotenv -e .dev.vars prisma migrate dev",

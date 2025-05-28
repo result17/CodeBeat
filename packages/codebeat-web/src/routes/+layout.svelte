@@ -1,18 +1,22 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-  import { browser } from '$app/environment';
-  let isMobile = false;
+  import { onMount } from 'svelte'
+  import { browser } from '$app/environment'
+  import Header from '$lib/component/Header.svelte'
+
+  import '../app.css'
+
+  let isMobile = false
 
   onMount(() => {
     if (browser) {
-      isMobile = window.innerWidth <= 768;
+      isMobile = window.innerWidth <= 768
     }
-  });
+  })
 </script>
 
-<svelte:head>
-  <title>Codebeat</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</svelte:head>
-
-<slot />
+<div class="flex min-h-screen flex-col" id="page">
+  <Header />
+  <div class="flex flex-1 w-full bg-neutral-900 p-4">
+    <slot />
+  </div>
+</div>

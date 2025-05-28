@@ -31,11 +31,9 @@
     "w:dev": "pnpm -C packages/codebeat-ext-webview run dev"
   },
   "dependencies": {
-    "@vitejs/plugin-vue": "catalog:view",
     "d3": "catalog:extension",
     "vue": "catalog:view",
-    "zod": "catalog:deps",
-    "melt": "catalog:web"
+    "zod": "catalog:deps"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:devtool",
@@ -45,12 +43,16 @@
     "@prisma/client": "catalog:server",
     "@sveltejs/kit": "catalog:devtool",
     "@sveltejs/vite-plugin-svelte": "catalog:devtool",
+    "@tailwindcss/vite": "catalog:web",
     "@types/d3": "catalog:devtool",
     "@typescript-eslint/utils": "catalog:devtool",
+    "@vitejs/plugin-vue": "catalog:view",
     "dotenv-cli": "catalog:build",
     "eslint": "catalog:devtool",
+    "melt": "catalog:web",
     "svelte": "catalog:web",
     "svelte-check": "catalog:devtool",
+    "tailwindcss": "catalog:web",
     "tinybench": "catalog:devtool",
     "tsx": "catalog:server",
     "vite": "catalog:build",

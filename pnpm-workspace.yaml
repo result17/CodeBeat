@@ -50,7 +50,14 @@ catalogs:
     '@vitejs/plugin-vue': ^5.2.3
     vue: ^3.5.13
   web:
+    '@tailwindcss/nesting': ^0.0.0-insiders.565cd3e
+    '@tailwindcss/postcss': ^4.1.7
+    '@tailwindcss/vite': ^4.1.7
+    autoprefixer: ^10.4.21
     melt: ^0.34.0
+    postcss: ^8.5.3
+    postcss-import: ^16.1.0
     svelte: ^5.33.1
+    tailwindcss: ^4.1.7
 onlyBuiltDependencies:
   - esbuild

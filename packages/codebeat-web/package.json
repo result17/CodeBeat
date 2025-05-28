@@ -13,7 +13,9 @@
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "catalog:devtool",
+    "@tailwindcss/vite": "catalog:web",
     "svelte": "catalog:web",
-    "svelte-check": "catalog:devtool"
+    "svelte-check": "catalog:devtool",
+    "tailwindcss": "catalog:web"
   }
 }
