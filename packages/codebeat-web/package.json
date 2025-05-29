@@ -11,11 +11,15 @@
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
   },
+  "dependencies": {
+    "@trpc/client": "catalog:web"
+  },
   "devDependencies": {
-    "@melt-ui/pp": "^0.3.2",
+    "@melt-ui/pp": "catalog:web",
     "@melt-ui/svelte": "catalog:web",
     "@sveltejs/vite-plugin-svelte": "catalog:devtool",
     "@tailwindcss/vite": "catalog:web",
+    "codebeat-server": "workspace:*",
     "svelte": "catalog:web",
     "svelte-check": "catalog:devtool",
     "tailwindcss": "catalog:web"

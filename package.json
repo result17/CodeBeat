@@ -31,6 +31,9 @@
     "w:dev": "pnpm -C packages/codebeat-ext-webview run dev"
   },
   "dependencies": {
+    "@hono/trpc-server": "catalog:server",
+    "@trpc/client": "catalog:web",
+    "@trpc/server": "catalog:server",
     "d3": "catalog:extension",
     "vue": "catalog:view",
     "zod": "catalog:deps"
@@ -40,6 +43,7 @@
     "@antfu/nip": "catalog:devtool",
     "@cloudflare/workers-types": "catalog:devtool",
     "@hono/node-server": "catalog:devtool",
+    "@melt-ui/pp": "catalog:web",
     "@melt-ui/svelte": "catalog:web",
     "@prisma/client": "catalog:server",
     "@sveltejs/kit": "catalog:devtool",

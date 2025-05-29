@@ -122,7 +122,9 @@ export function handZodError(result:
 
 // Main error handler
 export function handleError(err: Error, c: Context): Response {
+  console.error('Handling error:', err)
   if (err instanceof ApiError) {
+    console.error('An ApiError')
     return c.json(
       createErrorResponse(err.code, err.message),
       codeToStatus(err.code),
@@ -130,6 +132,7 @@ export function handleError(err: Error, c: Context): Response {
   }
 
   if (err instanceof HTTPException) {
+    console.error('An HTTPException Error')
     const code = statusToCode(err.status)
     return c.json(
       createErrorResponse(code, err.message),

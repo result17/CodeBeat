@@ -11,7 +11,7 @@ let heartbeatManager: HeartbeatManager | null = null
 let durationManager: DurationManager | null = null
 
 // cloudflare context
-interface ContextProps {
+export interface ContextProps {
   services: Services
   env: Env['RUNTIME_ENV']
 }

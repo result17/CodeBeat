@@ -1,6 +1,6 @@
-import type { HeartbeatMetrics, MetricValueDurationRatio } from '@/lib'
+import type { HeartbeatMetrics, MetricValueDurationRatio } from '@/lib/metric'
 
-export type { HeartbeatMetrics, MetricValueDurationRatio } from '@/lib'
+export type { HeartbeatMetrics, MetricValueDurationRatio } from '@/lib/metric'
 
 /**
  * Heartbeat duration summary data

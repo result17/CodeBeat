@@ -1,6 +1,30 @@
 <script lang="ts">
   import GridContainer from "$lib/component/GridContainer.svelte";
   import DateRanger from "$lib/component/DateRanger.svelte";
+  import { createTRPCClient, httpBatchLink } from "@trpc/client";
+  import type { AppRouter } from "codebeat-server";
+
+  let durationVal: number = 0;
+
+  const client = createTRPCClient<AppRouter>({
+    links: [
+      httpBatchLink({
+        url: "http://localhost:3000/trpc",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }),
+    ],
+  });
+
+  client.duration.getDuration
+    .query()
+    .then(({ duration }) => {
+      durationVal = duration;
+    })
+    .catch((error: Error) => {
+      console.error("Error fetching duration:", error);
+    });
 </script>
 
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
@@ -20,7 +44,7 @@
   </GridContainer>
   <GridContainer>
     <h2 class="text-lg font-bold text-neutral-100">Column 2</h2>
-    <p class="text-neutral-400 my-2">Content for column 2</p>
+    <p class="text-neutral-400 my-2">{durationVal} second(s)</p>
   </GridContainer>
   <GridContainer>
     <h2 class="text-lg font-bold text-neutral-100">Column 3</h2>

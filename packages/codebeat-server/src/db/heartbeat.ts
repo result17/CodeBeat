@@ -1,6 +1,6 @@
-import type { AcceleratedFindManyArgs } from '@/types'
 import type { Heartbeat, Prisma } from '@prisma/client'
 import type { PrismaInstance } from './prisma'
+import type { AcceleratedFindManyArgs } from '@/types'
 
 export type HeartbeatRecordResponse = Omit<Heartbeat, 'recvAt' | 'createdAt'>
 
