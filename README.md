@@ -72,6 +72,8 @@ Migration will creat tables this program needs.
 // Node server
 pnpm dev
 ```
+## export trpc router
+If your tsconfig.json uses moduleResolution: "node", it will cause errors when bundling and exporting tRPC routers. This configuration incorrectly imports a non-existent package @trpc/server/dist/unstable-core-do-not-import, leading to type definition errors. The correct configuration should be moduleResolution: "bundler", which allows tsup to properly handle the exports.
 
 ## TODO
 - [x] database connection log

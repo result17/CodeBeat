@@ -6,5 +6,12 @@ export default defineConfig({
   ],
   outDir: 'dist/shared',
   format: ['esm'],
-  dts: true,
+  dts: {
+    only: true,
+    resolve: true,
+  },
+  bundle: true,
+  clean: true,
+  skipNodeModulesBundle: true,
+  target: 'es2020',
 })
