@@ -1,7 +1,7 @@
+import type { Context } from 'hono'
 import type { HeartbeatManager, PrismaInstance } from '@/db'
 import type { DurationManager } from '@/db/duration'
-import type { ContextProps } from '@/types'
-import type { Context } from 'hono'
+import type { Services } from '@/types'
 import { getHeartbeatManager, getPrismaClientInstance } from '@/db'
 import { getDurationManager } from '@/db/duration'
 import { createDurationNativeSQLService, createHeartbeatService, createMetricService } from '@/service'
@@ -9,6 +9,18 @@ import { createDurationNativeSQLService, createHeartbeatService, createMetricSer
 let prismaClient: PrismaInstance | null = null
 let heartbeatManager: HeartbeatManager | null = null
 let durationManager: DurationManager | null = null
+
+// cloudflare context
+interface ContextProps {
+  services: Services
+  env: Env['RUNTIME_ENV']
+}
+
+declare module 'hono' {
+  interface ExecutionContext {
+    props: ContextProps
+  }
+}
 
 export function getContextProps(c: Context): ContextProps {
   try {

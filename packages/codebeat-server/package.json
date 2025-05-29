@@ -5,7 +5,11 @@
   "type": "module",
   "license": "MIT",
   "exports": {
-    ".": "./dist/shared/index.js"
+    ".": {
+      "types": "./dist/shared/index.d.ts",
+      "import": "./dist/shared/index.mjs",
+      "require": "./dist/shared/index.js"
+    }
   },
   "main": "./dist/shared/index.js",
   "types": "./dist/shared/index.d.ts",
@@ -30,9 +34,12 @@
   },
   "dependencies": {
     "@cloudflare/workers-types": "catalog:devtool",
+    "@hono/trpc-server": "catalog:server",
     "@hono/zod-openapi": "catalog:server",
+    "@melt-ui/pp": "catalog:web",
     "@prisma/client": "catalog:server",
     "@prisma/extension-accelerate": "catalog:server",
+    "@trpc/server": "catalog:server",
     "@types/node": "catalog:devtool",
     "dotenv": "catalog:build",
     "dotenv-cli": "catalog:build",

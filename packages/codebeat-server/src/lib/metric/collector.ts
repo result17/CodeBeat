@@ -3,7 +3,7 @@ import type { MetricDurationData } from '@/shared/types'
 import { formatMilliseconds } from '@/shared'
 import { HeartbeatTimeline } from '../duration'
 
-export type HeartbeatMetrics = keyof HeartbeatRecordResponse
+export type HeartbeatMetrics = keyof Omit<HeartbeatRecordResponse, 'id'>
 
 // Helper type to get the correct value type for a metric
 type MetricValueType<T extends HeartbeatMetrics> = NonNullable<HeartbeatRecordResponse[T]>

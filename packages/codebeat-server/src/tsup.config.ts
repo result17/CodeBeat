@@ -1,14 +1,12 @@
 import { defineConfig } from 'tsup'
 
 export default defineConfig({
-  entry: [
-    'src/shared/index.ts',
-  ],
+  entry: ['src/shared/index.ts'],
   outDir: 'dist/shared',
   format: ['esm'],
   dts: {
-    only: true,
     resolve: true,
+    entry: ['src/shared/index.ts'],
   },
   bundle: true,
   clean: true,
