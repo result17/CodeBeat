@@ -142,7 +142,7 @@ export function handleError(err: Error, c: Context): Response {
 
   console.error('Unhandled error:', err)
 
-  const env = getContextProps(c).env
+  const env = getContextProps(c).runtimeEnv
 
   const isProduction = env === 'production'
   const isDevelopment = env === 'development'

@@ -1,10 +1,10 @@
 import type { MiddlewareHandler } from 'hono'
-import type { ContextProps } from '../../types'
+import type { ContextProps } from '@/lib/context/context'
 import process from 'node:process'
+import { getHeartbeatManager, getPrismaClientInstance } from '@/db'
 import { getDurationManager } from '@/db/duration'
+import { createHeartbeatService, createMetricService } from '@/service'
 import { createDurationNativeSQLService } from '@/service/duration'
-import { getHeartbeatManager, getPrismaClientInstance } from '../../db'
-import { createHeartbeatService, createMetricService } from '../../service'
 
 export function serviceMiddleWare(): MiddlewareHandler<{ Variables: ContextProps }> {
   const { DIRECT_DATABASE_URL, DATABASE_URL, RUNTIME_ENV } = process.env
@@ -24,7 +24,7 @@ export function serviceMiddleWare(): MiddlewareHandler<{ Variables: ContextProps
       duration: durationService,
       metric: metricService,
     })
-    c.set('env', RUNTIME_ENV)
+    c.set('runtimeEnv', RUNTIME_ENV)
     return await next()
   }
 }

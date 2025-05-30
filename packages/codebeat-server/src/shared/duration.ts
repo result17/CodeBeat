@@ -3,16 +3,20 @@ import type { GrandTotal } from './types'
 const MILLISECONDS_PER_HOUR = 3_600_000
 const MILLISECONDS_PER_MINUTE = 60_000
 
-export function getStartOfTodayDay() {
+export function getDayPreviousToToday(prev: number) {
   const now = new Date()
-  const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-  return startOfDay
+  const previousDay = new Date(now.getFullYear(), now.getMonth(), now.getDate() - prev)
+  return previousDay
+}
+
+export function getStartOfTodayDay() {
+  return getDayPreviousToToday(0)
 }
 
 export function getEndOfTodayDay() {
-  const now = new Date()
-  const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999)
-  return endOfDay
+  const start = getStartOfTodayDay()
+  start.setHours(23, 59, 59, 999)
+  return start
 }
 
 /**

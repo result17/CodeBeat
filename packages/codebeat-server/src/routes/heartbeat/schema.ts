@@ -1,5 +1,5 @@
-import { UnixMillisSchema } from '@/lib/verify'
 import { z } from '@hono/zod-openapi'
+import { UnixMillisSchema } from '@/lib/verify'
 
 const BaseHeartbeatSchema = z.object({
   entity: z.string().nonempty().openapi({

@@ -1,7 +1,8 @@
+import type { ContextProps } from '@/lib/context'
 import { initTRPC } from '@trpc/server'
 import { z } from 'zod'
 
-export const t = initTRPC.create()
+export const t = initTRPC.context<ContextProps>().create()
 
 const appRouter = t.router({
   greeting: t.procedure

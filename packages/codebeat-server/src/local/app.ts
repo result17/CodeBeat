@@ -16,12 +16,16 @@ app.use('*', logReqJSONBody())
 
 app.use('/api/*', logResJSONBody())
 
-app.use('/api/*', serviceMiddleWare())
+app.use('*', serviceMiddleWare())
+
 app.use('/trpc/*', cors())
 app.use(
   '/trpc/*',
   trpcServer({
     router: trpcRouter,
+    createContext: (_opt, c) => {
+      return { services: c.get('services') || {}, runtimeEnv: c.get('runtimeEnv') || {} }
+    },
   }),
 )
 

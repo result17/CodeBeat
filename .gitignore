@@ -18,3 +18,4 @@ out
 codebeat.log
 .wrangler
 .svelte-kit
+.env.*

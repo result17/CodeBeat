@@ -7,8 +7,7 @@
   "exports": {
     ".": {
       "types": "./dist/shared/index.d.ts",
-      "import": "./dist/shared/index.mjs",
-      "require": "./dist/shared/index.js"
+      "import": "./dist/shared/index.js"
     }
   },
   "main": "./dist/shared/index.js",

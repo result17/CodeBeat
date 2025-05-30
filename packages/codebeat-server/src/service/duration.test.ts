@@ -1,9 +1,10 @@
 import type { PrismaInstance } from '@/db'
 import type { DurationService } from '@/service'
+import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { getHeartbeatManager, getPrismaClientInstance } from '@/db'
 import { getDurationManager } from '@/db/duration'
 import { createDurationNativeSQLService, createDurationService } from '@/service'
-import { afterAll, beforeAll, describe, expect, it } from 'vitest'
+import { getDayPreviousToToday } from '@/shared'
 
 const DATABASE_URL = process.env.DATABASE_URL
 const DIRECT_DATABASE_URL = process.env.DIRECT_DATABASE_URL
@@ -49,8 +50,6 @@ describe('heartbeat duration calculation', () => {
       throw new Error('DATABASE_URL or DIRECT_DATABASE_URL must be set in environment')
     }
 
-    prismaClient = getPrismaClientInstance(DATABASE_URL || DIRECT_DATABASE_URL, false)
-
     const summary = await durationService.getSpecDateSummary(yesterday, today)
     expect(summary).toBeDefined()
     expect(summary.grandTotal).toBeDefined()
@@ -63,5 +62,29 @@ describe('heartbeat duration calculation', () => {
 
     expect(summary.grandTotal.total_ms).equal(sqlSummary.grandTotal.total_ms)
     expect(summary.timeline.length).equal(sqlSummary.timeline.length)
+  })
+
+  it('should return multiple range durations', async () => {
+    const list = [{
+      startDate: getDayPreviousToToday(7),
+      endDate: today,
+    }, {
+      startDate: getDayPreviousToToday(30),
+      endDate: today,
+    }]
+
+    const res = await durationService.getMultiRangeDurations(list)
+
+    expect(res).toBeDefined()
+    expect(res.length).toBe(list.length)
+
+    const sqlRes = await durationSQLService.getMultiRangeDurations(list)
+
+    expect(sqlRes).toBeDefined()
+    expect(sqlRes.length).toBe(list.length)
+
+    for (let i = 0; i < list.length; i++) {
+      expect(sqlRes[i].text).toBe(res[i].text)
+    }
   })
 })

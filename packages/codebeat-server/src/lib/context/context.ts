@@ -13,7 +13,7 @@ let durationManager: DurationManager | null = null
 // cloudflare context
 export interface ContextProps {
   services: Services
-  env: Env['RUNTIME_ENV']
+  runtimeEnv: Env['RUNTIME_ENV']
 }
 
 declare module 'hono' {
@@ -30,7 +30,7 @@ export function getContextProps(c: Context): ContextProps {
   catch {
     return {
       services: c.get('services'),
-      env: c.get('env'),
+      runtimeEnv: c.get('env'),
     }
   }
 }
