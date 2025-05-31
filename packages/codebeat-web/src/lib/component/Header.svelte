@@ -12,7 +12,7 @@
   <div class="flex justify-end">
     <a
       href="https://github.com/your-repo"
-      class="text-neutral-400 hover:text-neutral-200"
+      class="text-neutral-300"
     >
       <Github />
     </a>

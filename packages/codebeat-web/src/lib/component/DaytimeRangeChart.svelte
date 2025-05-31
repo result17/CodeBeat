@@ -26,6 +26,7 @@
     }
 
     const painter = new DayTimeRangePainter(chartContainer, timeline, projectSet.size);
+    painter.setColor("var(--color-neutral-300)");
     painter.draw()
   })
 

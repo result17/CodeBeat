@@ -9,6 +9,7 @@ export abstract class Painter {
   protected container: ContainerSelect
   protected width: number = 0
   protected height: number = 0
+  protected color: string = ''
 
   constructor(container: HTMLElement) {
     this.container = select(container)
@@ -48,6 +49,16 @@ export abstract class Painter {
 
   public getHeight() {
     return this.height
+  }
+
+  public setColor(color: string) {
+    if (color) {
+      this.svg.style('color', color)
+    }
+  }
+
+  public getColor() {
+    return this.color
   }
 }
 
