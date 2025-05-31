@@ -59,11 +59,11 @@ export const useChartView = createSingletonComposable(() => {
       if (message.message && message.message === ICommand.summary_today_query) {
         await queryAndPostTodaySummaryMessage(webview, true)
       }
-      console.log('receive message', message)
+
       if (message.message && message.message === ICommand.metric_duration_project_query) {
         const data = message.data as MetricDurationData<HeartbeatMetrics>
-        curQueryMetric.value = data.metricKey
-        await parseAndPostTodayMetricDuration(webview, data.metricKey, true)
+        curQueryMetric.value = data.metric
+        await parseAndPostTodayMetricDuration(webview, data.metric, true)
       }
     },
     retainContextWhenHidden: true,

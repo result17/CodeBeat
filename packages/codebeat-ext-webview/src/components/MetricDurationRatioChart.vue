@@ -10,8 +10,7 @@ const props = defineProps<MetricPieChartViewProps<T>>()
 
 const colorScale = shallowRef<ScaleOrdinal<string, string, never>>()
 
-const { data } = props
-const validRatios = computed(() => data.ratios.filter(({ duration }) => duration > 0))
+const validRatios = computed(() => props.data.ratios.filter(({ duration }) => duration > 0))
 
 const pieChartContainer = ref<HTMLElement>()
 const padding = ref(20)
@@ -27,9 +26,10 @@ function handleResize() {
   }
 }
 
-watch(data, () => {
+watch(props.data, () => {
+  console.log('data changed:', props.data)
   painter.setData({
-    ...data,
+    ...props.data,
     ratios: validRatios.value,
   })
   painter.draw()
@@ -39,7 +39,7 @@ watch(data, () => {
 onMounted(() => {
   if (pieChartContainer.value && validRatios.value.length > 0) {
     painter = new MetricPiePainter(pieChartContainer.value, {
-      ...data,
+      ...props.data,
       ratios: validRatios.value,
     }, padding.value)
     painter.draw()

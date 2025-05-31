@@ -24,13 +24,13 @@ describe('grandTotalSchema validation tests', () => {
     minutes,
     seconds,
     text,
-    total_ms: hours * 60 * 60 * 1000 + minutes * 60 * 1000 + seconds * 1000,
+    totalMs: hours * 60 * 60 * 1000 + minutes * 60 * 1000 + seconds * 1000,
   })
 
   describe('invalid data scenarios', () => {
-    it('should fail when total_ms does not match calculated value', () => {
+    it('should fail when totalMs does not match calculated value', () => {
       const demo = createDemoData(0, 14, 34, '14 mins')
-      demo.total_ms = 5400 // Incorrect total_ms
+      demo.totalMs = 5400 // Incorrect totalMs
 
       const { success, error } = GrandTotalSchema.safeParse(demo)
       assertValidationFailed(success, error, GrandTotalSchemaMsg.InvalidTotalMs)

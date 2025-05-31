@@ -21,7 +21,7 @@ onBeforeMount(() => {
     {
       message: ICommand.metric_duration_project_query,
       data: {
-        metricKey: 'project',
+        metric: 'project',
       },
     },
   ])
@@ -36,7 +36,6 @@ onBeforeMount(() => {
   addMessageListener((event: MessageEvent<IMessage<MetricDurationData<'project'>>>) => {
     const posted = event.data
     if (posted.message === ICommand.metric_duration_project_response && posted.data && posted.data.metric === 'project') {
-      // Handle the metric duration response
       metricDurationRef.value = posted.data
     }
   })
@@ -48,7 +47,7 @@ onBeforeUnmount(removeAllMessageListeners)
 <template>
   <DaytimeRange v-if="timelineRef.length > 0" :data="timelineRef" />
   <NoData v-if="timelineRef.length === 0" />
-  <MetricPieChart v-if="metricDurationRef" :data="metricDurationRef" metric-key="project" />
+  <MetricPieChart v-if="metricDurationRef" :data="metricDurationRef" metric="project" />
   <div class="pt-10">
     <LastUpdatedAt :update-at="lastUpdateRef" />
   </div>

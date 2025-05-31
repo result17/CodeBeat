@@ -37,12 +37,11 @@ describe('heartbeat duration calculation', () => {
     expect(res.grandTotal).toBeDefined()
 
     const sqlRes = await durationSQLService.getSpecDateDuration(yesterday, today)
-    console.log(typeof res.grandTotal.total_ms, typeof sqlRes.grandTotal.total_ms)
     expect(sqlRes).toBeDefined()
     expect(sqlRes.grandTotal).toBeDefined()
 
     expect(res.grandTotal.text).equal(sqlRes.grandTotal.text)
-    expect(res.grandTotal.total_ms).equal(sqlRes.grandTotal.total_ms)
+    expect(res.grandTotal.totalMs).equal(sqlRes.grandTotal.totalMs)
   })
 
   it('should return summary data', async () => {
@@ -60,7 +59,7 @@ describe('heartbeat duration calculation', () => {
     expect(sqlSummary.timeline).toBeDefined()
     expect(summary.grandTotal).toBeDefined()
 
-    expect(summary.grandTotal.total_ms).equal(sqlSummary.grandTotal.total_ms)
+    expect(summary.grandTotal.totalMs).equal(sqlSummary.grandTotal.totalMs)
     expect(summary.timeline.length).equal(sqlSummary.timeline.length)
   })
 

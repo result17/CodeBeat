@@ -60,7 +60,7 @@ export function getGrandTotalWithMS(ms: number | bigint) {
   const grandTotal: GrandTotal = {
     ...millisecondsToTimeComponents(msInt),
     text: formatMilliseconds(msInt),
-    total_ms: msInt,
+    totalMs: msInt,
   }
   return grandTotal
 }

@@ -6,5 +6,5 @@ export interface DaytimeRangeChartViewProps {
 
 export interface MetricPieChartViewProps<T extends HeartbeatMetrics> {
   data: MetricDurationData<T>
-  metricKey: T
+  metric: T
 }

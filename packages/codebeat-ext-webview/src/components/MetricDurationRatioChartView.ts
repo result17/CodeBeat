@@ -5,7 +5,6 @@ import IxProject from './IxProject.vue'
 import RatioChart from './MetricDurationRatioChart.vue'
 
 const validMetrics = new Set<HeartbeatMetrics>([
-  'id',
   'entity',
   'language',
   'cursorpos',
@@ -22,29 +21,29 @@ export default defineComponent({
       type: Object as PropType<MetricDurationData<HeartbeatMetrics>>,
       required: true,
     },
-    metricKey: {
+    metric: {
       type: String as PropType<HeartbeatMetrics>,
       required: true,
     },
   },
   setup(props) {
     return () => {
-      if (!validMetrics.has(props.metricKey)) {
+      if (!validMetrics.has(props.metric)) {
         return null
       }
 
-      if (!props.data && props.metricKey === 'project') {
+      if (!props.data && props.metric === 'project') {
         return h('div', { class: 'chart-title' }, [
           h(IxProject, {
             style: {
               transform: 'translateY(0.5px)',
             },
           }),
-          h('span', props.metricKey),
+          h('span', props.metric),
         ])
       }
 
-      if (props.data && props.metricKey === 'project') {
+      if (props.data && props.metric === 'project') {
         return h('div', [
           h('div', { class: 'chart-title' }, [
             h(IxProject, {
@@ -56,7 +55,7 @@ export default defineComponent({
           ]),
           h(RatioChart, {
             data: props.data,
-            metricKey: props.metricKey,
+            metric: props.metric,
           }),
         ])
       }

@@ -15,7 +15,7 @@ export interface GrandTotal {
   /** Formatted time string */
   text: string
   /** Total milliseconds */
-  total_ms: number
+  totalMs: number
 }
 
 export interface TimeRange {

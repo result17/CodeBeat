@@ -34,7 +34,7 @@
   });
 </script>
 
-<div class="my-2">
+<div class="mb-2">
   <DateRanger dayBefore={0} />
   <p class="text-neutral-400 space-y-2">{todayDurationText}</p>
 </div>

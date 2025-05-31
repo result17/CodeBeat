@@ -104,7 +104,7 @@ describe('duration calculation performance benchmark', () => {
     // Validate result consistency
     const jsResult = await durationService.getSpecDateSummary(startDate, endDate)
     const sqlResult = await durationSQLService.getSpecDateSummary(startDate, endDate)
-    expect(jsResult.grandTotal.total_ms).toBe(sqlResult.grandTotal.total_ms)
+    expect(jsResult.grandTotal.totalMs).toBe(sqlResult.grandTotal.totalMs)
 
     // Performance analysis summary
     console.log('\nPerformance Analysis Summary')
@@ -168,8 +168,8 @@ describe('duration calculation performance benchmark', () => {
       console.log('\nValidation Results:')
       console.log('-----------------')
       expect(jsResult.timeline.length, 'Test timeline entries').toBe(sqlResult.timeline.length)
-      expect(jsResult.grandTotal.total_ms, 'Test grandtotal total_ms').toBe(sqlResult.grandTotal.total_ms)
-      expect(jsResult.grandTotal.text, 'Test grandtotal total_ms').toBe(sqlResult.grandTotal.text)
+      expect(jsResult.grandTotal.totalMs, 'Test grandtotal totalMs').toBe(sqlResult.grandTotal.totalMs)
+      expect(jsResult.grandTotal.text, 'Test grandtotal totalMs').toBe(sqlResult.grandTotal.text)
 
       console.table(bench.table())
     }

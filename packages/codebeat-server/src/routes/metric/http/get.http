@@ -36,6 +36,6 @@ GET http://localhost:3000/api/metric/duration/today/project
 #     "minutes": 32, // Total minutes
 #     "seconds": 49, // Total seconds
 #     "text": "8 hrs 32 mins", // Human-readable total time
-#     "total_ms": 30769470 // Total duration in milliseconds
+#     "totalMs": 30769470 // Total duration in milliseconds
 #   },
 # }

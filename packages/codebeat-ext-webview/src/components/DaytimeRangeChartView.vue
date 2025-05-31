@@ -48,8 +48,7 @@ function handleResize() {
 
 watch(processedData, () => {
   painter.setData(processedData.value, uniqueProjectSet.value.size)
-  const drawResult = painter.draw()
-  console.log(`data changed, and draw result is ${drawResult}`)
+  painter.draw()
 })
 
 onMounted(() => {

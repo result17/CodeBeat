@@ -179,7 +179,6 @@ export function getDurationManager(prisma: PrismaInstance): DurationManager {
             timeline: [],
           }
         }
-        console.log('result', result[0])
         return {
           grandTotal: getGrandTotalWithMS(result[0].total_duration_ms),
           timeline: result.map(item => ({

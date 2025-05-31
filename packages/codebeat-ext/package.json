@@ -58,7 +58,7 @@
   },
   "scripts": {
     "build": "tsup src/index.ts --external vscode",
-    "dev": "pnpm -C ../codebeat-ext-webview  build && nr build --watch --sourcemap",
+    "dev": "pnpm -C ../codebeat-ext-webview build && nr build --watch --sourcemap",
     "prepare": "nr update",
     "update": "vscode-ext-gen --output src/generated/meta.ts --readme ../../README.md",
     "vscode:prepublish": "nr build",

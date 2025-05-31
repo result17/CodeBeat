@@ -20,7 +20,7 @@ export const GrandTotalSchema = z.object({
       example: 59,
     },
   }),
-  total_ms: z.number().int().min(0).openapi({
+  totalMs: z.number().int().min(0).openapi({
     param: {
       description: 'The total millionsends of duration',
       example: 4952332,
@@ -37,11 +37,11 @@ export const GrandTotalSchema = z.object({
       example: '36 mins',
     },
   }),
-}).refine(({ total_ms, hours, minutes, seconds }) => {
-  return total_ms >= hours * 60 * 60 * 1000 + minutes * 60 * 1000 + seconds * 1000
+}).refine(({ totalMs, hours, minutes, seconds }) => {
+  return totalMs >= hours * 60 * 60 * 1000 + minutes * 60 * 1000 + seconds * 1000
 }, {
   message: GrandTotalSchemaMsg.InvalidTotalMs,
-  path: ['hours', 'minutes', 'seconds', 'total_ms'],
+  path: ['hours', 'minutes', 'seconds', 'totalMs'],
 })
 
 export type GrandTotal = z.infer<typeof GrandTotalSchema>

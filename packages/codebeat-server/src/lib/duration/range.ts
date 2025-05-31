@@ -9,7 +9,7 @@ export function getRangerData(records: HeartbeatRecordResponse[]): SummaryData {
       minutes: 0,
       seconds: 0,
       text: '0 min',
-      total_ms: 0,
+      totalMs: 0,
     },
     timeline: [],
   }

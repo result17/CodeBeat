@@ -4,33 +4,16 @@ import { z } from 'zod'
 
 export const t = initTRPC.context<ContextProps>().create()
 
-const appRouter = t.router({
+const helloRouter = t.router({
   greeting: t.procedure
     .input(z.object({ name: z.string() }))
     .query(({ input }) => {
-      return `Hello ${input.name}`
-    }),
-})
-
-const userRouter = t.router({
-  getUser: t.procedure
-    .input(z.object({ id: z.string() }))
-    .query(({ input }) => {
-      return { id: input.id, name: 'John Doe' }
-    }),
-})
-
-const postRouter = t.router({
-  getPosts: t.procedure
-    .query(() => {
-      return [{ id: 1, title: 'Hello tRPC' }]
+      return `Hello ${input.name} from codebeat-server!`
     }),
 })
 
 export const baseRouter = t.router({
-  app: appRouter,
-  user: userRouter,
-  post: postRouter,
+  hello: helloRouter,
 })
 
 export const createTRPCRouter = t.router
