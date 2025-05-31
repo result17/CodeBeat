@@ -7,10 +7,11 @@ import { MetricPiePainter } from '../lib'
 import NoDataView from './NoDataView.vue'
 
 const props = defineProps<MetricPieChartViewProps<T>>()
+const data = computed(() => props.data)
 
 const colorScale = shallowRef<ScaleOrdinal<string, string, never>>()
 
-const validRatios = computed(() => props.data.ratios.filter(({ duration }) => duration > 0))
+const validRatios = computed(() => data.value.ratios.filter(({ duration }) => duration > 0))
 
 const pieChartContainer = ref<HTMLElement>()
 const padding = ref(20)
@@ -26,10 +27,9 @@ function handleResize() {
   }
 }
 
-watch(props.data, () => {
-  console.log('data changed:', props.data)
+watch(data, (_newData) => {
   painter.setData({
-    ...props.data,
+    ...data.value,
     ratios: validRatios.value,
   })
   painter.draw()
@@ -97,7 +97,7 @@ onMounted(() => {
 .legend-label {
   font-size: 10px;
   font-weight: bold;
-   color: var(--vscode-editor-foreground);
+  color: var(--vscode-editor-foreground);
 }
 
 .legend-value {
