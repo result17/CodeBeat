@@ -2,6 +2,7 @@
   import { DayTimeRangePainter } from "codebeat-ext-webview";
   import { onMount } from "svelte";
   import { client } from '../trpc'
+  
   let chartContainer: HTMLElement;
 
   onMount(async () => {

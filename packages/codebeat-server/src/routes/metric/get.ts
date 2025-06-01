@@ -1,16 +1,8 @@
 import type { metricAPI } from '.'
-import { getContextProps, openApiErrorResponses, queryStartAndEndTimeStampSchema } from '@/lib'
 import { createRoute } from '@hono/zod-openapi'
-import { z } from 'zod'
-import { BaseMetricSchema, METRIC_TYPES } from './schema'
+import { getContextProps, openApiErrorResponses, queryStartAndEndTimeStampSchema } from '@/lib'
 
-const metricParamsSchema = z.object({
-  metric: z.enum(METRIC_TYPES.ALL_METRICS)
-    .openapi({
-      description: 'The metric to analyze',
-      example: 'project',
-    }),
-})
+import { BaseMetricSchema, metricParamsSchema } from './schema'
 
 export const durationMetricRoute = createRoute({
   method: 'get',

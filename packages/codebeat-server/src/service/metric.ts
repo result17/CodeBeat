@@ -1,6 +1,6 @@
-import type { HeartbeatManager } from '@/db'
 import type { HeartbeatMetrics } from '../lib'
 import type { MetricDurationData } from '../shared/types'
+import type { HeartbeatManager } from '@/db'
 import { getEndOfTodayDay, getStartOfTodayDay } from '@/shared'
 import { HeartbeatMetricCollector } from '../lib'
 

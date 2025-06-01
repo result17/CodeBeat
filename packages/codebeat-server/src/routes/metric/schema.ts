@@ -1,4 +1,4 @@
-import type { HeartbeatMetrics, MetricValueDurationRatio } from '@/lib/metric/collector'
+import type { HeartbeatMetrics } from '@/lib/metric/collector'
 import { z } from '@hono/zod-openapi'
 import { GrandTotalSchema } from '../duration/schema'
 
@@ -48,7 +48,7 @@ export function createMetricRatioSchema<T extends HeartbeatMetrics>(metric: T) {
     duration: z.number().int().min(0).positive(),
     ratio: z.number().min(0).max(1),
     durationText: z.string().min(1),
-  }) as z.ZodType<MetricValueDurationRatio<T>>
+  })
 }
 
 // Export metric constants for use in route definitions
@@ -58,8 +58,18 @@ export const METRIC_TYPES = {
   ALL_METRICS: [...STRING_METRICS, ...NUMBER_METRICS] as const,
 }
 
+export const metricSchema = z.enum(METRIC_TYPES.ALL_METRICS)
+  .openapi({
+    description: 'The metric to analyze',
+    example: 'project',
+  })
+
+export const metricParamsSchema = z.object({
+  metric: metricSchema,
+})
+
 export const BaseMetricSchema = z.object({
-  metric: z.enum(METRIC_TYPES.ALL_METRICS),
+  metric: metricSchema,
   ratios: z.array(z.object({
     value: z.union([z.string(), z.number()]),
     duration: z.number().int().min(0).positive(),

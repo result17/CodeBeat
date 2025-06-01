@@ -16,5 +16,5 @@
     "sourceMap": true,
     "esModuleInterop": true
   },
-  "includes": ["env.d.ts", "vite-env.d.ts"]
+  "includes": ["env.d.ts"]
 }
