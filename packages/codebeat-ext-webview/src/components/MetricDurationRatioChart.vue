@@ -42,9 +42,9 @@ onMounted(() => {
       ...props.data,
       ratios: validRatios.value,
     }, padding.value)
+    colorScale.value = painter.getColorScale()
     painter.draw()
     window.addEventListener('resize', handleResize)
-    colorScale.value = painter.getColorScale()
   }
 })
 </script>

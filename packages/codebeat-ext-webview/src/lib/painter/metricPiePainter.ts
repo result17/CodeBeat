@@ -26,6 +26,7 @@ export class MetricPiePainter<T extends HeartbeatMetrics> extends Painter {
     this.padding = padding
     this.setWidth(container.offsetWidth)
     this.setHeight(container.offsetWidth)
+    this.setupScales()
   }
 
   public setData(data: MetricDurationData<T>): boolean {
@@ -115,7 +116,9 @@ export class MetricPiePainter<T extends HeartbeatMetrics> extends Painter {
       .text((d) => {
         if (d.data.ratio < 0.1)
           return ''
-        return isBasicType(d.data.value) ? String(d.data.value) : `${(d.data.ratio * 100).toFixed(2)}`
+        const textContent = isBasicType(d.data.value) ? String(d.data.value) : `${(d.data.ratio * 100).toFixed(2)}`
+        const textShowContent = textContent.length > 10 ? `${textContent.slice(0, 10)}...` : textContent
+        return textShowContent
       })
   }
 
@@ -123,7 +126,6 @@ export class MetricPiePainter<T extends HeartbeatMetrics> extends Painter {
    * Main drawing method called by base class
    */
   protected drawContext(): void {
-    this.setupScales()
     this.drawPieChart()
   }
 
