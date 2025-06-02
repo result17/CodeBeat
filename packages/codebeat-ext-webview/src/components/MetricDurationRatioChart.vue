@@ -7,11 +7,10 @@ import { MetricPiePainter } from '../lib'
 import NoDataView from './NoDataView.vue'
 
 const props = defineProps<MetricPieChartViewProps<T>>()
-const data = computed(() => props.data)
 
 const colorScale = shallowRef<ScaleOrdinal<string, string, never>>()
 
-const validRatios = computed(() => data.value.ratios.filter(({ duration }) => duration > 0))
+const validRatios = computed(() => props.data.ratios.filter(({ duration }) => duration > 0))
 
 const pieChartContainer = ref<HTMLElement>()
 const padding = ref(20)
@@ -27,9 +26,9 @@ function handleResize() {
   }
 }
 
-watch(data, (_newData) => {
+watch(() => props.data, (_newData) => {
   painter.setData({
-    ...data.value,
+    ..._newData,
     ratios: validRatios.value,
   })
   painter.draw()
@@ -50,13 +49,13 @@ onMounted(() => {
 </script>
 
 <template>
-  <div v-show="validRatios.length > 0" class="chart-container flex flex-row">
-    <div ref="pieChartContainer" class="half" />
-    <div class="flex flex-col half" :style="{ padding: `${padding}px` }">
+  <div v-show="validRatios.length > 0" class="chart-container flex flex-col align-items-center">
+    <div ref="pieChartContainer" style="width: 66.7%" />
+    <div class="flex flex-col" :style="{ padding: `${padding}px` }">
       <div v-for="({ value, ratio, durationText }, index) of validRatios" :key="index" class="legend-item">
         <div class="color-box" :style="{ backgroundColor: colorScale ? colorScale(String(value)) : 'white' }" />
         <span class="legend-label">{{ value }}</span>
-        <span class="legend-value">- {{ durationText }}{{ ratio ? ` (${(ratio * 100).toFixed(1)}%)` : '' }}</span>
+        <span class="legend-value">&nbsp;- {{ durationText }}{{ ratio ? ` (${(ratio * 100).toFixed(1)}%)` : '' }}</span>
       </div>
     </div>
   </div>
@@ -70,15 +69,14 @@ onMounted(() => {
 
 .flex-row {
   flex-direction: row;
+}
+
+.align-items-center {
   align-items: center;
 }
 
 .flex-col {
   flex-direction: column;
-}
-
-.half {
-  width: 50%;
 }
 
 .legend-item {

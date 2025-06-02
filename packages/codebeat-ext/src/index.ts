@@ -1,12 +1,8 @@
-import process from 'node:process'
-import * as dotenv from 'dotenv'
-import { computed, defineExtension, extensionContext, reactive, useStatusBarItem, watchEffect } from 'reactive-vscode'
-import { ExtensionMode, StatusBarAlignment } from 'vscode'
+import { computed, defineExtension, reactive, useStatusBarItem, watchEffect } from 'reactive-vscode'
+import { StatusBarAlignment } from 'vscode'
 import { useChartView, useOnEvent } from './composables'
 import { clockIconName, debounceMs } from './constants'
-import { logger, queryAndPostTodaySummaryMessage, queryTodayDuration, queryTodayMetricDuration, sendHeartbeat, shouldQueryTodayData } from './utils'
-
-dotenv.config()
+import { logger, parseAndPostTodayMetricDuration, queryAndPostTodaySummaryMessage, queryTodayDuration, sendHeartbeat, shouldQueryTodayData } from './utils'
 
 interface ExtensionState {
   file: string
@@ -44,9 +40,8 @@ const { activate, deactivate } = defineExtension(() => {
     for (const entire of Object.entries(params.value)) {
       list.push(...entire)
     }
-    if (process.env.IS_LOCAL === 'true' || (extensionContext.value && extensionContext.value.extensionMode === ExtensionMode.Development)) {
-      list.unshift('--local-save', '--dlog')
-    }
+    // just open log file flag
+    list.unshift('--local-save', '--dlog')
     return list
   })
 
@@ -68,12 +63,12 @@ const { activate, deactivate } = defineExtension(() => {
         logger.info(`heartbeatResult code is ${heartbeatResult?.code}, should query is ${shouldQueryFlag}`)
         if (shouldQueryFlag) {
           extensionState.lastQueryDurationTime = Date.now()
-          const list = [
+          const list: Promise<any>[] = [
             queryTodayDuration(),
             queryAndPostTodaySummaryMessage(webview, shouldQueryFlag),
           ]
           if (curQueryMetric.value) {
-            list.push(queryTodayMetricDuration(curQueryMetric.value))
+            list.push(parseAndPostTodayMetricDuration(webview, curQueryMetric.value, shouldQueryFlag))
           }
           const [todayDurationResult] = await Promise.allSettled(list)
           if (todayDurationResult?.status === 'fulfilled'

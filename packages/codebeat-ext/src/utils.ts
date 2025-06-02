@@ -263,6 +263,7 @@ export async function parseAndPostTodayMetricDuration(webview: ReturnType<typeof
     } satisfies IMessage<MetricDurationData<HeartbeatMetrics>>
 
     isPosted = !!await webview.postMessage(postContent)
+    return result
   }
   catch (error) {
     if (error instanceof Error) {

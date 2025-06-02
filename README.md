@@ -89,3 +89,4 @@ If your tsconfig.json uses moduleResolution: "node", it will cause errors when b
 - [] when git committing, code will be linted
 - [] when server shut down, codebeat cli has memory address error
 - [] when server shut down, prsima should disconnect
+- [] Using '*' activation is usually a bad idea as it impacts performance.

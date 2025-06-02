@@ -10,7 +10,8 @@
   "author": "result17 <rescp17@gmail.com>",
   "main": "./dist/index.js",
   "files": [
-    "dist/*"
+    "dist/*",
+    "dist/webview/*"
   ],
   "engines": {
     "vscode": "^1.97.0"
@@ -58,18 +59,16 @@
   },
   "scripts": {
     "build": "tsup src/index.ts --external vscode",
-    "dev": "pnpm -C ../codebeat-ext-webview build && nr build --watch --sourcemap",
+    "dev": "nr build_webview && nr build --watch --sourcemap",
     "prepare": "nr update",
+    "build_webview": "pnpm -C ../codebeat-ext-webview build",
     "update": "vscode-ext-gen --output src/generated/meta.ts --readme ../../README.md",
     "vscode:prepublish": "nr build",
     "publish": "vsce publish --no-dependencies",
-    "pack": "vsce package --no-dependencies",
+    "pack": "nr build_webview && vsce package --no-dependencies",
     "typecheck": "tsc --noEmit",
     "release": "bumpp && nr publish",
     "lint": "eslint --fix"
-  },
-  "dependencies": {
-    "dotenv": "catalog:build"
   },
   "devDependencies": {
     "@antfu/ni": "catalog:devtool",
