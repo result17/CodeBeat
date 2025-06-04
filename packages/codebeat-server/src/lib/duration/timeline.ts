@@ -64,12 +64,9 @@ export class HeartbeatTimeline extends HeartbeatCollection {
         this.addNewRange(item, sendTime)
       }
       else {
+        this.lastRange.duration = sendTime - this.lastRange.start
         // if both are same project
-        if (project === prev.project) {
-          this.lastRange.duration = sendTime - this.lastRange.start
-        }
-        else {
-          // if they aren't same project, then add a new range
+        if (project !== prev.project) {
           this.addNewRange(item, sendTime)
         }
       }

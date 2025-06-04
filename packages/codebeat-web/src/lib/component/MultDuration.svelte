@@ -6,43 +6,40 @@
 
   const endOfToday = getEndOfTodayDay().getTime();
 
-  const multDateRanges = [
-    { start: getStartOfTodayDay().getTime(), end: endOfToday },
-    { start: getDayPreviousToToday(7).getTime(), end: endOfToday },
-    { start: getDayPreviousToToday(30).getTime(), end: endOfToday },
-  ] satisfies {
+  const ranges = [
+    { days: 0 },
+    { days: 7 }, 
+    { days: 30 }
+  ];
+
+  const multDateRanges = ranges.map(({ days }) => ({
+    start: days === 0 
+      ? getStartOfTodayDay().getTime()
+      : getDayPreviousToToday(days).getTime(),
+    end: endOfToday
+  })) satisfies {
     start: number,
     end: number
-  }[] ;
+  }[];
 
-  let todayDurationText: string = ""
-  let sevenDaysDurationText: string = ""
-  let thirtyDaysDurationText: string = ""
+  let durationTexts: string[] = [];
 
   onMount(async () => {
     try {
       const data = await client.duration.getDashboardRangeDurations.query({
         schedule: multDateRanges
       });
-
-      todayDurationText = data[0].text;
-      sevenDaysDurationText = data[1].text;
-      thirtyDaysDurationText = data[2].text;
+      durationTexts = data.map(item => item.text);
     } catch (error) {
       console.error("Error fetching duration:", error);
+      durationTexts = ranges.map(() => "");
     }
   });
 </script>
 
-<div class="mb-2">
-  <DateRanger dayBefore={0} />
-  <p class="text-neutral-400 space-y-2">{todayDurationText}</p>
-</div>
-<div class="my-2">
-  <DateRanger dayBefore={7} />
-  <p class="text-neutral-400">{sevenDaysDurationText}</p>
-</div>
-<div class="my-2">
-  <DateRanger dayBefore={30} />
-  <p class="text-neutral-400">{thirtyDaysDurationText}</p>
-</div>
+{#each ranges as range, i}
+  <div class="flex flex-row items-center mb-2">
+    <DateRanger class="mr-2" dayBefore={range.days} />
+    <p class="text-neutral-400 mt-2">{durationTexts[i]}</p>
+  </div>
+{/each}

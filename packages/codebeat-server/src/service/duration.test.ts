@@ -4,7 +4,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { getHeartbeatManager, getPrismaClientInstance } from '@/db'
 import { getDurationManager } from '@/db/duration'
 import { createDurationNativeSQLService, createDurationService } from '@/service'
-import { getDayPreviousToToday } from '@/shared'
+import { getDayPreviousToToday, getEndOfTodayDay, getStartOfTodayDay } from '@/shared'
 
 const DATABASE_URL = process.env.DATABASE_URL
 const DIRECT_DATABASE_URL = process.env.DIRECT_DATABASE_URL
@@ -17,7 +17,7 @@ describe('heartbeat duration calculation', () => {
   let durationSQLService: DurationService
 
   beforeAll(async () => {
-    prismaClient = getPrismaClientInstance(DATABASE_URL || DIRECT_DATABASE_URL, false)
+    prismaClient = getPrismaClientInstance(DATABASE_URL || DIRECT_DATABASE_URL || '', false)
     yesterday = new Date()
     yesterday.setDate(yesterday.getDate() - 1)
     today = new Date()
@@ -64,12 +64,16 @@ describe('heartbeat duration calculation', () => {
   })
 
   it('should return multiple range durations', async () => {
+    const endOfToday = getEndOfTodayDay()
     const list = [{
+      startDate: getDayPreviousToToday(1),
+      endDate: getStartOfTodayDay(),
+    }, {
       startDate: getDayPreviousToToday(7),
-      endDate: today,
+      endDate: endOfToday,
     }, {
       startDate: getDayPreviousToToday(30),
-      endDate: today,
+      endDate: endOfToday,
     }]
 
     const res = await durationService.getMultiRangeDurations(list)
@@ -83,7 +87,21 @@ describe('heartbeat duration calculation', () => {
     expect(sqlRes.length).toBe(list.length)
 
     for (let i = 0; i < list.length; i++) {
-      expect(sqlRes[i].text).toBe(res[i].text)
+      expect(sqlRes[i].text).equal(res[i].text)
     }
+  })
+
+  it('check duration is same', async () => {
+    const res = await durationService.getSpecDateDuration(getDayPreviousToToday(1), getStartOfTodayDay())
+    expect(res).toBeDefined()
+    expect(res.grandTotal).toBeDefined()
+
+    const sqlRes = await durationSQLService.getSpecDateDuration(getDayPreviousToToday(1), getStartOfTodayDay())
+    expect(sqlRes).toBeDefined()
+    expect(sqlRes.grandTotal).toBeDefined()
+
+    expect(sqlRes.grandTotal.text).equal(res.grandTotal.text)
+
+    expect(sqlRes.grandTotal.totalMs).equal(res.grandTotal.totalMs)
   })
 })

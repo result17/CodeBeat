@@ -8,8 +8,9 @@ const config = {
     preprocessMeltUI(),
   ]),
   kit: {
-    paths: {
-      relative: false,
+    alias: {
+      '$utils': './src/utils',
+      '$utils/*': './src/utils/*',
     },
   },
 }

@@ -17,7 +17,7 @@
 
 <div class="flex min-h-screen flex-col" id="page">
   <Header />
-  <div class="flex flex-1 w-full bg-neutral-900 p-4">
+  <main class="flex flex-1 w-full bg-neutral-900 p-4">
     <slot />
-  </div>
+  </main>
 </div>

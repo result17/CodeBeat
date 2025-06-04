@@ -20,10 +20,12 @@
     "@melt-ui/svelte": "catalog:web",
     "@sveltejs/vite-plugin-svelte": "catalog:devtool",
     "@tailwindcss/vite": "catalog:web",
+    "clsx": "catalog:web",
     "codebeat-ext-webview": "workspace:*",
     "codebeat-server": "workspace:*",
     "svelte": "catalog:web",
     "svelte-check": "catalog:devtool",
+    "tailwind-merge": "catalog:web",
     "tailwindcss": "catalog:web"
   }
 }

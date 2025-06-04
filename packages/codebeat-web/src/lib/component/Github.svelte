@@ -12,7 +12,7 @@
   ></path>
 </svg>
 
-<style global>
+<style scoped>
   .octicon {
     fill: currentColor;
   }

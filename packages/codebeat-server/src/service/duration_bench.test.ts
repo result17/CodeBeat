@@ -1,12 +1,12 @@
 import type { HeartbeatManager } from '@/db/heartbeat'
 import type { PrismaInstance } from '@/db/prisma'
 import type { DurationService } from '@/service'
-import { getHeartbeatManager, getPrismaClientInstance } from '@/db'
-import { getDurationManager } from '@/db/duration'
-import { createDurationNativeSQLService, createDurationService } from '@/service'
-
 import { Bench } from 'tinybench'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
+import { getHeartbeatManager, getPrismaClientInstance } from '@/db'
+
+import { getDurationManager } from '@/db/duration'
+import { createDurationNativeSQLService, createDurationService } from '@/service'
 
 describe('duration calculation performance benchmark', () => {
   // Test data setup
@@ -38,7 +38,7 @@ describe('duration calculation performance benchmark', () => {
     endDate.setDate(0) // Auto-adjust to last day of current month
     endDate.setHours(23, 59, 59, 999) // End of day
 
-    prismaClient = getPrismaClientInstance(DATABASE_URL || DIRECT_DATABASE_URL, false)
+    prismaClient = getPrismaClientInstance(DATABASE_URL || DIRECT_DATABASE_URL || '', false)
     heartbeatManager = getHeartbeatManager(prismaClient)
     durationService = createDurationService(heartbeatManager)
     const durationManager = getDurationManager(prismaClient)

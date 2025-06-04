@@ -16,16 +16,16 @@
     "dist/shared"
   ],
   "scripts": {
-    "test": "pnpm prepare && vitest run",
-    "test:watch": "pnpm prepare && vitest watch",
-    "prepare": "dotenv -e .dev.vars prisma generate",
+    "test": "pnpm prepare_node && vitest run",
+    "test:watch": "pnpm prepare_node && vitest watch",
+    "prepare_node": "dotenv -e .dev.vars prisma generate",
     "prepare_worker": "dotenv -e .dev.vars.staging prisma generate --no-engine",
     "migrate": "dotenv -e .dev.vars prisma migrate dev",
     "migrate_local": "dotenv -e .dev.vars prisma migrate dev",
     "migrate:reset": "dotenv -e .dev.vars.staging prisma migrate reset",
     "migrate:deploy": "dotenv -e .dev.vars.staging prisma migrate deploy",
     "studio": "dotenv -e .dev.vars npx prisma studio",
-    "dev": "pnpm prepare && dotenv -e .dev.vars tsx watch ./src/local/start.ts",
+    "dev": "pnpm prepare_node && dotenv -e .dev.vars tsx watch ./src/local/start.ts",
     "wdev": "pnpm prepare_worker && wrangler dev --env staging",
     "wdeploy": "dotenv -e .dev.vars.staging pnpm prepare_worker && dotenv -e .dev.vars.staging wrangler deploy",
     "share": "tsup --config src/tsup.config.ts"

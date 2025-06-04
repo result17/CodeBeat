@@ -6,9 +6,18 @@ settings:
 
 catalogs:
   build:
+    dotenv:
+      specifier: ^16.5.0
+      version: 16.5.0
     dotenv-cli:
       specifier: ^8.0.0
       version: 8.0.0
+    esno:
+      specifier: ^4.8.0
+      version: 4.8.0
+    tsup:
+      specifier: ^8.3.6
+      version: 8.5.0
     vite:
       specifier: ^6.1.0
       version: 6.3.5
@@ -20,6 +29,9 @@ catalogs:
     '@antfu/eslint-config':
       specifier: ^4.2.1
       version: 4.13.2
+    '@antfu/ni':
+      specifier: ^23.3.1
+      version: 23.3.1
     '@antfu/nip':
       specifier: ^0.0.0
       version: 0.0.0
@@ -38,35 +50,74 @@ catalogs:
     '@types/d3':
       specifier: ^7.4.3
       version: 7.4.3
+    '@types/node':
+      specifier: ^22.13.10
+      version: 22.15.21
+    '@types/vscode':
+      specifier: ^1.97.0
+      version: 1.100.0
     '@typescript-eslint/utils':
       specifier: ^8.29.1
       version: 8.32.1
+    '@vscode/vsce':
+      specifier: ^3.2.2
+      version: 3.4.2
+    bumpp:
+      specifier: ^10.0.3
+      version: 10.1.1
     eslint:
       specifier: ^9.20.1
       version: 9.27.0
+    pnpm:
+      specifier: ^10.8.1
+      version: 10.11.0
     svelte-check:
       specifier: ^4.2.1
       version: 4.2.1
     tinybench:
       specifier: ^4.0.1
       version: 4.0.1
+    ts-node:
+      specifier: ^10.9.2
+      version: 10.9.2
+    typescript:
+      specifier: ^5.8.2
+      version: 5.8.3
     vite-plugin-node:
       specifier: ^5.0.1
       version: 5.0.1
+    vscode-ext-gen:
+      specifier: ^1.0.0
+      version: 1.0.2
   extension:
     d3:
       specifier: ^7.9.0
       version: 7.9.0
+    reactive-vscode:
+      specifier: ^0.2.10
+      version: 0.2.17
   server:
     '@hono/trpc-server':
       specifier: ^0.3.4
       version: 0.3.4
+    '@hono/zod-openapi':
+      specifier: ^0.19.4
+      version: 0.19.6
     '@prisma/client':
       specifier: ^6.6.0
       version: 6.8.2
+    '@prisma/extension-accelerate':
+      specifier: ^1.3.0
+      version: 1.3.0
     '@trpc/server':
       specifier: ^11.1.3
       version: 11.1.3
+    hono:
+      specifier: ^4.7.7
+      version: 4.7.10
+    prisma:
+      specifier: ^6.6.0
+      version: 6.8.2
     tsx:
       specifier: ^4.19.3
       version: 4.19.4
@@ -100,9 +151,15 @@ catalogs:
     '@trpc/client':
       specifier: ^11.1.4
       version: 11.1.4
+    clsx:
+      specifier: ^2.1.1
+      version: 2.1.1
     svelte:
       specifier: ^5.33.1
       version: 5.33.3
+    tailwind-merge:
+      specifier: ^3.3.0
+      version: 3.3.0
     tailwindcss:
       specifier: ^4.1.7
       version: 4.1.7
@@ -120,9 +177,15 @@ importers:
       '@trpc/server':
         specifier: catalog:server
         version: 11.1.3(typescript@5.8.3)
+      clsx:
+        specifier: catalog:web
+        version: 2.1.1
       d3:
         specifier: catalog:extension
         version: 7.9.0
+      tailwind-merge:
+        specifier: catalog:web
+        version: 3.3.0
       vue:
         specifier: catalog:view
         version: 3.5.15(typescript@5.8.3)
@@ -4235,6 +4298,9 @@ packages:
   table@6.9.0:
     resolution: {integrity: sha512-9kY+CygyYM6j02t5YFHbNz2FN5QmYGv9zAjVp4lCDjlCw7amdckXlEt/bjMhUIfj4ThGRE4gCUH5+yGnNuPo5A==}
     engines: {node: '>=10.0.0'}
+
+  tailwind-merge@3.3.0:
+    resolution: {integrity: sha512-fyW/pEfcQSiigd5SNn0nApUOxx0zB/dm6UDU/rEwc2c3sX2smWUNbapHv+QRqLGVp9GWX3THIa7MUGPo+YkDzQ==}
 
   tailwindcss@4.1.7:
     resolution: {integrity: sha512-kr1o/ErIdNhTz8uzAYL7TpaUuzKIE6QPQ4qmSdxnoX/lo+5wmUHQA6h3L5yIqEImSRnAAURDirLu/BgiXGPAhg==}
@@ -8869,6 +8935,8 @@ snapshots:
       slice-ansi: 4.0.0
       string-width: 4.2.3
       strip-ansi: 6.0.1
+
+  tailwind-merge@3.3.0: {}
 
   tailwindcss@4.1.7: {}
 

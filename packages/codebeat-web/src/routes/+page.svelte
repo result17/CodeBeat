@@ -6,19 +6,16 @@
 </script>
 
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 w-full">
-  <GridContainer>
+  <GridContainer title="Durations">
     <MultDuration />
   </GridContainer>
-  <GridContainer>
-    <h2 class="text-lg font-bold text-neutral-100">Today</h2>
+  <GridContainer title="Timeline">
     <DaytimeRangeChart />
   </GridContainer>
-  <GridContainer>
-    <h2 class="text-lg font-bold text-neutral-100">Project</h2>
+  <GridContainer title="project">
     <MetricRatioChart metric="project" />
   </GridContainer>
-   <GridContainer>
-    <h2 class="text-lg font-bold text-neutral-100">Language</h2>
+   <GridContainer title="Language">
     <MetricRatioChart metric="language" />
   </GridContainer>
 </div>
