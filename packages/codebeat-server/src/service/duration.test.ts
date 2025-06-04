@@ -91,7 +91,7 @@ describe('heartbeat duration calculation', () => {
     }
   })
 
-  it('check duration is same', async () => {
+  it('both calculation methods should return the same duration', async () => {
     const res = await durationService.getSpecDateDuration(getDayPreviousToToday(1), getStartOfTodayDay())
     expect(res).toBeDefined()
     expect(res.grandTotal).toBeDefined()
@@ -103,5 +103,48 @@ describe('heartbeat duration calculation', () => {
     expect(sqlRes.grandTotal.text).equal(res.grandTotal.text)
 
     expect(sqlRes.grandTotal.totalMs).equal(res.grandTotal.totalMs)
+  })
+
+  it('bulk and unit calculations must return the same duration', async () => {
+    const res = await durationService.getSpecDateDuration(getDayPreviousToToday(1), getStartOfTodayDay())
+    expect(res.grandTotal).toBeDefined()
+
+    const list = [{
+      startDate: getDayPreviousToToday(1),
+      endDate: getStartOfTodayDay(),
+    }]
+
+    const bulkRes = await durationService.getMultiRangeDurations(list)
+    expect(res).toBeDefined()
+    expect(bulkRes.length).toBe(list.length)
+
+    expect(bulkRes[0].text).equal(res.grandTotal.text)
+    expect(bulkRes[0].totalMs).equal(res.grandTotal.totalMs)
+  })
+
+  it('summary and unit calculations must return the same duration', async () => {
+    const summary = await durationSQLService.getSpecDateSummary(getDayPreviousToToday(1), getStartOfTodayDay())
+    expect(summary.grandTotal).toBeDefined()
+    expect(summary.timeline).toBeDefined()
+
+    const res = await durationSQLService.getSpecDateDuration(getDayPreviousToToday(1), getStartOfTodayDay())
+    expect(res.grandTotal).toBeDefined()
+
+    expect(summary.grandTotal.text).equal(res.grandTotal.text)
+    expect(summary.grandTotal.totalMs).equal(res.grandTotal.totalMs)
+  })
+
+  it('both calculation methods should return the same summmary', async () => {
+    const summary = await durationService.getSpecDateSummary(getDayPreviousToToday(1), getStartOfTodayDay())
+    expect(summary.grandTotal).toBeDefined()
+    expect(summary.timeline).toBeDefined()
+
+    const sqlSummary = await durationSQLService.getSpecDateSummary(getDayPreviousToToday(1), getStartOfTodayDay())
+    expect(sqlSummary.grandTotal).toBeDefined()
+    expect(sqlSummary.timeline).toBeDefined()
+
+    expect(sqlSummary.grandTotal.text).equal(summary.grandTotal.text)
+    expect(sqlSummary.grandTotal.totalMs).equal(summary.grandTotal.totalMs)
+    expect(sqlSummary.timeline.length).equal(summary.timeline.length)
   })
 })

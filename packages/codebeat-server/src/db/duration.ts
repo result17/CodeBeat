@@ -16,14 +16,13 @@ export function getDurationManager(prisma: PrismaInstance): DurationManager {
     async getMultiRangeDurations(ranges) {
       try {
         const result = await prisma.$queryRaw<Array<{ range_index: number, duration_ms: bigint }>>(Prisma.sql`
-        /*
-         * This query calculates durations for multiple date ranges in a single pass
-         */
-        WITH RangeTags AS (
+        WITH RecordDiffs AS (
           SELECT 
             h."project",
             h."sendAt",
-            r.idx as range_index
+            r.idx as range_index,
+            LAG(h."sendAt") OVER (PARTITION BY r.idx ORDER BY h."sendAt") as prev_sendAt,
+            LAG(h."project") OVER (PARTITION BY r.idx ORDER BY h."sendAt") as prev_project
           FROM "Heartbeat" h
           CROSS JOIN (
             VALUES ${Prisma.join(
@@ -36,46 +35,34 @@ export function getDurationManager(prisma: PrismaInstance): DurationManager {
           WHERE h."sendAt" >= r.start_date 
             AND h."sendAt" < r.end_date
         ),
-        TimeRanges AS (
-          -- Step 1: Identify continuous time ranges
-          SELECT 
-            "project",
-            "sendAt",
+        ValidDurations AS (
+          SELECT
             range_index,
-            CASE WHEN 
-              LAG("sendAt") OVER (PARTITION BY "project", range_index ORDER BY "sendAt") IS NULL OR
-              "project" != LAG("project") OVER (ORDER BY "sendAt") OR
-              EXTRACT(EPOCH FROM ("sendAt" - LAG("sendAt") OVER (PARTITION BY "project", range_index ORDER BY "sendAt"))) > 15 * 60
-            THEN 1 ELSE 0 END as is_new_range
-          FROM RangeTags
-          WHERE range_index >= 0  -- Only include records within specified ranges
-        ),
-        RangeDurations AS (
-          -- Step 2: Calculate duration for each continuous time range
-          SELECT 
-            range_index,
-            -- Convert duration to milliseconds
-            CAST(EXTRACT(EPOCH FROM (MAX("sendAt") - MIN("sendAt"))) * 1000 AS BIGINT) as duration_ms
-          FROM (
-            -- Group records into continuous ranges using cumulative sum of is_new_range
-            SELECT 
-              *,
-              SUM(is_new_range) OVER (PARTITION BY range_index ORDER BY "sendAt") as range_group
-            FROM TimeRanges
-            WHERE range_index >= 0  -- Only include records within specified ranges
-          ) grouped
-          GROUP BY "project", range_index, range_group
+            -- Assign time difference to previous project
+            CASE
+              WHEN prev_project IS NOT NULL THEN prev_project
+              ELSE "project"  -- First record
+            END as assigned_project,
+            CASE
+              -- First record doesn't count
+              WHEN prev_sendAt IS NULL THEN 0
+              -- Time intervals >15 minutes don't count
+              WHEN EXTRACT(EPOCH FROM ("sendAt" - prev_sendAt)) > 15 * 60 THEN 0
+              -- Normal case: calculate time difference
+              ELSE EXTRACT(EPOCH FROM ("sendAt" - prev_sendAt)) * 1000
+            END as duration_ms
+          FROM RecordDiffs
+          -- Exclude first record (no previous record)
+          WHERE prev_sendAt IS NOT NULL
         )
-        -- Step 3: Sum durations by original range index
         SELECT 
           range_index,
           COALESCE(CAST(SUM(duration_ms) AS BIGINT), CAST(0 AS BIGINT)) as duration_ms
-        FROM RangeDurations
+        FROM ValidDurations
         GROUP BY range_index
         ORDER BY range_index
         `)
 
-        // Initialize result array with 0n for each range
         const durations = ranges.map(() => 0n)
         result.forEach((row) => {
           if (row.range_index >= 0 && row.range_index < durations.length) {
@@ -91,40 +78,37 @@ export function getDurationManager(prisma: PrismaInstance): DurationManager {
     async getSendAtDuration(startDate, endDate) {
       try {
         const result = await prisma.$queryRaw<[{ total_duration_ms: bigint }]>`
-    WITH RecordDiffs AS (
-  SELECT 
-    "project",
-    "sendAt",
-    LAG("sendAt") OVER (ORDER BY "sendAt") as prev_sendAt,
-    LAG("project") OVER (ORDER BY "sendAt") as prev_project,
-    -- Flag if this is the last record
-    LEAD("sendAt") OVER (ORDER BY "sendAt") IS NULL as is_last_record
-  FROM "Heartbeat"
-  WHERE "sendAt" >= ${startDate}
-    AND "sendAt" < ${endDate}
-),
-ValidDurations AS (
-  SELECT
-    -- Assign time difference to previous project
-    CASE
-      WHEN prev_project IS NOT NULL THEN prev_project
-      ELSE "project"  -- First record
-    END as assigned_project,
-    CASE
-      -- First record doesn't count
-      WHEN prev_sendAt IS NULL THEN 0
-      -- Time intervals >15 minutes don't count
-      WHEN EXTRACT(EPOCH FROM ("sendAt" - prev_sendAt)) > 15 * 60 THEN 0
-      -- Normal case: calculate time difference
-      ELSE EXTRACT(EPOCH FROM ("sendAt" - prev_sendAt)) * 1000
-    END as duration_ms
-  FROM RecordDiffs
-    -- Exclude first record (no previous record)
-  WHERE prev_sendAt IS NOT NULL
-)
-SELECT COALESCE(CAST(SUM(duration_ms) AS BIGINT), CAST(0 AS BIGINT)) as total_duration_ms
-FROM ValidDurations
-        `
+          WITH RecordDiffs AS (
+            SELECT 
+              "project",
+              "sendAt",
+              LAG("sendAt") OVER (ORDER BY "sendAt") as prev_sendAt,
+              LAG("project") OVER (ORDER BY "sendAt") as prev_project
+            FROM "Heartbeat"
+            WHERE "sendAt" >= ${startDate}
+              AND "sendAt" < ${endDate}
+          ),
+          ValidDurations AS (
+            SELECT
+              -- Assign time difference to previous project
+              CASE
+                WHEN prev_project IS NOT NULL THEN prev_project
+                ELSE "project"  -- First record
+              END as assigned_project,
+              CASE
+                -- First record doesn't count
+                WHEN prev_sendAt IS NULL THEN 0
+                -- Time intervals >15 minutes don't count
+                WHEN EXTRACT(EPOCH FROM ("sendAt" - prev_sendAt)) > 15 * 60 THEN 0
+                -- Normal case: calculate time difference
+                ELSE EXTRACT(EPOCH FROM ("sendAt" - prev_sendAt)) * 1000
+              END as duration_ms
+            FROM RecordDiffs
+            WHERE prev_sendAt IS NOT NULL
+          )
+          SELECT COALESCE(CAST(SUM(duration_ms) AS BIGINT), CAST(0 AS BIGINT)) as total_duration_ms
+          FROM ValidDurations
+          `
         return result[0]?.total_duration_ms || 0n
       }
       catch (error) {
@@ -137,50 +121,77 @@ FROM ValidDurations
           project: string
           start_timestamp: bigint
           duration: bigint
-          total_duration_ms: bigint
         }>>`
-    WITH TimeRanges AS (
-      -- Restore project partitioning with adjusted time interval logic
-      SELECT 
-        "project",
-        "sendAt",
-        CASE WHEN 
-          LAG("sendAt") OVER (PARTITION BY "project" ORDER BY "sendAt") IS NULL OR
-          "project" != LAG("project") OVER (ORDER BY "sendAt") OR
-          EXTRACT(EPOCH FROM ("sendAt" - LAG("sendAt") OVER (PARTITION BY "project" ORDER BY "sendAt")) > 15 * 60
-        THEN 1 ELSE 0 END as is_new_range,
-        -- Add flag indicating project change point
-        CASE WHEN 
-          LAG("project") OVER (ORDER BY "sendAt") IS NOT NULL AND
-          "project" != LAG("project") OVER (ORDER BY "sendAt")
-        THEN 1 ELSE 0 END as is_project_change
-      FROM "Heartbeat"
-      WHERE "sendAt" >= ${startDate}
-        AND "sendAt" < ${endDate}
-    ),
-    RangeDurations AS (
-      -- Modified duration calculation logic:
-      -- 1. Include time difference when project changes
-      -- 2. Assign time difference to previous project
-      SELECT 
-        "project",
-        CAST(EXTRACT(EPOCH FROM (
-          MAX("sendAt") - MIN("sendAt") + 
-          CASE WHEN is_project_change = 1 THEN 
-            ("sendAt" - LAG("sendAt") OVER (ORDER BY "sendAt"))
-          ELSE 0 END
-        )) * 1000 AS BIGINT) as duration_ms
-      FROM (
-        SELECT 
-          *,
-          SUM(is_new_range) OVER (PARTITION BY "project" ORDER BY "sendAt") as range_group
-        FROM TimeRanges
-      ) grouped
-      GROUP BY "project", range_group, is_project_change
-    )
-    SELECT COALESCE(CAST(SUM(duration_ms) AS BIGINT), CAST(0 AS BIGINT)) as total_duration_ms
-    FROM RangeDurations
-            `
+          WITH RecordDiffs AS (
+            SELECT 
+              "project",
+              "sendAt",
+              LAG("project") OVER (ORDER BY "sendAt") as prev_project,
+              LAG("sendAt") OVER (ORDER BY "sendAt") as prev_send_at
+            FROM "Heartbeat"
+            WHERE "sendAt" >= ${startDate} AND "sendAt" < ${endDate}
+          ),
+          -- Debug output for raw time differences
+          DebugRawDiffs AS (
+            SELECT 
+              prev_project,
+              "project",
+              prev_send_at,
+              "sendAt",
+              EXTRACT(EPOCH FROM ("sendAt" - prev_send_at)) as raw_diff_seconds
+            FROM RecordDiffs
+            WHERE prev_send_at IS NOT NULL
+          ),
+          -- Calculate valid durations
+          ValidDurations AS (
+            SELECT
+              -- Assign time difference to previous project
+              CASE
+                WHEN prev_project IS NOT NULL THEN prev_project
+                ELSE "project"  -- First record
+              END as project,
+              prev_send_at as start_timestamp,
+              CASE
+                -- First record doesn't count
+                WHEN prev_send_at IS NULL THEN 0
+                -- Time intervals >15 minutes don't count
+                WHEN EXTRACT(EPOCH FROM ("sendAt" - prev_send_at)) > 15 * 60 THEN 0
+                -- Normal case: calculate time difference
+                ELSE EXTRACT(EPOCH FROM ("sendAt" - prev_send_at)) * 1000
+              END as duration_ms
+            FROM RecordDiffs
+            WHERE prev_send_at IS NOT NULL
+          ),
+          -- Debug output
+          DebugOutput AS (
+            SELECT 
+              project,
+              start_timestamp,
+              duration_ms
+            FROM ValidDurations
+            ORDER BY start_timestamp
+          ),
+          -- First calculate total duration for validation
+          TotalDuration AS (
+            SELECT SUM(duration_ms) as total_ms FROM ValidDurations
+          ),
+          -- Then group by project
+          ProjectDurations AS (
+            SELECT
+              project,
+              MIN(start_timestamp) as start_timestamp,
+              SUM(duration_ms) as project_duration_ms
+            FROM ValidDurations
+            GROUP BY project
+            ORDER BY start_timestamp
+          )
+          SELECT
+            project,
+            start_timestamp,
+            CAST(project_duration_ms AS BIGINT) as duration
+          FROM ProjectDurations
+          ORDER BY start_timestamp
+          `
 
         if (result.length === 0) {
           return {
@@ -189,7 +200,9 @@ FROM ValidDurations
           }
         }
         return {
-          grandTotal: getGrandTotalWithMS(result[0].total_duration_ms),
+          grandTotal: getGrandTotalWithMS(
+            result.reduce((sum, item) => sum + Number(item.duration), 0),
+          ),
           timeline: result.map(item => ({
             project: item.project,
             start: Number(item.start_timestamp),
