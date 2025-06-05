@@ -131,65 +131,55 @@ export function getDurationManager(prisma: PrismaInstance): DurationManager {
             FROM "Heartbeat"
             WHERE "sendAt" >= ${startDate} AND "sendAt" < ${endDate}
           ),
-          -- Debug output for raw time differences
-          DebugRawDiffs AS (
-            SELECT 
-              prev_project,
-              "project",
-              prev_send_at,
-              "sendAt",
-              EXTRACT(EPOCH FROM ("sendAt" - prev_send_at)) as raw_diff_seconds
+
+          /* 
+          ValidDurations CTE 作用：
+          1. 从RecordDiffs中筛选有效时间段
+          2. 计算每个时间段的duration_ms
+          3. 处理项目切换和超时情况
+
+          行数变化原因：
+          - 过滤掉第一条记录(prev_send_at IS NULL)
+          - 过滤掉间隔>15分钟的记录
+          - 合并相同项目的时间段
+
+          输出字段：
+          - project: 归属项目
+          - start_timestamp: 时间段开始时间  
+          - duration_ms: 时间段长度(毫秒)
+          */
+          TimeGroups AS (
+            SELECT *,
+              SUM(CASE 
+                WHEN prev_send_at IS NULL THEN 1
+                WHEN prev_project != "project" THEN 1
+                WHEN EXTRACT(EPOCH FROM ("sendAt" - prev_send_at)) > 15 * 60 THEN 1
+                ELSE 0 
+              END) OVER (ORDER BY "sendAt") as group_id
             FROM RecordDiffs
-            WHERE prev_send_at IS NOT NULL
           ),
-          -- Calculate valid durations
           ValidDurations AS (
             SELECT
-              -- Assign time difference to previous project
+              "project",
+              MIN("sendAt") OVER (
+                PARTITION BY group_id
+              ) as start_timestamp,
               CASE
-                WHEN prev_project IS NOT NULL THEN prev_project
-                ELSE "project"  -- First record
-              END as project,
-              prev_send_at as start_timestamp,
-              CASE
-                -- First record doesn't count
                 WHEN prev_send_at IS NULL THEN 0
-                -- Time intervals >15 minutes don't count
                 WHEN EXTRACT(EPOCH FROM ("sendAt" - prev_send_at)) > 15 * 60 THEN 0
-                -- Normal case: calculate time difference
                 ELSE EXTRACT(EPOCH FROM ("sendAt" - prev_send_at)) * 1000
               END as duration_ms
-            FROM RecordDiffs
-            WHERE prev_send_at IS NOT NULL
+            FROM TimeGroups
           ),
-          -- Debug output
-          DebugOutput AS (
-            SELECT 
-              project,
-              start_timestamp,
-              duration_ms
-            FROM ValidDurations
-            ORDER BY start_timestamp
-          ),
-          -- First calculate total duration for validation
+          -- Calculate total duration for validation
           TotalDuration AS (
             SELECT SUM(duration_ms) as total_ms FROM ValidDurations
-          ),
-          -- Then group by project
-          ProjectDurations AS (
-            SELECT
-              project,
-              MIN(start_timestamp) as start_timestamp,
-              SUM(duration_ms) as project_duration_ms
-            FROM ValidDurations
-            GROUP BY project
-            ORDER BY start_timestamp
           )
           SELECT
             project,
             start_timestamp,
-            CAST(project_duration_ms AS BIGINT) as duration
-          FROM ProjectDurations
+            CAST(duration_ms AS BIGINT) as duration
+          FROM ValidDurations
           ORDER BY start_timestamp
           `
 
