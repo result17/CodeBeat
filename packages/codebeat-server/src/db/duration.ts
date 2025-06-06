@@ -118,71 +118,85 @@ export function getDurationManager(prisma: PrismaInstance): DurationManager {
     async getSummary(startDate, endDate) {
       try {
         const result = await prisma.$queryRaw<Array<{
+          period_id: bigint
           project: string
-          start_timestamp: bigint
-          duration: bigint
+          period_start: bigint
+          duration_ms: bigint
+          period_end: bigint
+          total_duration_ms: bigint
+          total_heartbeat_count: number
+          heartbeat_count: number
         }>>`
-          WITH RecordDiffs AS (
+          WITH HeartbeatData AS (
             SELECT 
-              "project",
-              "sendAt",
-              LAG("project") OVER (ORDER BY "sendAt") as prev_project,
-              LAG("sendAt") OVER (ORDER BY "sendAt") as prev_send_at
+                id,
+                "project",
+                "sendAt",
+                LAG("project") OVER (ORDER BY "sendAt") as prev_project,
+                LAG("sendAt") OVER (ORDER BY "sendAt") as prev_send_at,
+                LEAD("project") OVER (ORDER BY "sendAt") as next_project,
+                LEAD("sendAt") OVER (ORDER BY "sendAt") as next_send_at,
+                EXTRACT(EPOCH FROM ("sendAt" - LAG("sendAt") OVER (ORDER BY "sendAt"))) AS prev_time_diff,
+                EXTRACT(EPOCH FROM (LEAD("sendAt") OVER (ORDER BY "sendAt") - "sendAt")) AS next_time_diff
             FROM "Heartbeat"
             WHERE "sendAt" >= ${startDate} AND "sendAt" < ${endDate}
-          ),
-
-          /* 
-          ValidDurations CTE 作用：
-          1. 从RecordDiffs中筛选有效时间段
-          2. 计算每个时间段的duration_ms
-          3. 处理项目切换和超时情况
-
-          行数变化原因：
-          - 过滤掉第一条记录(prev_send_at IS NULL)
-          - 过滤掉间隔>15分钟的记录
-          - 合并相同项目的时间段
-
-          输出字段：
-          - project: 归属项目
-          - start_timestamp: 时间段开始时间  
-          - duration_ms: 时间段长度(毫秒)
-          */
-          TimeGroups AS (
-            SELECT *,
-              SUM(CASE 
-                WHEN prev_send_at IS NULL THEN 1
-                WHEN prev_project != "project" THEN 1
-                WHEN EXTRACT(EPOCH FROM ("sendAt" - prev_send_at)) > 15 * 60 THEN 1
-                ELSE 0 
-              END) OVER (ORDER BY "sendAt") as group_id
-            FROM RecordDiffs
-          ),
-          ValidDurations AS (
-            SELECT
+        ),
+      PeriodStarts AS (
+          SELECT 
+              *,
+              CASE 
+                  WHEN prev_project IS NULL THEN 1 -- First record
+                  WHEN prev_project != "project" THEN 1 -- Project changed
+                  WHEN prev_time_diff IS NULL OR prev_time_diff > 15 * 60 THEN 1 -- Gap >15 minutes
+                  ELSE 0
+              END AS is_period_start
+          FROM HeartbeatData
+      ),
+  PeriodGroups AS (
+      SELECT 
+          *,
+          SUM(is_period_start) OVER (ORDER BY "sendAt") AS period_id
+      FROM PeriodStarts
+  ),
+  PeriodBoundaries AS (
+      SELECT 
+          period_id,
+          "project",
+          MIN("sendAt") AS period_start,
+          MAX("sendAt") AS period_end_raw,
+          MIN(CASE 
+              WHEN next_project != "project" AND next_time_diff <= 15 * 60 
+              THEN next_send_at 
+              ELSE NULL 
+          END) AS next_period_start
+      FROM PeriodGroups
+      GROUP BY period_id, "project"
+  ),
+  FinalPeriods AS (
+      SELECT 
+          pb.period_id,
+          pb."project",
+          pb.period_start,
+          COALESCE(pb.next_period_start, pb.period_end_raw) AS period_end,
+          EXTRACT(EPOCH FROM (COALESCE(pb.next_period_start, pb.period_end_raw) - pb.period_start)) * 1000 AS duration_ms,
+          COUNT(*) AS heartbeat_count
+      FROM PeriodBoundaries pb
+      JOIN PeriodGroups pg ON pb.period_id = pg.period_id
+      GROUP BY pb.period_id, pb."project", pb.period_start, pb.period_end_raw, pb.next_period_start
+  )
+          SELECT 
+              period_id,
               "project",
-              MIN("sendAt") OVER (
-                PARTITION BY group_id
-              ) as start_timestamp,
-              CASE
-                WHEN prev_send_at IS NULL THEN 0
-                WHEN EXTRACT(EPOCH FROM ("sendAt" - prev_send_at)) > 15 * 60 THEN 0
-                ELSE EXTRACT(EPOCH FROM ("sendAt" - prev_send_at)) * 1000
-              END as duration_ms
-            FROM TimeGroups
-          ),
-          -- Calculate total duration for validation
-          TotalDuration AS (
-            SELECT SUM(duration_ms) as total_ms FROM ValidDurations
-          )
-          SELECT
-            project,
-            start_timestamp,
-            CAST(duration_ms AS BIGINT) as duration
-          FROM ValidDurations
-          ORDER BY start_timestamp
+              period_start,
+              period_end,
+              duration_ms,
+              heartbeat_count,
+              SUM(duration_ms) OVER() AS total_duration_ms,
+              SUM(heartbeat_count) OVER() AS total_heartbeat_count
+          FROM FinalPeriods
+          WHERE period_end > period_start
+          ORDER BY period_start;
           `
-
         if (result.length === 0) {
           return {
             grandTotal: getGrandTotalWithMS(0),
@@ -191,12 +205,12 @@ export function getDurationManager(prisma: PrismaInstance): DurationManager {
         }
         return {
           grandTotal: getGrandTotalWithMS(
-            result.reduce((sum, item) => sum + Number(item.duration), 0),
+            Number(result[0].total_duration_ms),
           ),
           timeline: result.map(item => ({
             project: item.project,
-            start: Number(item.start_timestamp),
-            duration: Number(item.duration),
+            start: Number(item.period_start),
+            duration: Number(item.duration_ms),
           })),
         }
       }

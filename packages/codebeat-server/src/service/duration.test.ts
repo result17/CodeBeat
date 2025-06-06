@@ -135,11 +135,11 @@ describe('heartbeat duration calculation', () => {
   })
 
   it('both calculation methods should return the same summmary', async () => {
-    const summary = await durationService.getSpecDateSummary(getDayPreviousToToday(2), getDayPreviousToToday(1))
+    const summary = await durationService.getSpecDateSummary(getDayPreviousToToday(3), getDayPreviousToToday(2))
     expect(summary.grandTotal).toBeDefined()
     expect(summary.timeline).toBeDefined()
 
-    const sqlSummary = await durationSQLService.getSpecDateSummary(getDayPreviousToToday(2), getDayPreviousToToday(1))
+    const sqlSummary = await durationSQLService.getSpecDateSummary(getDayPreviousToToday(3), getDayPreviousToToday(2))
     expect(sqlSummary.grandTotal).toBeDefined()
     expect(sqlSummary.timeline).toBeDefined()
 

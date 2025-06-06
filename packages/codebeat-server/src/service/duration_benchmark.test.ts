@@ -13,6 +13,28 @@ describe('duration calculation performance benchmark', () => {
   const DATABASE_URL = process.env.DATABASE_URL
   const DIRECT_DATABASE_URL = process.env.DIRECT_DATABASE_URL
 
+  // Memory tracking for each task
+  const taskMemory: Record<string, {
+    beforeRun: ReturnType<typeof process.memoryUsage>
+    afterRun: ReturnType<typeof process.memoryUsage>
+  }> = {}
+
+  // Record initial memory state
+  const recordMemory = (task: string, type: 'before' | 'after') => {
+    if (!taskMemory[task]) {
+      taskMemory[task] = {
+        beforeRun: process.memoryUsage(),
+        afterRun: process.memoryUsage(),
+      }
+    }
+    if (type === 'before') {
+      taskMemory[task].beforeRun = process.memoryUsage()
+    }
+    else {
+      taskMemory[task].afterRun = process.memoryUsage()
+    }
+  }
+
   if (!DATABASE_URL && !DIRECT_DATABASE_URL) {
     throw new Error('DATABASE_URL or DIRECT_DATABASE_URL must be set in environment')
   }
@@ -49,37 +71,18 @@ describe('duration calculation performance benchmark', () => {
     await prismaClient.$disconnect()
   })
 
-  it('duration calculation', {
+  it('summary(timeline and duration) calculation', {
     timeout: 5 * 60 * 1000, // 5 minutes
   }, async () => {
+    const records = await heartbeatManager.queryRecordsFilterSendAt(startDate, endDate)
+    console.log(`Test Heartbeat Record Count: ${records.length}`)
+
     const bench = new Bench({
       iterations: 5,
       warmupIterations: 1,
       warmupTime: 1000,
       time: 1000,
     })
-
-    // Memory tracking for each task
-    const taskMemory: Record<string, {
-      beforeRun: ReturnType<typeof process.memoryUsage>
-      afterRun: ReturnType<typeof process.memoryUsage>
-    }> = {}
-
-    // Record initial memory state
-    const recordMemory = (task: string, type: 'before' | 'after') => {
-      if (!taskMemory[task]) {
-        taskMemory[task] = {
-          beforeRun: process.memoryUsage(),
-          afterRun: process.memoryUsage(),
-        }
-      }
-      if (type === 'before') {
-        taskMemory[task].beforeRun = process.memoryUsage()
-      }
-      else {
-        taskMemory[task].afterRun = process.memoryUsage()
-      }
-    }
 
     // Test with duration service
     bench.add('javascript implementation', async () => {

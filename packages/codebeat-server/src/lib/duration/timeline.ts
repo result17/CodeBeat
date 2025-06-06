@@ -115,7 +115,7 @@ export class HeartbeatTimeline extends HeartbeatCollection {
 export class HeartbeatSummaryData extends HeartbeatTimeline {
   public getFormattedSummary(): SummaryData {
     const ret = super.getSummary()
-    const timeline = ret.timeline.map(range => ({
+    const timeline = ret.timeline.filter(range => range.duration > 0).map(range => ({
       project: range.project ?? HeartbeatSummaryData.UNKNOWN_PROJECT_NAME,
       start: range.start,
       duration: range.duration,
