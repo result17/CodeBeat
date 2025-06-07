@@ -38,7 +38,7 @@
 </script>
 
 <div class={cn("inline-flex hover:cursor-default", className)} use:melt={$trigger}>
-  <h2 class="text-lg font-bold text-neutral-100">{dateText}</h2>
+  <h2 class="text-sm font-bold text-neutral-100">{dateText}</h2>
 </div>
 
 {#if $open}
