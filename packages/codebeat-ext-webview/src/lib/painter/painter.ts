@@ -60,6 +60,10 @@ export abstract class Painter {
   public getColor() {
     return this.color
   }
+
+  public remove() {
+    this.svg.remove()
+  }
 }
 
 export abstract class AxisPainter extends Painter {

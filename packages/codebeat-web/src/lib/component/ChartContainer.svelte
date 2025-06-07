@@ -6,7 +6,8 @@
 
   let toolAction = writable("");
 
-  export let id: string = "";
+  export let title: string = "";
+  export let id: string = ""
   let storeId = writable(id);
   let prevCtxKey =  ""
 
@@ -35,7 +36,7 @@
   });
 </script>
 
-<GridContainer title={id}>
+<GridContainer title={title}>
   <div class="flex flex-row" slot="right">
     <button type="button" on:click={() => {
       if (!isRotating) toolAction.set("update")

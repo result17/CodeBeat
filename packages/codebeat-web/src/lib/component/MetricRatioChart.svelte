@@ -1,10 +1,12 @@
 <script lang="ts" generics="T extends HeartbeatMetrics">
+  import type { ScaleOrdinal } from "d3";
+  import type { BaseChartContext } from "$types";
+  import type { Unsubscriber } from "svelte/store";
+  import type { HeartbeatMetrics, MetricDurationData } from "codebeat-server";
   import { MetricPiePainter } from "codebeat-ext-webview";
-  import type { HeartbeatMetrics } from "codebeat-server";
-  import { onMount } from "svelte";
+  import { getContext, onDestroy, onMount } from "svelte";
   import { client } from "../trpc";
   import { getDayPreviousToToday, getEndOfTodayDay } from "codebeat-server";
-  import type { ScaleOrdinal } from "d3";
 
   let chartContainer: HTMLElement;
   let colorScale: ScaleOrdinal<string, string, never>;
@@ -17,24 +19,54 @@
   $: validRatios = chartData
     ? chartData.ratios.filter(({ ratio }) => ratio > 0)
     : [];
+  let unSub: Unsubscriber;
 
-  onMount(async () => {
+  $: contextKey = `Metric_${metric}_chart`;
+  let isFetching: BaseChartContext['isFetching'];
+  
+  let painter: MetricPiePainter<T>;
+
+  const getMetricData = async () => {
+    isFetching.update(() => false);
     const data = await client.metricRatio.getMetricRatio.query({
       metric,
       start: getDayPreviousToToday(7).getTime(),
       end: getEndOfTodayDay().getTime(),
     });
+    isFetching.update(() => false);
     chartData = data;
+    return data as MetricDurationData<T>;
+  };
 
+  const initPainter = async () => {
+    const data = await getMetricData();
+    painter = new MetricPiePainter(chartContainer, data, padding);
+    painter.setColor("var(--color-neutral-300)");
+    colorScale = painter.getColorScale();
+  };
+
+  const updatePainter = async () => {
+    const data = await getMetricData();
+    painter.setData(data);
+  };
+
+  onMount(async () => {
+    const context = getContext<BaseChartContext>(contextKey);
+    isFetching = context.isFetching;
+    const { action } = context;
+    await initPainter();
     if (chartContainer && metric) {
-      const chart = new MetricPiePainter(chartContainer, data, padding);
-      chart.setColor("var(--color-neutral-300)");
-      colorScale = chart.getColorScale();
-      chart.draw();
+      painter.draw();
     }
+    unSub = action?.subscribe(async (val) => {
+      if (val === "update") {
+        await getMetricData();
+      }
+    });
   });
 
-  // Export the metric for use in other components or scripts
+  onDestroy(() => unSub());
+
   export { metric };
 </script>
 

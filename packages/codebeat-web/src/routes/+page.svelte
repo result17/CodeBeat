@@ -8,16 +8,16 @@
 </script>
 
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 w-full">
-  <ChartContainer id="Durations">
+  <ChartContainer id="Durations" title="Durations">
     <MultDuration />
   </ChartContainer>
-  <GridContainer title="Timeline">
+  <ChartContainer id="Timeline" title="Timeline">
     <DaytimeRangeChart />
-  </GridContainer>
-  <GridContainer title="project">
+  </ChartContainer>
+  <ChartContainer id="Metric_project" title="Project">
     <MetricRatioChart metric="project" />
-  </GridContainer>
-  <GridContainer title="Language">
+  </ChartContainer>
+  <ChartContainer id="Metric_language" title="Language">
     <MetricRatioChart metric="language" />
-  </GridContainer>
+  </ChartContainer>
 </div>
