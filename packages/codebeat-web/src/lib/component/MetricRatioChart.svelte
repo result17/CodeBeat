@@ -17,7 +17,7 @@
     | Awaited<ReturnType<typeof client.metricRatio.getMetricRatio.query>>
     | undefined;
   $: validRatios = chartData
-    ? chartData.ratios.filter(({ ratio }) => ratio > 0)
+    ? chartData.ratios.sort((a, b) => b.ratio - a.ratio)
     : [];
   let unSub: Unsubscriber;
 
@@ -65,7 +65,11 @@
     });
   });
 
-  onDestroy(() => unSub());
+  onDestroy(() => {
+    if (unSub && typeof unSub === "function") {
+      unSub()
+    }
+  });
 
   export { metric };
 </script>
