@@ -3,7 +3,7 @@
   import Github from "./Github.svelte";
 </script>
 
-<div class="flex flex-row items-center justify-between h-14 bg-neutral-800 w-full px-8">
+<div class="flex flex-row items-center justify-between h-14 bg-neutral-950 w-full px-8">
   <div class="flex">
     <a href="/">
       <Logo withText />
