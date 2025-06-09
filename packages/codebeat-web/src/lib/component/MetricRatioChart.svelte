@@ -1,12 +1,11 @@
 <script lang="ts" generics="T extends HeartbeatMetrics">
   import type { ScaleOrdinal } from "d3";
-  import type { BaseChartContext } from "$types";
-  import type { Unsubscriber } from "svelte/store";
   import type { HeartbeatMetrics, MetricDurationData } from "codebeat-server";
   import { MetricPiePainter } from "codebeat-ext-webview";
-  import { getContext, onDestroy, onMount } from "svelte";
+  import { onMount } from "svelte";
   import { client } from "../trpc";
   import { getDayPreviousToToday, getEndOfTodayDay } from "codebeat-server";
+  import { useChartState } from "$lib/stores/chart";
 
   let chartContainer: HTMLElement;
   let colorScale: ScaleOrdinal<string, string, never>;
@@ -16,58 +15,54 @@
   let chartData:
     | Awaited<ReturnType<typeof client.metricRatio.getMetricRatio.query>>
     | undefined;
+
   $: validRatios = chartData
     ? chartData.ratios.sort((a, b) => b.ratio - a.ratio)
     : [];
-  let unSub: Unsubscriber;
 
-  $: contextKey = `Metric_${metric}_chart`;
-  let isFetching: BaseChartContext['isFetching'];
-  
+  $: chartId = `Metric_${metric}`;
+
+  const chartState = useChartState(chartId);
+
   let painter: MetricPiePainter<T>;
 
   const getMetricData = async () => {
-    isFetching.update(() => false);
-    const data = await client.metricRatio.getMetricRatio.query({
-      metric,
-      start: getDayPreviousToToday(7).getTime(),
-      end: getEndOfTodayDay().getTime(),
-    });
-    isFetching.update(() => false);
-    chartData = data;
-    return data as MetricDurationData<T>;
+    try {
+      chartState.setLoading(true);
+      const data = await client.metricRatio.getMetricRatio.query({
+        metric,
+        start: getDayPreviousToToday(7).getTime(),
+        end: getEndOfTodayDay().getTime(),
+      });
+      chartData = data;
+      return data as MetricDurationData<T>;
+    } catch (error) {
+      chartState.setError(error as Error);
+    } finally {
+      chartState.setLoading(false);
+    }
   };
 
   const initPainter = async () => {
     const data = await getMetricData();
-    painter = new MetricPiePainter(chartContainer, data, padding);
-    painter.setColor("var(--color-neutral-300)");
-    colorScale = painter.getColorScale();
+    if (data) {
+      painter = new MetricPiePainter(chartContainer, data, padding);
+      painter.setColor("var(--color-neutral-300)");
+      colorScale = painter.getColorScale();
+    }
   };
 
   const updatePainter = async () => {
     const data = await getMetricData();
-    painter.setData(data);
+    if (data) {
+      painter.setData(data);
+    }
   };
 
   onMount(async () => {
-    const context = getContext<BaseChartContext>(contextKey);
-    isFetching = context.isFetching;
-    const { action } = context;
     await initPainter();
     if (chartContainer && metric) {
       painter.draw();
-    }
-    unSub = action?.subscribe(async (val) => {
-      if (val === "update") {
-        await getMetricData();
-      }
-    });
-  });
-
-  onDestroy(() => {
-    if (unSub && typeof unSub === "function") {
-      unSub()
     }
   });
 

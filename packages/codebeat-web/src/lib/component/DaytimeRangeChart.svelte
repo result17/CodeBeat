@@ -1,17 +1,17 @@
 <script lang="ts">
-  import type { BaseChartContext } from "$types";
   import { DayTimeRangePainter } from "codebeat-ext-webview";
-  import { getContext, onMount } from "svelte";
-  import { timelineStore } from "../stores/timeline";
+  import { onMount } from "svelte";
+  import { createTimelineStore } from "../stores/timeline";
+  import { useChartState } from "../stores/chart";
 
   let chartContainer: HTMLElement;
   let painter: DayTimeRangePainter;
-  const contextKey = "Timeline_chart";
-  const { isFetching, action } = getContext<BaseChartContext>(contextKey);
-
+  const chartId = "Timeline";
+  const chartState = useChartState(chartId);
+  const timelineStore = createTimelineStore(chartState)
   const updateChart = async (shouldSetLoading = true) => {
     if (shouldSetLoading) {
-      isFetching.update(() => true);
+      chartState.setLoading(true)
     }
 
     try {
@@ -22,17 +22,15 @@
       }
     } finally {
       if (shouldSetLoading) {
-        isFetching.update(() => false);
+        chartState.setLoading(false)
       }
     }
   };
 
-  action?.subscribe(async (val) => {
-    if (val === "update") {
-      await updateChart();
-      action.update(() => "");
-    }
-  });
+  $: if ($chartState.action === "update") {
+    updateChart();
+    chartState.setAction("");
+  }
 
   onMount(async () => {
     painter = new DayTimeRangePainter(chartContainer, [], 0);
@@ -41,25 +39,23 @@
   });
 </script>
 
-{#if $timelineStore}
-  <div>
-    <section class="duration-info text-center">
-      {#if $timelineStore.error}
-        <span class="error">Error loading data</span>
-      {:else if $timelineStore.data}
-        <span>
-          <span class="text-neutral-300 text-sm">Today</span>
-          <span class="text-primary-500 text-xs"
-            >{$timelineStore.data.totalInfo.text}</span
-          >
-        </span>
-      {:else}
-        <span class="text-neutral-400">No data available</span>
-      {/if}
-    </section>
-    <div bind:this={chartContainer} class="chart-container"></div>
-  </div>
-{/if}
+<div>
+  <section class="duration-info text-center">
+    {#if $chartState.error}
+      <span class="error">Error loading data: {$chartState.error.message}</span>
+    {:else if $timelineStore.data}
+      <span>
+        <span class="text-neutral-300 text-sm">Today</span>
+        <span class="text-primary-500 text-xs">{$timelineStore.data.totalInfo.text}</span>
+      </span>
+    {:else if $chartState.loading}
+      <span class="text-neutral-400">Loading...</span>
+    {:else}
+      <span class="text-neutral-400">No data available</span>
+    {/if}
+  </section>
+  <div bind:this={chartContainer} class="chart-container"></div>
+</div>
 
 <style>
   .duration-info {

@@ -1,20 +1,21 @@
 <script lang="ts">
-  import type { BaseChartContext } from "$types";
   import DateRanger from "./DateRanger.svelte";
   import { client } from "$lib/trpc";
-  import { onMount, getContext } from "svelte";
+  import { onMount } from "svelte";
   import {
     getDayPreviousToToday,
     getEndOfTodayDay,
     getStartOfTodayDay,
   } from "codebeat-server";
+  import { useChartState } from "../stores/chart";
 
   interface DateParams {
     start: number;
     end: number;
   }
 
-  const contextKey = "Durations_chart";
+  const chartId = "Durations";
+  const chartState = useChartState(chartId);
   const endOfToday = getEndOfTodayDay().getTime();
 
   const ranges = [{ days: 0 }, { days: 7 }, { days: 30 }];
@@ -29,30 +30,30 @@
     })) satisfies DateParams[];
 
   let durationTexts: string[] = [];
-
-  const { isFetching, action } = getContext<BaseChartContext>(contextKey);
-  const queryDurations = async (schedule: DateParams[]) => {
+    const queryDurations = async (schedule: DateParams[]) => {
     try {
-      isFetching.update(() => false);
+      chartState.setLoading(true);
       const data = await client.duration.getDashboardRangeDurations.query({
         schedule,
       });
-      isFetching.update(() => false);
       durationTexts = data.map(({ text }) => text);
     } catch (error) {
       console.error("Error fetching duration:", error);
       durationTexts = ranges.map(() => "");
+    } finally {
+      chartState.setLoading(false);
     }
   };
-  
-  action?.subscribe(async (val) => {
-    if (val === "update") {
-      isFetching.update(() => true);
-      await queryDurations(getMultDateRanges());
-      action.update(() => "");
-      isFetching.update(() => false);
+
+  $: {
+    const action = $chartState.action;
+    if (action === "update") {
+      (async () => {
+        await queryDurations(getMultDateRanges());
+        chartState.setAction("");
+      })();
     }
-  });
+  }
 
   onMount(async () => {
     await queryDurations(getMultDateRanges());

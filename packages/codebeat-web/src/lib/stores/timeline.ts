@@ -1,4 +1,5 @@
 import type { GrandTotal, SummaryData } from 'codebeat-server'
+import type { ChartStateManager } from './chart'
 import { writable } from 'svelte/store'
 import { client } from '../trpc'
 
@@ -17,8 +18,6 @@ export interface TimelineData {
 
 export interface TimelineState {
   data: TimelineData | null
-  loading: boolean
-  error: Error | null
 }
 
 function processTimelineData(data: SummaryData): TimelineData {
@@ -40,33 +39,36 @@ function processTimelineData(data: SummaryData): TimelineData {
   }
 }
 
-function createTimelineStore() {
+export function createTimelineStore(chartState: ChartStateManager) {
   const { subscribe, update } = writable<TimelineState>({
     data: null,
-    loading: false,
-    error: null,
   })
 
+  chartState.subscribe(async (state) => {
+    if (state.action === 'update') {
+      await fetchData()
+      chartState.setAction('')
+    }
+  })
   async function fetchData() {
-    update(state => ({ ...state, loading: true, error: null }))
+    chartState.setLoading(true)
+
     try {
       const data = await client.duration.getTodaySummary.query()
       const processed = processTimelineData(data)
       update(state => ({
         ...state,
         data: processed,
-        loading: false,
       }))
       return processed
     }
     catch (err) {
       const error = err instanceof Error ? err : new Error(String(err))
-      update(state => ({
-        ...state,
-        error,
-        loading: false,
-      }))
+      chartState.setError(error)
       throw error
+    }
+    finally {
+      chartState.setLoading(false)
     }
   }
 
@@ -75,5 +77,3 @@ function createTimelineStore() {
     refresh: fetchData,
   }
 }
-
-export const timelineStore = createTimelineStore()

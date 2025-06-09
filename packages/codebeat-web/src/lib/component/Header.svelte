@@ -3,7 +3,7 @@
   import Github from "./Github.svelte";
 </script>
 
-<div class="flex flex-row items-center justify-between h-14 bg-neutral-950 w-full px-8">
+<header class="sticky top-0 flex flex-row items-center justify-between h-14 w-full px-8 backdrop-blur-lg">
   <div class="flex">
     <a href="/">
       <Logo withText />
@@ -17,4 +17,4 @@
       <Github />
     </a>
   </div>
-</div>
+</header>
