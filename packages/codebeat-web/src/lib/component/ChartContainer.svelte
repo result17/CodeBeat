@@ -1,7 +1,7 @@
 <script lang="ts">
   import UpdateIcon from "$lib/component/icons/Update.svelte";
-    import { useChartState } from "$lib/stores/chart";
-  import { durationsChartState } from "../stores/chartStates/durations";
+  import { useChartState } from "$lib/stores/chart";
+  import { cn } from "$utils";
   import ChartSkeleton from "./ChartSkeleton.svelte";
 
   export let title: string = "";
@@ -27,11 +27,13 @@
       </div>
     </section>
   </div>
-  <section class="pt-4 relative min-h-[180px]">
+  <section class={ cn("pt-4 min-h-[160px]", isLoading && "relative") }>
     <slot></slot>
     {#if isLoading}
       <div
-        class="absolute inset-0 w-full h-full bg-neutral-950 flex items-center justify-center overflow-auto transition-opacity duration-300 ease-in-out {isLoading ? 'opacity-100' : 'opacity-0'}"
+        class="absolute inset-0 w-full h-full bg-neutral-950 flex items-center justify-center overflow-auto transition-opacity duration-300 ease-in-out {isLoading
+          ? 'opacity-100'
+          : 'opacity-0'}"
       >
         <ChartSkeleton />
       </div>
