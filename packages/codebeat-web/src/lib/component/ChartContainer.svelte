@@ -1,11 +1,13 @@
 <script lang="ts">
   import UpdateIcon from "$lib/component/icons/Update.svelte";
-  import { useChartState } from "../stores/chart";
+    import { useChartState } from "$lib/stores/chart";
+  import { durationsChartState } from "../stores/chartStates/durations";
+  import ChartSkeleton from "./ChartSkeleton.svelte";
 
   export let title: string = "";
   export let id: string = "";
   const chartState = useChartState(id);
-  $: isRotating = $chartState.loading;
+  $: isLoading = $chartState.loading;
 </script>
 
 <div class="bg-neutral-950 p-4 rounded-lg shadow-md">
@@ -16,16 +18,23 @@
         <button
           type="button"
           on:click={() => {
-            if (!isRotating) chartState.setAction("update");
+            if (!isLoading) chartState.setAction("update");
           }}
         >
-          <UpdateIcon {isRotating} />
+          <UpdateIcon isRotating={isLoading} />
         </button>
         <slot name="toolbar"></slot>
       </div>
     </section>
   </div>
-  <section class="pt-4">
+  <section class="pt-4 relative min-h-[180px]">
     <slot></slot>
+    {#if isLoading}
+      <div
+        class="absolute inset-0 w-full h-full bg-neutral-950 flex items-center justify-center overflow-auto transition-opacity duration-300 ease-in-out {isLoading ? 'opacity-100' : 'opacity-0'}"
+      >
+        <ChartSkeleton />
+      </div>
+    {/if}
   </section>
 </div>

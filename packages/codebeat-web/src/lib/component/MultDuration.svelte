@@ -7,16 +7,21 @@
     getEndOfTodayDay,
     getStartOfTodayDay,
   } from "codebeat-server";
-  import { useChartState } from "../stores/chart";
+  import { durationsChartState } from "../stores/chartStates/durations";
 
   interface DateParams {
     start: number;
     end: number;
   }
+  console.log("MultDuration: Component initializing");
 
-  const chartId = "Durations";
-  const chartState = useChartState(chartId);
+  const chartState = durationsChartState;
   const endOfToday = getEndOfTodayDay().getTime();
+
+  // onDestroy(() => {
+  //   // chartState.dispose()
+  //   console.log('MultDuration: Component being destroyed');
+  // });
 
   const ranges = [{ days: 0 }, { days: 7 }, { days: 30 }];
 
@@ -42,13 +47,16 @@
       console.error("Error fetching duration:", error);
       durationTexts = ranges.map(() => "");
     } finally {
-      chartState.setLoading(false);
+      setTimeout(() => chartState.setLoading(false), 500);
+
       chartState.setAction("none");
     }
-  }
-  
+  };
+
+  $: action = $chartState.action;
   $: {
-    if ($chartState.action === "update" && !$chartState.loading) {
+    console.log("action changed to:", action);
+    if (action === "update") {
       console.log("MultDuration: Starting update");
       queryDurations(getMultDateRanges());
     }

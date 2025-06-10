@@ -4,4 +4,4 @@
 
     export { className as class}
 </script>
-<div class={cn('bg-neutral-300 animate-pulse rounded-md', className)}></div>
+<div class={cn('bg-neutral-500 animate-pulse rounded-md', className)}></div>
