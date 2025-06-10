@@ -29,7 +29,7 @@
 
   $: if ($chartState.action === "update") {
     updateChart();
-    chartState.setAction("");
+    chartState.setAction("none");
   }
 
   onMount(async () => {

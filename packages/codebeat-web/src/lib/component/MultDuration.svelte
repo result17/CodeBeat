@@ -30,7 +30,8 @@
     })) satisfies DateParams[];
 
   let durationTexts: string[] = [];
-    const queryDurations = async (schedule: DateParams[]) => {
+
+  const queryDurations = async (schedule: DateParams[]) => {
     try {
       chartState.setLoading(true);
       const data = await client.duration.getDashboardRangeDurations.query({
@@ -42,16 +43,14 @@
       durationTexts = ranges.map(() => "");
     } finally {
       chartState.setLoading(false);
+      chartState.setAction("none");
     }
-  };
-
+  }
+  
   $: {
-    const action = $chartState.action;
-    if (action === "update") {
-      (async () => {
-        await queryDurations(getMultDateRanges());
-        chartState.setAction("");
-      })();
+    if ($chartState.action === "update" && !$chartState.loading) {
+      console.log("MultDuration: Starting update");
+      queryDurations(getMultDateRanges());
     }
   }
 

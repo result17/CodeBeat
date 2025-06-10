@@ -47,7 +47,7 @@ export function createTimelineStore(chartState: ChartStateManager) {
   chartState.subscribe(async (state) => {
     if (state.action === 'update') {
       await fetchData()
-      chartState.setAction('')
+      chartState.setAction('none')
     }
   })
   async function fetchData() {
