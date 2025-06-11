@@ -12,6 +12,6 @@
 {#each durations as duration, i}
   <div class="flex flex-row items-center mb-4">
     <DateRanger class="mr-2" dayBefore={defaultRanges[i].days} />
-    <p class="text-xs text-primary-500">{durations[i]}</p>
+    <p class="text-xs text-primary-500">{duration}</p>
   </div>
 {/each}

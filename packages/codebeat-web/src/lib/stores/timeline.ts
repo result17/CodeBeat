@@ -45,11 +45,7 @@ export class TimelineChartStore extends DataChartStore<TimelineData> {
     this.setHasContent(data.timeline.length > 0)
     this.dataStore.set(data)
   }
-
-  protected disposeData(): void {
-    this.dataStore.set(undefined)
-  }
-
+  
   public getDataStore() {
     return this.dataStore
   }

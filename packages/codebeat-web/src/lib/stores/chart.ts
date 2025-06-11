@@ -1,6 +1,7 @@
 import type { BaseChartStore } from './base'
 import { chartStoreMap, UnknownChart } from './base'
 import { DurationChartStore } from './duration'
+import { MetricChartStore } from './metric'
 import { TimelineChartStore } from './timeline'
 
 export type ChartID = 'Durations' | 'Timeline' | 'Metric_project' | 'Metric_language'
@@ -9,8 +10,8 @@ export type ChartID = 'Durations' | 'Timeline' | 'Metric_project' | 'Metric_lang
 interface ChartStateMap {
   Durations: DurationChartStore
   Timeline: TimelineChartStore
-  Metric_project: UnknownChart
-  Metric_language: UnknownChart
+  Metric_project: MetricChartStore<'project'>
+  Metric_language: MetricChartStore<'language'>
 }
 
 export function useChartState<T extends ChartID>(id: T): ChartStateMap[T] {
@@ -24,6 +25,12 @@ export function useChartState<T extends ChartID>(id: T): ChartStateMap[T] {
       break
     case 'Timeline':
       store = new TimelineChartStore(id)
+      break
+    case 'Metric_project':
+      store = new MetricChartStore(id, 'project')
+      break
+    case 'Metric_language':
+      store = new MetricChartStore(id, 'language')
       break
     default:
       store = new UnknownChart(id)

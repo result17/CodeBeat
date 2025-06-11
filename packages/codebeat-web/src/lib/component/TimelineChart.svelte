@@ -1,31 +1,19 @@
-<script lang="ts">  import { DayTimeRangePainter } from "codebeat-ext-webview";
+<script lang="ts">
+  import { DayTimeRangePainter } from "codebeat-ext-webview";
   import { onMount, onDestroy } from "svelte";
   import { useChartState } from "../stores/chart";
+  import { shouldUpdateSize } from "$utils";
 
   let chartContainer: HTMLElement;
   let painter: DayTimeRangePainter;
   let resizeObserver: ResizeObserver;
   const chartId = "Timeline";
   const chartState = useChartState(chartId);
-  
-  const store = chartState.getDataStore()
 
-  function updateSize() {
-    if (!chartContainer || !painter) return false;
-
-    const width = chartContainer.offsetWidth;
-    const height = chartContainer.offsetHeight;
-
-    if (width === 0 || height === 0) return false;
-
-    painter.setWidth(width);
-    painter.setHeight(height);
-    return true;
-  }
+  const store = chartState.getDataStore();
 
   function updateData(data: typeof $store) {
     if (!data || !painter) return;
-    console.log('draw svg now')
     painter.setData(data.timeline, data.projects.size);
     painter.draw();
   }
@@ -36,19 +24,22 @@
     // init chart
     painter = new DayTimeRangePainter(chartContainer, [], 0);
     painter.setColor("var(--color-neutral-300)");
-    
+
     // listen container size changing
     resizeObserver = new ResizeObserver(() => {
-      if (updateSize() && $store) {
+      if (shouldUpdateSize(chartContainer, painter) && $store) {
+        painter.setWidth(chartContainer.offsetWidth);
+        painter.setHeight(chartContainer.offsetHeight);
         painter.draw();
       }
     });
     resizeObserver.observe(chartContainer);
-    
+
     // init size
-    updateSize();
+    painter.setWidth(chartContainer.offsetWidth);
+    painter.setHeight(chartContainer.offsetHeight);
   });
- 
+
   onDestroy(() => {
     if (resizeObserver) {
       resizeObserver.disconnect();
@@ -62,8 +53,6 @@
 
 <span>
   <span class="text-neutral-300 text-sm">Today</span>
-  <span class="text-primary-500 text-xs"
-    >{$store?.totalInfo.text}</span
-  >
+  <span class="text-primary-500 text-xs">{$store?.totalInfo.text}</span>
 </span>
 <div bind:this={chartContainer} class="w-full h-full"></div>

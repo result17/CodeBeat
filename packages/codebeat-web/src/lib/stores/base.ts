@@ -87,6 +87,10 @@ export class UnknownChart extends BaseChartStore {
 export abstract class DataChartStore<T> extends BaseChartStore {
   protected readonly dataStore: Writable<T | undefined> = writable()
 
+  protected disposeData(): void {
+    this.dataStore.set(undefined)
+  }
+
   public getDataStore() {
     return this.dataStore
   }

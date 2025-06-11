@@ -1,78 +1,87 @@
-<script lang="ts" generics="T extends HeartbeatMetrics">
+<script lang="ts">
   import type { ScaleOrdinal } from "d3";
-  import type { HeartbeatMetrics, MetricDurationData } from "codebeat-server";
+  import type { Writable } from "svelte/store";
+  import type { MetricChartStore } from "$lib/stores/metric";
   import { MetricPiePainter } from "codebeat-ext-webview";
-  import { onMount } from "svelte";
-  import { client } from "../trpc";
-  import { getDayPreviousToToday, getEndOfTodayDay } from "codebeat-server";
   import { useChartState } from "$lib/stores/chart";
+  import type { MetricDurationData } from "codebeat-server";
+  import { shouldUpdateSize } from "$utils";
+  import { onDestroy } from "svelte";
+
+  type ValidMetrics = "project" | "language";
+  type MetricChartId = `Metric_${ValidMetrics}`;
 
   let chartContainer: HTMLElement;
   let colorScale: ScaleOrdinal<string, string, never>;
-  let metric: T;
-  let padding = 20;
+  let chartState: MetricChartStore<ValidMetrics>;
+  let painter: MetricPiePainter<ValidMetrics>;
+  let store: Writable<MetricDurationData<ValidMetrics> | undefined>;
+  let chartId: MetricChartId | undefined;
+  let padding: number = 20;
+  let resizeObserver: ResizeObserver;
 
-  let chartData:
-    | Awaited<ReturnType<typeof client.metricRatio.getMetricRatio.query>>
-    | undefined;
+  export let metric: ValidMetrics;
 
-  $: validRatios = chartData
-    ? chartData.ratios.sort((a, b) => b.ratio - a.ratio)
-    : [];
+  $: if (metric) {
+    chartId = `Metric_${metric}` as const satisfies MetricChartId;
+  }
 
-  $: chartId = `Metric_${metric}`;
+  $: if (chartId) {
+    console.log("chartID is", chartId);
+    chartState = useChartState(chartId);
+  }
 
-  const chartState = useChartState(chartId);
+  $: if (chartState) {
+    console.log(chartState);
+    store = chartState.getDataStore();
+  }
 
-  let painter: MetricPiePainter<T>;
+  function obsChart() {
+    resizeObserver = new ResizeObserver(() => {
+      if (shouldUpdateSize(chartContainer, painter) && $store) {
+        const radius = chartContainer.offsetWidth;
+        painter.setWidth(radius);
+        painter.setHeight(radius);
+        painter.draw();
+      }
+    });
+    resizeObserver.observe(chartContainer);
+  }
 
-  const getMetricData = async () => {
-    try {
-      chartState.setLoading(true);
-      const data = await client.metricRatio.getMetricRatio.query({
-        metric,
-        start: getDayPreviousToToday(7).getTime(),
-        end: getEndOfTodayDay().getTime(),
-      });
-      chartData = data;
-      return data as MetricDurationData<T>;
-    } catch (error) {
-      chartState.setError(error as Error);
-    } finally {
-      chartState.setLoading(false);
-    }
-  };
-
-  const initPainter = async () => {
-    const data = await getMetricData();
-    if (data) {
+  function updatePainter(data: MetricDurationData<ValidMetrics>) {
+    if (!painter) {
       painter = new MetricPiePainter(chartContainer, data, padding);
       painter.setColor("var(--color-neutral-300)");
-      colorScale = painter.getColorScale();
-    }
-  };
-
-  const updatePainter = async () => {
-    const data = await getMetricData();
-    if (data) {
+      padding = painter.getPadding();
+      obsChart();
+      const radius = chartContainer.offsetWidth;
+      painter.setWidth(radius);
+      painter.setHeight(radius);
+    } else {
       painter.setData(data);
     }
-  };
+    colorScale = painter.getColorScale();
+    painter.draw();
+  }
 
-  onMount(async () => {
-    await initPainter();
-    if (chartContainer && metric) {
-      painter.draw();
+  $: if ($store) {
+    updatePainter($store);
+  }
+
+  $: sortedRatios =
+    $store?.ratios.sort((a, b) => b.duration - a.duration) || [];
+
+  onDestroy(() => {
+    if (resizeObserver) {
+      resizeObserver.disconnect();
     }
   });
-
-  export { metric };
 </script>
 
 <div class="flex flex-row">
   <div class="w-1/2" bind:this={chartContainer}></div>
-  <div class="flex flex-col w-1/2" style={`padding: ${padding}px`}>
-    {#each validRatios as { value, ratio, durationText }}
+  <div class="flex flex-col justify-center flex-1" style={`padding: ${padding}px`}>
+    {#each sortedRatios as { value, ratio, durationText }}
       <div class="flex items-center">
         <div
           class="w-2 h-2 mr-2"

@@ -43,9 +43,4 @@ export class DurationChartStore extends DataChartStore<GrandTotal[]> {
     this.dataStore.set(data)
     this.setHasContent(data.length > 0)
   }
-
-  // Implement the dispose method to clean up resources
-  protected disposeData(): void {
-    this.dataStore.set([])
-  }
 }
