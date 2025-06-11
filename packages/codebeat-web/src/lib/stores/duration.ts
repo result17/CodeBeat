@@ -1,14 +1,11 @@
 import type { GrandTotal } from 'codebeat-server'
-import type { Writable } from 'svelte/store'
-import type { ChartState } from './base'
 import { client } from '$lib/trpc'
 import {
   getDayPreviousToToday,
   getEndOfTodayDay,
   getStartOfTodayDay,
 } from 'codebeat-server'
-import { derived, writable } from 'svelte/store'
-import { BaseChartStore } from './base'
+import { DataChartStore } from './base'
 
 interface DateParams {
   start: number
@@ -17,24 +14,7 @@ interface DateParams {
 
 export const defaultRanges = [{ days: 0 }, { days: 7 }, { days: 30 }]
 
-// Type definition for the combined state
-interface DurationChartState extends ChartState {
-  data: GrandTotal[]
-}
-
-export class DurationChartStore extends BaseChartStore {
-  // Store for the duration data
-  private readonly dataStore: Writable<GrandTotal[]> = writable([])
-
-  // Create a persistent derived store that combines base state and data
-  private readonly derivedStore = derived(
-    [this.store, this.dataStore],
-    ([state, data]): DurationChartState => ({
-      ...state,
-      data,
-    }),
-  )
-
+export class DurationChartStore extends DataChartStore<GrandTotal[]> {
   private ranges: { days: number }[] = defaultRanges
 
   public setRanges(ranges: { days: number }[]) {
@@ -67,10 +47,5 @@ export class DurationChartStore extends BaseChartStore {
   // Implement the dispose method to clean up resources
   protected disposeData(): void {
     this.dataStore.set([])
-  }
-
-  // Override subscribe to use the derived store with proper typing
-  public subscribe(run: (value: DurationChartState) => void) {
-    return this.derivedStore.subscribe(run)
   }
 }

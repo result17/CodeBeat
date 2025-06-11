@@ -2,8 +2,7 @@ import type { GrandTotal, SummaryData } from 'codebeat-server'
 
 import type { ChartState } from './base'
 import { client } from '$lib/trpc'
-import { derived, writable } from 'svelte/store'
-import { BaseChartStore } from './base'
+import { DataChartStore } from './base'
 
 export interface TimelineItem {
   start: number
@@ -19,19 +18,9 @@ export interface TimelineData {
 }
 
 export interface TimelineState extends ChartState {
-  data: TimelineData | null
+  data: TimelineData | undefined
 }
-export class TimelineChartStore extends BaseChartStore {
-  private readonly dataStore = writable<TimelineData | null>(null)
-
-  private readonly derivedStore = derived(
-    [this.store, this.dataStore],
-    ([state, data]): TimelineState => ({
-      ...state,
-      data,
-    }),
-  )
-
+export class TimelineChartStore extends DataChartStore<TimelineData> {
   private processTimelineData(data: SummaryData): TimelineData {
     const projectSet = new Set<string>()
     const timeline = data.timeline.map(({ start, duration, project }) => {
@@ -58,10 +47,10 @@ export class TimelineChartStore extends BaseChartStore {
   }
 
   protected disposeData(): void {
-    this.dataStore.set(null)
+    this.dataStore.set(undefined)
   }
 
-  public subscribe(run: (value: TimelineState) => void) {
-    return this.derivedStore.subscribe(run)
+  public getDataStore() {
+    return this.dataStore
   }
 }

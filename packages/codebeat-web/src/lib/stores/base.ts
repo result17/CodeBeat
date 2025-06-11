@@ -83,3 +83,11 @@ export class UnknownChart extends BaseChartStore {
     throw new Error('Method not implemented.')
   }
 }
+
+export abstract class DataChartStore<T> extends BaseChartStore {
+  protected readonly dataStore: Writable<T | undefined> = writable()
+
+  public getDataStore() {
+    return this.dataStore
+  }
+}
