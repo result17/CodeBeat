@@ -92,3 +92,4 @@ If your tsconfig.json uses moduleResolution: "node", it will cause errors when b
 - [] Using '*' activation is usually a bad idea as it impacts performance.
 - [] changing heartbeat table schema to save prev project and sendAt
 - [] timeline struct add end field
+- [] chartNoData component

@@ -1,7 +1,9 @@
 import type { GrandTotal, SummaryData } from 'codebeat-server'
-import type { ChartStateManager } from './chart'
-import { writable } from 'svelte/store'
-import { client } from '../trpc'
+
+import type { ChartState } from './base'
+import { client } from '$lib/trpc'
+import { derived, writable } from 'svelte/store'
+import { BaseChartStore } from './base'
 
 export interface TimelineItem {
   start: number
@@ -16,64 +18,48 @@ export interface TimelineData {
   totalInfo: GrandTotal
 }
 
-export interface TimelineState {
+export interface TimelineState extends ChartState {
   data: TimelineData | null
 }
+export class TimelineChartStore extends BaseChartStore {
+  private readonly dataStore = writable<TimelineData | null>(null)
 
-function processTimelineData(data: SummaryData): TimelineData {
-  const projects = new Set<string>()
-  const timeline = data.timeline.map(({ start, duration, project }) => {
-    projects.add(project)
+  private readonly derivedStore = derived(
+    [this.store, this.dataStore],
+    ([state, data]): TimelineState => ({
+      ...state,
+      data,
+    }),
+  )
+
+  private processTimelineData(data: SummaryData): TimelineData {
+    const projectSet = new Set<string>()
+    const timeline = data.timeline.map(({ start, duration, project }) => {
+      projectSet.add(project)
+      return {
+        start,
+        end: start + duration,
+        duration,
+        project,
+      }
+    })
+
     return {
-      start,
-      end: start + duration,
-      duration,
-      project,
-    }
-  })
-
-  return {
-    timeline,
-    projects,
-    totalInfo: data.grandTotal,
-  }
-}
-
-export function createTimelineStore(chartState: ChartStateManager) {
-  const { subscribe, update } = writable<TimelineState>({
-    data: null,
-  })
-
-  chartState.subscribe(async (state) => {
-    if (state.action === 'update') {
-      await fetchData()
-      chartState.setAction('none')
-    }
-  })
-  async function fetchData() {
-    chartState.setLoading(true)
-
-    try {
-      const data = await client.duration.getTodaySummary.query()
-      const processed = processTimelineData(data)
-      update(state => ({
-        ...state,
-        data: processed,
-      }))
-      return processed
-    }
-    catch (err) {
-      const error = err instanceof Error ? err : new Error(String(err))
-      chartState.setError(error)
-      throw error
-    }
-    finally {
-      chartState.setLoading(false)
+      timeline,
+      projects: projectSet,
+      totalInfo: data.grandTotal,
     }
   }
 
-  return {
-    subscribe,
-    refresh: fetchData,
+  protected async innerQuery(): Promise<void> {
+    this.dataStore.set(this.processTimelineData(await client.duration.getTodaySummary.query()))
+  }
+
+  protected disposeData(): void {
+    this.dataStore.set(null)
+  }
+
+  public subscribe(run: (value: TimelineState) => void) {
+    return this.derivedStore.subscribe(run)
   }
 }

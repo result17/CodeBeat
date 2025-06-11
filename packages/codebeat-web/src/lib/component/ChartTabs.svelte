@@ -4,7 +4,7 @@
   import { cubicInOut } from "svelte/easing";
   import { crossfade } from "svelte/transition";
   import ContentContainer from "./ContentContainer.svelte";
-  import DaytimeRangeChart from "$lib/component/DaytimeRangeChart.svelte";
+  import DaytimeRangeChart from "$lib/component/TimelineChart.svelte";
 
   const triggers = [
     { id: "today", title: "Today" },

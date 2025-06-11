@@ -17,7 +17,7 @@
 
 <div class="block min-h-screen bg-neutral-800 " id="page">
   <Header />
-  <main class="flex w-full p-4 overflow-auto">
+  <main class="flex w-full px-8 py-4 overflow-auto">
     <slot />
   </main>
 </div>

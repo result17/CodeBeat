@@ -1,47 +1,32 @@
-import type { Readable, Writable } from 'svelte/store'
-import { writable } from 'svelte/store'
+import type { BaseChartStore } from './base'
+import { chartStoreMap, UnknownChart } from './base'
+import { DurationChartStore } from './duration'
+import { TimelineChartStore } from './timeline'
 
-export interface ChartState {
-  loading: boolean
-  action: string
-  error: Error | null
+export type ChartID = 'Durations' | 'Timeline' | 'Metric_project' | 'Metric_language'
+
+// Map each chart ID to its specific store type
+interface ChartStateMap {
+  Durations: DurationChartStore
+  Timeline: TimelineChartStore
+  Metric_project: UnknownChart
+  Metric_language: UnknownChart
 }
 
-export interface ChartStateManager extends Readable<ChartState> {
-  setLoading: (value: boolean) => void
-  setAction: (value: string) => void
-  setError: (value: Error | null) => void
-  dispose: () => void
-}
-
-const chartStates = new Map<string, Writable<ChartState>>()
-
-function createChartState() {
-  return writable<ChartState>({
-    loading: false,
-    action: '',
-    error: null,
-  })
-}
-
-export function useChartState(id: string): ChartStateManager {
-  const store = chartStates.get(id) ?? createChartState()
-  chartStates.set(id, store)
-
-  const dispose = () => {
-    store.set({
-      loading: false,
-      action: '',
-      error: null,
-    })
-    chartStates.delete(id)
+export function useChartState<T extends ChartID>(id: T): ChartStateMap[T] {
+  if (chartStoreMap.has(id)) {
+    return chartStoreMap.get(id)! as ChartStateMap[T]
   }
-
-  return {
-    subscribe: store.subscribe,
-    setLoading: value => store.update(state => ({ ...state, loading: value })),
-    setAction: value => store.update(state => ({ ...state, action: value })),
-    setError: value => store.update(state => ({ ...state, error: value })),
-    dispose,
-  }
+  let store: BaseChartStore
+  switch (id) {
+    case 'Durations':
+      store = new DurationChartStore(id)
+      break
+    case 'Timeline':
+      store = new TimelineChartStore(id)
+      break
+    default:
+      store = new UnknownChart(id)
+  } chartStoreMap.set(id, store)
+  return store as ChartStateMap[T]
 }
