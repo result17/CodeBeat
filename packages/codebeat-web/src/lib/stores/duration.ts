@@ -57,9 +57,11 @@ export class DurationChartStore extends BaseChartStore {
   }
 
   protected async innerQuery() {
-    this.dataStore.set(await client.duration.getDashboardRangeDurations.query(
+    const data = await client.duration.getDashboardRangeDurations.query(
       this.queryParams(),
-    ))
+    )
+    this.dataStore.set(data)
+    this.setHasContent(data.length > 0)
   }
 
   // Implement the dispose method to clean up resources

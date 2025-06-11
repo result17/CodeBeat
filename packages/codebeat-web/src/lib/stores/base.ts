@@ -7,6 +7,7 @@ export interface ChartState {
   loading: boolean
   action: ChartAction
   error: Error | null
+  hasContent: boolean
 }
 
 export const chartStoreMap = new Map<string, BaseChartStore>()
@@ -16,6 +17,7 @@ export abstract class BaseChartStore {
     loading: false,
     action: 'none',
     error: null,
+    hasContent: false,
   })
 
   constructor(public readonly id: string) {
@@ -38,9 +40,13 @@ export abstract class BaseChartStore {
     return this.store.update(state => ({ ...state, error: err }))
   }
 
+  public setHasContent(contentFlag: boolean) {
+    return this.store.update(state => ({ ...state, hasContent: contentFlag }))
+  }
+
   public dispose() {
     chartStoreMap.delete(this.id)
-    this.store.set({ loading: false, action: 'none', error: null })
+    this.store.set({ loading: false, action: 'none', error: null, hasContent: false })
     this.disposeData()
   }
 
@@ -52,6 +58,7 @@ export abstract class BaseChartStore {
     catch (error) {
       console.error('Error querying:', error)
       this.setError(error as Error)
+      this.setHasContent(false)
     }
     finally {
       this.setLoading(false)

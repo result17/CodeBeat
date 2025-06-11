@@ -52,7 +52,9 @@ export class TimelineChartStore extends BaseChartStore {
   }
 
   protected async innerQuery(): Promise<void> {
-    this.dataStore.set(this.processTimelineData(await client.duration.getTodaySummary.query()))
+    const data = this.processTimelineData(await client.duration.getTodaySummary.query())
+    this.setHasContent(data.timeline.length > 0)
+    this.dataStore.set(data)
   }
 
   protected disposeData(): void {

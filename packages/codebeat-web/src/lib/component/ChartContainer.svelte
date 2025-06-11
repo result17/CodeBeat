@@ -11,6 +11,7 @@
   const chartState = useChartState(id);
 
   $: isLoading = $chartState.loading;
+  $: hasContent = $chartState.hasContent
 
   $: if (!isLoading && $chartState.action === "update") {
     chartState.query();
@@ -39,7 +40,7 @@
     </section>
   </div>
   <section class={cn("pt-4 min-h-[150px]", isLoading && "relative")}>
-    <slot></slot>
+    <div class={cn(!hasContent && "hidden")}><slot></slot></div>
     {#if isLoading}
       <div
         class="absolute inset-0 w-full h-full
