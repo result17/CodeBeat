@@ -10,9 +10,7 @@
   <ChartContainer id="Durations" title="Durations">
     <MultDuration />
   </ChartContainer>
-  <ChartContainer id="Timeline" title="Timeline">
-    <TimelineChart />
-  </ChartContainer>
+  <TimelineChart />
   <ChartContainer id="Metric_project" title="Project">
     <MetricDateQueryBtn metric="project" slot="toolbar" />
     <MetricRatioChart metric="project" />

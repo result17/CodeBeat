@@ -2,11 +2,12 @@
   import { DayTimeRangePainter } from "codebeat-ext-webview";
   import { onMount, onDestroy } from "svelte";
   import { useChartState } from "../stores/chart";
-  import { shouldUpdateSize } from "$utils";
+  import { cn, shouldUpdateSize } from "$utils";
   import LeftIcon from "./icons/left.svelte";
   import RightIcon from "./icons/right.svelte";
   import { writable } from "svelte/store";
   import { getDayPreviousToToday } from "codebeat-server";
+  import ChartContainer from "$lib/component/ChartContainer.svelte";
 
   let chartContainer: HTMLElement;
   let painter: DayTimeRangePainter;
@@ -27,7 +28,7 @@
       chartState.setDayBeforeToday($dayPrevToday);
       chartState.query();
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
   }
 
@@ -64,24 +65,28 @@
   }
 </script>
 
-<div class="flex flex-col items-center">
-  <span class="inline-flex items-center space-x-2">
+<ChartContainer id="Timeline" title="Timeline">
+  <div class="flex flex-row gap-2 w-full" slot="toolbar">
     <button type="button" onclick={() => dayPrevToday.update((day) => day + 1)}
       ><LeftIcon /></button
     >
-    <span class="text-neutral-300 text-xs"
-      >{$dayPrevToday === 0
-        ? "Today"
-        : getDayPreviousToToday($dayPrevToday).toDateString()}</span
+
+    <button
+      disabled={$dayPrevToday === 0}
+      type="button"
+      onclick={() => dayPrevToday.update((day) => day - 1)}
+      ><RightIcon class={cn($dayPrevToday === 0 && "invisible")} /></button
     >
-    <span class="text-primary-500 text-xs">{$store?.totalInfo.text}</span>
-    {#if $dayPrevToday !== 0}
-      <button
-        type="button"
-        onclick={() => dayPrevToday.update((day) => day - 1)}
-        ><RightIcon /></button
+  </div>
+  <div class="flex flex-col items-center">
+    <span class="inline-flex items-center space-x-2">
+      <span class="text-neutral-300 text-xs"
+        >{$dayPrevToday === 0
+          ? "Today"
+          : getDayPreviousToToday($dayPrevToday).toDateString()}</span
       >
-    {/if}
-  </span>
-  <div bind:this={chartContainer} class="w-full h-full"></div>
-</div>
+      <span class="text-primary-500 text-xs">{$store?.totalInfo.text}</span>
+    </span>
+    <div bind:this={chartContainer} class="w-full h-full"></div>
+  </div>
+</ChartContainer>
