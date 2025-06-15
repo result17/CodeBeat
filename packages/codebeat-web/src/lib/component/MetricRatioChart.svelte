@@ -29,7 +29,6 @@
   }
 
   $: if (chartState) {
-    console.log(chartState);
     store = chartState.getDataStore();
   }
 

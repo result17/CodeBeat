@@ -88,7 +88,7 @@ export class UnknownChart extends BaseChartStore {
 export abstract class DataChartStore<T> extends BaseChartStore {
   protected readonly dataStore: Writable<T | undefined> = writable()
   private intervalId: number | undefined
-  private intervalVal: number = 1000 * 5
+  private intervalVal: number = 1000 * 60 * 5
 
   protected setInterval(ms: number) {
     if (ms < 0) {
