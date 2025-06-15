@@ -62,6 +62,7 @@
     "tinybench": "catalog:devtool",
     "tsx": "catalog:server",
     "vite": "catalog:build",
+    "vite-plugin-devtools-json": "catalog:web",
     "vite-plugin-node": "catalog:devtool",
     "vite-tsconfig-paths": "catalog:test",
     "vitest": "catalog:test",

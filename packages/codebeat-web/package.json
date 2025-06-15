@@ -26,6 +26,7 @@
     "svelte": "catalog:web",
     "svelte-check": "catalog:devtool",
     "tailwind-merge": "catalog:web",
-    "tailwindcss": "catalog:web"
+    "tailwindcss": "catalog:web",
+    "vite-plugin-devtools-json": "catalog:web"
   }
 }

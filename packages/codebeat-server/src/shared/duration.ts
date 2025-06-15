@@ -13,10 +13,14 @@ export function getStartOfTodayDay() {
   return getDayPreviousToToday(0)
 }
 
+export function getEndOfDay(date: Date) {
+  const end = new Date(date)
+  end.setHours(23, 59, 59, 999)
+  return end
+}
+
 export function getEndOfTodayDay() {
-  const start = getStartOfTodayDay()
-  start.setHours(23, 59, 59, 999)
-  return start
+  return getEndOfDay(getStartOfTodayDay())
 }
 
 /**

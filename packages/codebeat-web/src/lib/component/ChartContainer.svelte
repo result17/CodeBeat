@@ -39,7 +39,7 @@
       </div>
     </section>
   </div>
-  <section class={cn("pt-4 min-h-[150px]", isLoading && "relative")}>
+  <section class={cn("pt-4 min-h-[180px]", isLoading && "relative")}>
     <div class={cn(!hasContent && "hidden")}><slot></slot></div>
     {#if isLoading}
       <div

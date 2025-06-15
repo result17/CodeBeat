@@ -7,6 +7,14 @@ const durationRouter = createTRPCRouter({
     .query(async ({ ctx }) => {
       return await ctx.services.duration.getTodaySummary()
     }),
+  getSpecSummary: t.procedure
+    .input(z.object({
+      start: UnixMillisSchema,
+      end: UnixMillisSchema,
+    }))
+    .query(async ({ input: { start, end }, ctx }) => {
+      return await ctx.services.duration.getSpecDateSummary(new Date(start), new Date(end))
+    }),
   getDashboardRangeDurations: t.procedure
     .input(z.object({
       schedule: z.array(z.object({
