@@ -1,5 +1,5 @@
 import type { HeartbeatMetrics, MetricDurationData } from 'codebeat-server'
-import { getDayPreviousToToday } from 'codebeat-server'
+import { getDayPreviousToToday, getEndOfDay } from 'codebeat-server'
 import { client } from '../trpc'
 import { DataChartStore } from './base'
 
@@ -37,7 +37,7 @@ export class MetricChartStore<T extends HeartbeatMetrics> extends DataChartStore
     return {
       metric: this.metric,
       start: getDayPreviousToToday(this.startBeforeToday).getTime(),
-      end: getDayPreviousToToday(0).getTime(),
+      end: getEndOfDay(getDayPreviousToToday(this.endBeforeToday)).getTime(),
     }
   }
 

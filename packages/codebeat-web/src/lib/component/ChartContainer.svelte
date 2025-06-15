@@ -11,7 +11,7 @@
   const chartState = useChartState(id);
 
   $: isLoading = $chartState.loading;
-  $: hasContent = $chartState.hasContent
+  $: hasContent = $chartState.hasContent;
 
   $: if (!isLoading && $chartState.action === "update") {
     chartState.query();
@@ -26,8 +26,10 @@
   <div class="flex flex-row justify-between border-b-1 border-neutral-500 pb-4">
     <h1 class="text-sm font-bold text-neutral-100">{title}</h1>
     <section>
-      <div class="flex flex-row">
+      <div class="flex flex-row gap-2">
+        <slot name="toolbar"></slot>
         <button
+          title="update"
           type="button"
           on:click={() => {
             if (!isLoading) chartState.setAction("update");
@@ -35,7 +37,6 @@
         >
           <UpdateIcon isRotating={isLoading} />
         </button>
-        <slot name="toolbar"></slot>
       </div>
     </section>
   </div>

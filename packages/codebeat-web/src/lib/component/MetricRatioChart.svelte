@@ -1,4 +1,5 @@
 <script lang="ts">
+  import type { ValidMetrics, MetricChartId } from "$types";
   import type { ScaleOrdinal } from "d3";
   import type { Writable } from "svelte/store";
   import type { MetricChartStore } from "$lib/stores/metric";
@@ -8,16 +9,13 @@
   import { shouldUpdateSize } from "$utils";
   import { onDestroy } from "svelte";
 
-  type ValidMetrics = "project" | "language";
-  type MetricChartId = `Metric_${ValidMetrics}`;
-
+  const chartPadding: number = 30;
   let chartContainer: HTMLElement;
   let colorScale: ScaleOrdinal<string, string, never>;
   let chartState: MetricChartStore<ValidMetrics>;
   let painter: MetricPiePainter<ValidMetrics>;
   let store: Writable<MetricDurationData<ValidMetrics> | undefined>;
   let chartId: MetricChartId | undefined;
-  let padding: number = 20;
   let resizeObserver: ResizeObserver;
 
   export let metric: ValidMetrics;
@@ -27,7 +25,6 @@
   }
 
   $: if (chartId) {
-    console.log("chartID is", chartId);
     chartState = useChartState(chartId);
   }
 
@@ -50,9 +47,8 @@
 
   function updatePainter(data: MetricDurationData<ValidMetrics>) {
     if (!painter) {
-      painter = new MetricPiePainter(chartContainer, data, padding);
+      painter = new MetricPiePainter(chartContainer, data, chartPadding);
       painter.setColor("var(--color-neutral-300)");
-      padding = painter.getPadding();
       obsChart();
       const radius = chartContainer.offsetWidth;
       painter.setWidth(radius);
@@ -80,7 +76,7 @@
 
 <div class="flex flex-row">
   <div class="w-1/2" bind:this={chartContainer}></div>
-  <div class="flex flex-col justify-center flex-1" style={`padding: ${padding}px`}>
+  <div class="flex flex-col justify-center flex-1">
     {#each sortedRatios as { value, ratio, durationText }}
       <div class="flex items-center">
         <div

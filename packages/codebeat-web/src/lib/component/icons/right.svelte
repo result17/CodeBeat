@@ -10,6 +10,7 @@
 <div
   class={cn(
     "fill-neutral-300 hover:fill-primary-500 hover:cursor-pointer hover:bg-neutral-700",
+    "transition-colors duration-200",
     className,
   )}
 >
