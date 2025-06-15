@@ -59,6 +59,7 @@ export abstract class BaseChartStore {
       console.error('Error querying:', error)
       this.setError(error as Error)
       this.setHasContent(false)
+      throw error
     }
     finally {
       this.setLoading(false)
@@ -86,8 +87,41 @@ export class UnknownChart extends BaseChartStore {
 
 export abstract class DataChartStore<T> extends BaseChartStore {
   protected readonly dataStore: Writable<T | undefined> = writable()
+  private intervalId: number | undefined
+  private intervalVal: number = 1000 * 5
+
+  protected setInterval(ms: number) {
+    if (ms < 0) {
+      throw new Error('interval must be positive')
+    }
+    this.clearInterVal()
+    this.intervalVal = ms
+  }
+
+  private setInterValQuery() {
+    this.intervalId = window.setInterval(() => this.query(), this.intervalVal)
+  }
+
+  public async query() {
+    try {
+      await super.query()
+      if (!this.intervalId) {
+        this.setInterValQuery()
+      }
+    }
+    catch {
+      this.clearInterVal()
+    }
+  }
+
+  private clearInterVal() {
+    if (this.intervalId) {
+      window.clearInterval(this.intervalId)
+    }
+  }
 
   protected disposeData(): void {
+    this.clearInterVal()
     this.dataStore.set(undefined)
   }
 
